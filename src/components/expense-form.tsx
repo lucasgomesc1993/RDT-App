@@ -209,7 +209,17 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         <div className="grid grid-cols-4 gap-4 items-end">
           <div className="col-span-2 grid gap-2">
             <Label htmlFor="valor" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Valor Unitário</Label>
-            <Input id="valor" type="text" inputMode="decimal" value={formatCurrency(valorValue || 0)} onChange={handleCurrencyChange} className="h-10 rounded-xl bg-white/[0.02] border-white/[0.06] font-mono font-semibold" />
+            <Input 
+              id="valor" 
+              type="text" 
+              inputMode="decimal" 
+              value={formatCurrency(valorValue || 0)} 
+              onChange={handleCurrencyChange} 
+              className={cn(
+                "h-10 rounded-xl bg-white/[0.01] border-white/[0.05] font-mono font-semibold",
+                (valorValue === 0 || !valorValue) ? "text-muted-foreground/40" : "text-foreground"
+              )} 
+            />
           </div>
           <div className="col-span-1 grid gap-2">
             <Label htmlFor="quantidade" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider text-center">Qtd</Label>
