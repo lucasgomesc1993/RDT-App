@@ -190,7 +190,7 @@ export default function DespesasPage() {
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = `Relatorio_RDT_Parte_${i + 1}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.xlsx`
+        a.download = `RDT-${i + 1}.xlsx`
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)
