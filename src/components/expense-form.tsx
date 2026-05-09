@@ -235,7 +235,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         </div>
         
         {receiptUrls && receiptUrls.length > 0 && (
-          <div className="flex flex-wrap gap-2 p-2 rounded-xl bg-white/[0.02] border border-white/[0.06] animate-in fade-in slide-in-from-top-2">
+          <div className="flex flex-wrap gap-2 p-2 rounded-xl bg-muted/30 border border-border animate-in fade-in slide-in-from-top-2">
             {receiptUrls.map((url, idx) => (
               <div key={idx} className="relative group/img h-12 w-12">
                 <img src={url} className="h-full w-full object-cover rounded-lg border border-white/10" alt="p" />
@@ -247,33 +247,33 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
-            <Label className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Data do Gasto</Label>
+            <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Data do Gasto</Label>
             <Popover>
-              <PopoverTrigger className="flex h-10 w-full items-center rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 text-sm font-medium transition-all hover:bg-white/[0.04] text-left cursor-pointer">
+              <PopoverTrigger className="flex h-10 w-full items-center rounded-xl border border-border bg-muted/50 px-4 text-sm font-medium transition-all hover:bg-muted/80 text-left cursor-pointer">
                 <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
                 {dateValue ? format(new Date(dateValue + 'T12:00:00'), "dd MMM, yy", { locale: ptBR }) : 'Data'}
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 rounded-2xl border-white/[0.08] bg-background/95 backdrop-blur-2xl" align="start">
+              <PopoverContent className="w-auto p-0 rounded-2xl border-border bg-background/95 backdrop-blur-2xl" align="start">
                 <Calendar mode="single" selected={dateValue ? new Date(dateValue + 'T12:00:00') : undefined} onSelect={(date) => date && setValue('date', format(date, 'yyyy-MM-dd'), { shouldDirty: true, shouldValidate: true })} locale={ptBR} />
               </PopoverContent>
             </Popover>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="pago-status" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Reembolsado?</Label>
-            <div className="flex items-center justify-between h-10 px-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-               <span className="text-[10px] font-medium uppercase text-muted-foreground">{watch('pago') ? 'SIM' : 'NÃO'}</span>
+            <Label htmlFor="pago-status" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Reembolsado?</Label>
+            <div className="flex items-center justify-between h-10 px-4 rounded-xl bg-muted/50 border border-border">
+               <span className="text-[10px] font-bold uppercase text-muted-foreground">{watch('pago') ? 'SIM' : 'NÃO'}</span>
                <Switch id="pago-status" checked={watch('pago')} onCheckedChange={(checked) => setValue('pago', checked, { shouldDirty: true })} className="data-[state=checked]:bg-foreground" />
             </div>
           </div>
         </div>
 
         <div className="grid gap-2">
-          <Label htmlFor="motivo" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Motivo / Descrição</Label>
-          <Input id="motivo" {...register('motivo')} placeholder="Ex: Visita ao cliente, Reunião técnica..." className="h-10 rounded-xl bg-white/[0.02] border-white/[0.06] focus-visible:bg-white/[0.04]" />
+          <Label htmlFor="motivo" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Motivo / Descrição</Label>
+          <Input id="motivo" {...register('motivo')} placeholder="Ex: Visita ao cliente, Reunião técnica..." className="h-10 rounded-xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
         </div>
       </div>
 
-      <div className="p-8 border-t border-white/[0.05] bg-background/50 backdrop-blur-xl">
+      <div className="p-8 border-t border-border/50 bg-background/50 backdrop-blur-xl">
         <button 
           type="submit" 
           disabled={isSubmitting || uploading}
