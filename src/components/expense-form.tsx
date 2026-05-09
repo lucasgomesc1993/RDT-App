@@ -150,7 +150,25 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
   const FormContent = (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-8 space-y-6 pb-24 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-8 space-y-5 pb-32 custom-scrollbar">
+        {isMobile && (
+          <div className="pt-8 pb-4">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Financeiro</span>
+              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+                <CreditCard className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="text-left">
+              <h2 className="text-3xl font-semibold tracking-tight">
+                {isEditing ? 'Editar Registro' : 'Nova Despesa'}
+              </h2>
+              <p className="text-sm font-medium text-muted-foreground/40 mt-1">
+                Insira as informações do seu gasto abaixo.
+              </p>
+            </div>
+          </div>
+        )}
         <div className="space-y-4 pt-1">
           <div className="grid gap-2">
             <Label htmlFor="local" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Local / Estabelecimento</Label>
@@ -300,24 +318,8 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger>{commonTrigger}</DrawerTrigger>
-        <DrawerContent className="h-[96%] bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none flex flex-col overflow-hidden">
+        <DrawerContent className="h-full bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none flex flex-col overflow-hidden">
           <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 my-4" />
-          <div className="px-8 pt-4 pb-6">
-            <div className="flex items-center justify-between mb-8">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Financeiro</span>
-              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
-                <CreditCard className="h-4 w-4" />
-              </div>
-            </div>
-            <DrawerHeader className="p-0 text-left">
-              <DrawerTitle className="text-3xl font-semibold tracking-tight">
-                {isEditing ? 'Editar Registro' : 'Nova Despesa'}
-              </DrawerTitle>
-              <p className="text-sm font-medium text-muted-foreground/40 mt-1">
-                Insira as informações do seu gasto abaixo.
-              </p>
-            </DrawerHeader>
-          </div>
           {FormContent}
         </DrawerContent>
       </Drawer>
