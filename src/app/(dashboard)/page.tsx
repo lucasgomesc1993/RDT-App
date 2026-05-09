@@ -114,7 +114,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
         <header className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-muted/40 text-muted-foreground text-[10px] font-semibold uppercase tracking-wider border border-border/50">Visão Geral</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-muted/20 text-muted-foreground text-[10px] font-semibold uppercase tracking-wider border border-border/30">Visão Geral</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
             Dashboard
@@ -130,10 +130,10 @@ export default function DashboardPage() {
           { label: 'Pendente Reembolso', value: stats.pending, icon: AlertCircle },
           { label: 'Total Pago', value: stats.paid, icon: CheckCircle2 },
         ].map((stat, i) => (
-          <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 p-8 transition-all duration-300 hover:bg-muted/20 shadow-sm">
+          <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/30 bg-card/20 p-8 transition-all duration-300 hover:bg-muted/10 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{stat.label}</span>
-              <div className="p-2 rounded-lg bg-muted/40 border border-border/50 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+              <div className="p-2 rounded-lg bg-muted/20 border border-border/30 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/40 bg-card/30 p-5 pb-10 sm:p-8 space-y-6 sm:space-y-8 transition-all duration-300 shadow-sm">
+        <div className="rounded-2xl border border-border/30 bg-card/20 p-5 pb-10 sm:p-8 space-y-6 sm:space-y-8 transition-all duration-300 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">

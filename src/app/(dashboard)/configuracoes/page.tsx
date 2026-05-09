@@ -41,12 +41,17 @@ export default function ConfiguracoesPage() {
 
       <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
         {/* Modo de Exibição */}
-        <Card className="lg:col-span-1 bg-card/40 border-border/40 rounded-2xl overflow-hidden shadow-sm h-fit">
-          <CardHeader className="p-8 border-b border-border/40">
-            <CardTitle className="text-xl font-semibold">Exibição</CardTitle>
-            <CardDescription>Alterne entre os modos claro e escuro.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-8 space-y-4">
+        <Card className="lg:col-span-1 bg-card/25 border-border/30 rounded-2xl overflow-hidden shadow-sm h-fit transition-all duration-300 group">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-1">
+                <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Exibição</span>
+                <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Modo de Interface</p>
+              </div>
+              <div className="p-2 rounded-lg bg-muted/20 border border-border/30 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+                <Settings className="h-4 w-4" />
+              </div>
+            </div>
             {[
               { id: 'light', label: 'Claro', icon: Sun },
               { id: 'dark', label: 'Escuro', icon: Moon },
@@ -75,12 +80,17 @@ export default function ConfiguracoesPage() {
         </Card>
 
         {/* Seleção de Cores */}
-        <Card className="lg:col-span-2 bg-card/40 border-border/40 rounded-2xl overflow-hidden shadow-sm">
-          <CardHeader className="p-8 border-b border-border/40">
-            <CardTitle className="text-xl font-semibold">Cor de Destaque</CardTitle>
-            <CardDescription>Escolha a cor que será aplicada em botões e indicadores.</CardDescription>
-          </CardHeader>
+        <Card className="lg:col-span-2 bg-card/25 border-border/30 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group">
           <CardContent className="p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-1">
+                <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Cor de Destaque</span>
+                <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Identidade Visual</p>
+              </div>
+              <div className="p-2 rounded-lg bg-muted/20 border border-border/30 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+                <Palette className="h-4 w-4" />
+              </div>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {accentColors.map((color) => (
                 <button
@@ -90,7 +100,7 @@ export default function ConfiguracoesPage() {
                     "flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 group",
                     accent.name === color.name 
                       ? "border-primary bg-primary/10 shadow-sm" 
-                      : "border-border/40 bg-muted/20 hover:bg-muted/40"
+                      : "border-border/30 bg-muted/20 hover:bg-muted/30"
                   )}
                 >
                   <div 
@@ -109,16 +119,6 @@ export default function ConfiguracoesPage() {
               ))}
             </div>
 
-            <div className="mt-12 p-6 rounded-2xl bg-muted/20 border border-dashed border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-1">
-                <h4 className="text-sm font-semibold text-foreground">Visualização em Tempo Real</h4>
-                <p className="text-xs text-muted-foreground">A cor selecionada é aplicada instantaneamente em toda a aplicação.</p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="default" size="sm" className="rounded-xl px-6 h-9">Botão Primário</Button>
-                <Button variant="outline" size="sm" className="rounded-xl px-6 h-9 border-border/50">Outline</Button>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
