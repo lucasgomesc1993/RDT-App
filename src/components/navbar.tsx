@@ -1,6 +1,6 @@
 'use client'
 
-import { Menu, Home, Receipt, LogOut, X } from 'lucide-react'
+import { Menu, Home, Receipt, LogOut, X, Settings } from 'lucide-react'
 import { Button } from './ui/button'
 import {
   Drawer,
