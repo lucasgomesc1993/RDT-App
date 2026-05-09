@@ -51,6 +51,17 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
+const getCategoryIcon = (opt: string) => {
+  switch (opt) {
+    case 'Estacionamento': return Car;
+    case 'Pedágio': return Ticket;
+    case 'CPTM/Metrô': return Bus;
+    case 'Almoço':
+    case 'Almoço Reduzido': return Utensils;
+    default: return Tag;
+  }
+}
+
 export default function DespesasPage() {
   const { data: expenses, isLoading } = useExpenses()
   const togglePayment = useTogglePayment()
@@ -446,11 +457,7 @@ export default function DespesasPage() {
             Todas
           </button>
           {transportOptions.map(opt => {
-            const Icon = opt === 'Estacionamento' ? Car : 
-                        opt === 'Pedágio' ? Ticket : 
-                        opt === 'CPTM/Metrô' ? Bus : 
-                        (opt === 'Almoço' || opt === 'Almoço Reduzido') ? Utensils : Tag
-            
+            const Icon = getCategoryIcon(opt)
             return (
               <button 
                 key={opt} 
@@ -676,7 +683,11 @@ export default function DespesasPage() {
                 {selectionMode ? <div className={cn("h-5 w-5 rounded border flex items-center justify-center transition-all", isSelected ? "bg-primary border-primary" : "border-border")}>{isSelected && <Check className="h-3 w-3 text-primary-foreground" />}</div> : <div className="flex gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg"><Edit2 className="h-4 w-4 text-muted-foreground/60 hover:text-foreground" /></Button>} /><Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div>}
               </div>
               <div className="flex items-center gap-3">
-                <span className="px-2.5 py-1 rounded-md bg-muted/20 border border-border/30 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <span className="px-2.5 py-1.5 rounded-lg bg-muted/20 border border-border/30 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                  {(() => {
+                    const Icon = getCategoryIcon(expense.transporte)
+                    return <Icon className="h-3 w-3 opacity-60" />
+                  })()}
                   {expense.transporte}
                 </span>
                 {expense.receipt_urls && expense.receipt_urls.length > 0 && (
@@ -741,7 +752,13 @@ export default function DespesasPage() {
                   <TableRow key={expense.id} className={cn("border-b border-border/20 hover:bg-muted/10 transition-all duration-300", isSelected && "bg-primary/[0.04]")}>
                     <TableCell className="pl-6"><Checkbox className="rounded-md" checked={isSelected} onCheckedChange={(checked) => handleSelectRow(expense.id, !!checked)} /></TableCell>
                     <TableCell className="font-medium text-muted-foreground text-sm py-5">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</TableCell>
-                    <TableCell><div className="flex flex-col"><span className="font-semibold text-foreground text-base">{expense.local}</span><span className="text-[10px] font-medium uppercase text-muted-foreground/60 flex items-center gap-1.5 mt-0.5 tracking-wider"><Tag className="h-3 w-3" /> {expense.transporte}</span></div></TableCell>
+                    <TableCell><div className="flex flex-col"><span className="font-semibold text-foreground text-base">{expense.local}</span><span className="text-[10px] font-medium uppercase text-muted-foreground/60 flex items-center gap-1.5 mt-0.5 tracking-wider">
+                      {(() => {
+                        const Icon = getCategoryIcon(expense.transporte)
+                        return <Icon className="h-3 w-3" />
+                      })()} 
+                      {expense.transporte}
+                    </span></div></TableCell>
                     <TableCell className="text-center"><span className="px-2.5 py-1 rounded-md bg-muted/40 text-[10px] font-semibold font-mono border border-border/30">{expense.quantidade}</span></TableCell>
                     <TableCell className="text-right"><span className="text-base font-semibold font-mono text-foreground">R$ {(expense.valor * expense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></TableCell>
                     <TableCell className="text-center">
