@@ -470,9 +470,6 @@ export default function DespesasPage() {
           </h1>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className={cn("h-10 rounded-xl font-medium hidden md:flex border-border/50", selectionMode && "bg-white/[0.06] border-foreground text-foreground")} onClick={toggleSelectionMode}>
-            <MousePointer2 className="h-4 w-4 mr-2" /> {selectionMode ? 'Cancelar' : 'Selecionar'}
-          </Button>
           <ExpenseForm onSuccess={() => setSelectedIds([])} />
         </div>
       </div>
