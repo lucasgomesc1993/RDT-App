@@ -33,7 +33,7 @@ import {
   DrawerFooter,
   DrawerTrigger,
 } from '@/components/ui/drawer'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { 
   ImageIcon, ChevronLeft, ChevronRight, X, Edit2, Trash2, Search, 
   FilterX, Loader2, FileX, CheckSquare, 
