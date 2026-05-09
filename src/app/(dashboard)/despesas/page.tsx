@@ -567,7 +567,40 @@ export default function DespesasPage() {
                 </div>
                 {selectionMode ? <div className={cn("h-5 w-5 rounded border flex items-center justify-center transition-all", isSelected ? "bg-foreground border-foreground" : "border-white/20")}>{isSelected && <Check className="h-3 w-3 text-background" />}</div> : <div className="flex gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg"><Edit2 className="h-4 w-4 text-muted-foreground/60 hover:text-foreground" /></Button>} /><Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div>}
               </div>
-              <div className="flex items-center gap-2"><span className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/[0.04] text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{expense.transporte}</span>{expense.receipt_urls && expense.receipt_urls.length > 0 && <button onClick={(e) => { e.stopPropagation(); handleOpenGallery(expense) }} className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10px] font-semibold text-foreground tracking-wider"><ImageIcon className="h-3 w-3" /> COMPROVANTES</button>}</div>
+              <div className="flex items-center gap-3">
+                <span className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/[0.04] text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                  {expense.transporte}
+                </span>
+                {expense.receipt_urls && expense.receipt_urls.length > 0 && (
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleOpenGallery(expense) }} 
+                    className="relative flex items-center h-10 w-16 group/stack-mobile ml-1"
+                  >
+                    {expense.receipt_urls.slice(0, 3).reverse().map((url, i, arr) => {
+                      const reverseIndex = arr.length - 1 - i;
+                      return (
+                        <div 
+                          key={i}
+                          className="absolute h-10 w-10 rounded-lg border border-white/[0.1] overflow-hidden shadow-xl transition-all duration-300"
+                          style={{ 
+                            left: `${reverseIndex * 8}px`,
+                            zIndex: reverseIndex,
+                            transform: `rotate(${reverseIndex * 3}deg)`,
+                            opacity: 1 - (reverseIndex * 0.15)
+                          }}
+                        >
+                          <img src={url} alt="Comprovante" className="h-full w-full object-cover" />
+                          {reverseIndex === 0 && expense.receipt_urls!.length > 3 && (
+                            <div className="absolute inset-0 bg-background/60 backdrop-blur-xs flex items-center justify-center text-[8px] font-black text-white">
+                              +{expense.receipt_urls!.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </button>
+                )}
+              </div>
               <div className="p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] flex items-center justify-between"><div><p className="text-[10px] font-medium uppercase text-muted-foreground/40 mb-1 tracking-widest">Valor Final</p><p className="text-xl font-semibold font-mono">R$ {(expense.valor * expense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div><button onClick={(e) => { e.stopPropagation(); togglePayment.mutate({ id: expense.id, pago: expense.pago }) }} className={cn("h-9 px-3 rounded-lg text-[10px] font-medium uppercase tracking-widest transition-all border", expense.pago ? "bg-white/[0.04] text-foreground border-white/[0.06]" : "bg-transparent text-muted-foreground border-white/[0.04]")}>{expense.pago ? 'Pago' : 'Pendente'}</button></div>
             </div>
           ) 
@@ -600,7 +633,41 @@ export default function DespesasPage() {
                     <TableCell><div className="flex flex-col"><span className="font-semibold text-foreground text-base">{expense.local}</span><span className="text-[10px] font-medium uppercase text-muted-foreground/60 flex items-center gap-1.5 mt-0.5 tracking-wider"><Tag className="h-3 w-3" /> {expense.transporte}</span></div></TableCell>
                     <TableCell className="text-center"><span className="px-2.5 py-1 rounded-md bg-white/[0.04] text-[10px] font-medium font-mono">{expense.quantidade}</span></TableCell>
                     <TableCell className="text-right"><span className="text-base font-semibold font-mono text-foreground">R$ {(expense.valor * expense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></TableCell>
-                    <TableCell className="text-center">{expense.receipt_urls && expense.receipt_urls.length > 0 ? (<button onClick={() => handleOpenGallery(expense)} className="relative h-10 w-10 rounded-lg border border-white/[0.08] overflow-hidden hover:opacity-80 transition-all inline-block shadow-sm"><img src={expense.receipt_urls[0]} alt="Comprovante" className="h-full w-full object-cover" />{expense.receipt_urls.length > 1 && (<div className="absolute inset-0 bg-background/60 backdrop-blur-xs flex items-center justify-center text-[10px] font-bold text-foreground">+{expense.receipt_urls.length - 1}</div>)}</button>) : <div className="h-10 w-10 rounded-lg border border-transparent bg-white/[0.02] flex items-center justify-center text-muted-foreground/30 mx-auto"><FileX className="h-4 w-4" /></div>}</TableCell>
+                    <TableCell className="text-center">
+                      {expense.receipt_urls && expense.receipt_urls.length > 0 ? (
+                        <button 
+                          onClick={() => handleOpenGallery(expense)} 
+                          className="relative flex items-center justify-center h-10 w-16 mx-auto group/stack"
+                        >
+                          {expense.receipt_urls.slice(0, 3).reverse().map((url, i, arr) => {
+                            const reverseIndex = arr.length - 1 - i;
+                            return (
+                              <div 
+                                key={i}
+                                className="absolute h-10 w-10 rounded-lg border border-white/[0.1] overflow-hidden shadow-xl transition-all duration-300 group-hover/stack:scale-105"
+                                style={{ 
+                                  left: `${reverseIndex * 8}px`,
+                                  zIndex: reverseIndex,
+                                  transform: `rotate(${reverseIndex * 3}deg)`,
+                                  opacity: 1 - (reverseIndex * 0.15)
+                                }}
+                              >
+                                <img src={url} alt="Comprovante" className="h-full w-full object-cover" />
+                                {reverseIndex === 0 && expense.receipt_urls!.length > 3 && (
+                                  <div className="absolute inset-0 bg-background/60 backdrop-blur-xs flex items-center justify-center text-[8px] font-black text-white">
+                                    +{expense.receipt_urls!.length - 3}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </button>
+                      ) : (
+                        <div className="h-10 w-10 rounded-lg border border-transparent bg-white/[0.02] flex items-center justify-center text-muted-foreground/30 mx-auto">
+                          <FileX className="h-4 w-4" />
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell className="text-center"><button onClick={() => togglePayment.mutate({ id: expense.id, pago: expense.pago })} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-medium uppercase tracking-widest transition-all", expense.pago ? 'bg-white/[0.04] text-foreground border border-white/[0.06]' : 'bg-transparent text-muted-foreground border border-white/[0.04] hover:bg-white/[0.02]')}>{expense.pago ? 'Confirmado' : 'Pendente'}</button></TableCell>
                     <TableCell className="text-right pr-6"><div className="flex items-center justify-end gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-foreground"><Edit2 className="h-4 w-4" /></Button>} /><Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div></TableCell>
                   </TableRow>
