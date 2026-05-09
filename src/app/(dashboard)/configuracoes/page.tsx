@@ -3,11 +3,13 @@
 import { useAccent, accentColors } from "@/components/accent-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Settings, Palette, Check, RotateCcw } from "lucide-react"
+import { Settings, Palette, Check, RotateCcw, Moon, Sun, Monitor } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 
 export default function ConfiguracoesPage() {
   const { accent, setAccent } = useAccent()
+  const { theme, setTheme } = useTheme()
 
   return (
     <div className="max-w-7xl mx-auto space-y-10 pb-20 pt-4 animate-in fade-in duration-1000">
@@ -27,22 +29,59 @@ export default function ConfiguracoesPage() {
           <Button 
             variant="outline" 
             className="h-10 rounded-xl font-medium border-border/50"
-            onClick={() => setAccent("default")}
+            onClick={() => {
+              setAccent("default")
+              setTheme("dark")
+            }}
           >
-            <RotateCcw className="h-4 w-4 mr-2" /> Resetar Tema
+            <RotateCcw className="h-4 w-4 mr-2" /> Resetar Tudo
           </Button>
         </div>
       </div>
 
-      {/* Seleção de Cores */}
-      <div className="px-4 md:px-0">
-        <Card className="bg-white/[0.01] border-border/50 rounded-2xl overflow-hidden backdrop-blur-md">
+      <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
+        {/* Modo de Exibição */}
+        <Card className="lg:col-span-1 bg-white/[0.01] border-border/50 rounded-2xl overflow-hidden backdrop-blur-md h-fit">
           <CardHeader className="p-8 border-b border-white/[0.04]">
-            <CardTitle className="text-xl font-semibold">Customização Visual</CardTitle>
-            <CardDescription>Escolha a cor de destaque que será aplicada em botões, gráficos e indicadores de saldo.</CardDescription>
+            <CardTitle className="text-xl font-semibold">Exibição</CardTitle>
+            <CardDescription>Alterne entre os modos claro e escuro.</CardDescription>
+          </CardHeader>
+          <CardContent className="p-8 space-y-4">
+            {[
+              { id: 'light', label: 'Claro', icon: Sun },
+              { id: 'dark', label: 'Escuro', icon: Moon },
+              { id: 'system', label: 'Sistema', icon: Monitor },
+            ].map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTheme(t.id)}
+                className={cn(
+                  "flex items-center justify-between w-full p-4 rounded-xl border transition-all duration-300",
+                  theme === t.id 
+                    ? "border-primary bg-primary/10 shadow-sm shadow-primary/5" 
+                    : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-muted-foreground"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("p-2 rounded-lg border", theme === t.id ? "bg-white/10 border-white/20 text-primary" : "bg-white/[0.03] border-white/5")}>
+                    <t.icon className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm font-semibold">{t.label}</span>
+                </div>
+                {theme === t.id && <Check className="h-4 w-4 text-primary" />}
+              </button>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Seleção de Cores */}
+        <Card className="lg:col-span-2 bg-white/[0.01] border-border/50 rounded-2xl overflow-hidden backdrop-blur-md">
+          <CardHeader className="p-8 border-b border-white/[0.04]">
+            <CardTitle className="text-xl font-semibold">Cor de Destaque</CardTitle>
+            <CardDescription>Escolha a cor que será aplicada em botões e indicadores.</CardDescription>
           </CardHeader>
           <CardContent className="p-8">
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {accentColors.map((color) => (
                 <button
                   key={color.name}
