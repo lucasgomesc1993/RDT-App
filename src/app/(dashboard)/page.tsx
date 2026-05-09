@@ -27,7 +27,7 @@ const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background/90 backdrop-blur-2xl border border-white/[0.06] p-4 rounded-xl shadow-sm animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-card/95 backdrop-blur-2xl border border-border p-4 rounded-xl shadow-xl animate-in fade-in zoom-in-95 duration-200">
         <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
         <div className="flex items-center gap-2">
           <div className="h-1.5 w-1.5 rounded-full bg-foreground shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
@@ -44,7 +44,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 const CategoryTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background/90 backdrop-blur-2xl border border-white/[0.06] p-4 rounded-xl shadow-sm animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-card/95 backdrop-blur-2xl border border-border p-4 rounded-xl shadow-xl animate-in fade-in zoom-in-95 duration-200">
         <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">{payload[0].name}</p>
         <p className="text-sm font-semibold font-mono text-foreground">
           {payload[0].value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
@@ -114,7 +114,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
         <header className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] text-muted-foreground text-[10px] font-medium uppercase tracking-wider border border-white/[0.08]">Visão Geral</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-muted/40 text-muted-foreground text-[10px] font-semibold uppercase tracking-wider border border-border/50">Visão Geral</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
             Dashboard
@@ -130,10 +130,10 @@ export default function DashboardPage() {
           { label: 'Pendente Reembolso', value: stats.pending, icon: AlertCircle },
           { label: 'Total Pago', value: stats.paid, icon: CheckCircle2 },
         ].map((stat, i) => (
-          <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-white/[0.02] p-8 transition-all duration-300 hover:bg-white/[0.04]">
+          <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 p-8 transition-all duration-300 hover:bg-muted/20 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{stat.label}</span>
-              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+              <div className="p-2 rounded-lg bg-muted/40 border border-border/50 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2 px-4 md:px-0">
-        <div className="rounded-2xl border border-border/50 bg-white/[0.01] p-8 space-y-8 transition-all duration-300">
+        <div className="rounded-2xl border border-border/40 bg-card/30 p-8 space-y-8 transition-all duration-300 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
@@ -164,19 +164,19 @@ export default function DashboardPage() {
                     <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.02)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.1} />
                 <XAxis 
                   dataKey="month" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 10, fontWeight: 500 }} 
+                  tick={{ fill: 'currentColor', opacity: 0.3, fontSize: 10, fontWeight: 500 }} 
                   dy={15}
                   tickFormatter={(val) => val.substring(0, 3).toUpperCase()}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9, fontWeight: 500 }}
+                  tick={{ fill: 'currentColor', opacity: 0.3, fontSize: 9, fontWeight: 500 }}
                   tickFormatter={(value) => `R$${value >= 1000 ? (value/1000).toFixed(0) + 'k' : value}`}
                 />
                 <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--primary)', strokeOpacity: 0.1, strokeWidth: 1 }} />
@@ -194,7 +194,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/50 bg-white/[0.01] p-8 space-y-8 transition-all duration-300">
+        <div className="rounded-2xl border border-border/40 bg-card/30 p-8 space-y-8 transition-all duration-300 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">

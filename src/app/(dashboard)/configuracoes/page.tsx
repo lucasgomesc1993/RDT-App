@@ -17,7 +17,7 @@ export default function ConfiguracoesPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-muted border border-border text-muted-foreground text-[10px] font-bold uppercase tracking-wider">Preferências</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-muted/40 border border-border/50 text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">Preferências</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground flex items-center gap-4">
             Ajustes
@@ -41,7 +41,7 @@ export default function ConfiguracoesPage() {
 
       <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
         {/* Modo de Exibição */}
-        <Card className="lg:col-span-1 bg-card border-border/50 rounded-2xl overflow-hidden shadow-sm h-fit">
+        <Card className="lg:col-span-1 bg-card/40 border-border/40 rounded-2xl overflow-hidden shadow-sm h-fit">
           <CardHeader className="p-8 border-b border-border/40">
             <CardTitle className="text-xl font-semibold">Exibição</CardTitle>
             <CardDescription>Alterne entre os modos claro e escuro.</CardDescription>
@@ -58,8 +58,8 @@ export default function ConfiguracoesPage() {
                 className={cn(
                   "flex items-center justify-between w-full p-4 rounded-xl border transition-all duration-300",
                   theme === t.id 
-                    ? "border-primary bg-primary/5 shadow-sm" 
-                    : "border-border bg-muted/40 hover:bg-muted/60 text-muted-foreground"
+                    ? "border-primary bg-primary/10 shadow-sm" 
+                    : "border-border/40 bg-muted/20 hover:bg-muted/40 text-muted-foreground"
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -75,7 +75,7 @@ export default function ConfiguracoesPage() {
         </Card>
 
         {/* Seleção de Cores */}
-        <Card className="lg:col-span-2 bg-card border-border/50 rounded-2xl overflow-hidden shadow-sm">
+        <Card className="lg:col-span-2 bg-card/40 border-border/40 rounded-2xl overflow-hidden shadow-sm">
           <CardHeader className="p-8 border-b border-border/40">
             <CardTitle className="text-xl font-semibold">Cor de Destaque</CardTitle>
             <CardDescription>Escolha a cor que será aplicada em botões e indicadores.</CardDescription>
@@ -89,8 +89,8 @@ export default function ConfiguracoesPage() {
                   className={cn(
                     "flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 group",
                     accent.name === color.name 
-                      ? "border-primary bg-primary/5 shadow-sm" 
-                      : "border-border bg-muted/40 hover:bg-muted/60"
+                      ? "border-primary bg-primary/10 shadow-sm" 
+                      : "border-border/40 bg-muted/20 hover:bg-muted/40"
                   )}
                 >
                   <div 
@@ -109,7 +109,7 @@ export default function ConfiguracoesPage() {
               ))}
             </div>
 
-            <div className="mt-12 p-6 rounded-2xl bg-muted/40 border border-dashed border-border flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="mt-12 p-6 rounded-2xl bg-muted/20 border border-dashed border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-1">
                 <h4 className="text-sm font-semibold text-foreground">Visualização em Tempo Real</h4>
                 <p className="text-xs text-muted-foreground">A cor selecionada é aplicada instantaneamente em toda a aplicação.</p>
