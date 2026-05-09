@@ -38,7 +38,7 @@ import {
   ImageIcon, ChevronLeft, ChevronRight, X, Edit2, Trash2, Search, 
   FilterX, Loader2, FileX, CheckSquare, 
   CheckCircle2, Clock, Tag, Download, FileSpreadsheet,
-  TrendingUp, ArrowUpRight, SlidersHorizontal, MousePointer2,
+  TrendingUp, SlidersHorizontal, MousePointer2,
   Check
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -134,22 +134,44 @@ export default function DespesasPage() {
   }
 
   const handleBatchDownload = async () => {
-    const urls = filteredExpenses.filter(e => selectedIds.includes(e.id) && e.receipt_urls && e.receipt_urls.length > 0).flatMap(e => e.receipt_urls || [])
-    if (urls.length === 0) { alert('Nenhum comprovante encontrado.'); return }
-    for (const url of urls) {
-      try {
-        const response = await fetch(url)
-        const blob = await response.blob()
-        const blobUrl = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = blobUrl
-        link.setAttribute('download', url.split('/').pop() || 'comprovante.jpg')
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        window.URL.revokeObjectURL(blobUrl)
-        await new Promise(resolve => setTimeout(resolve, 300))
-      } catch (error) { console.error('Falha ao baixar:', url, error) }
+    const selectedExpenses = filteredExpenses.filter(e => selectedIds.includes(e.id) && e.receipt_urls && e.receipt_urls.length > 0)
+    
+    if (selectedExpenses.length === 0) {
+      alert('Nenhum comprovante encontrado nos itens selecionados.')
+      return
+    }
+
+    for (const expense of selectedExpenses) {
+      if (!expense.receipt_urls) continue
+
+      for (let i = 0; i < expense.receipt_urls.length; i++) {
+        const url = expense.receipt_urls[i]
+        try {
+          const response = await fetch(url)
+          const blob = await response.blob()
+          const blobUrl = window.URL.createObjectURL(blob)
+          
+          // Gerar nome inteligente: DATA-LOCAL-VALOR-INDEX.ext
+          const dateStr = format(parseISO(expense.date), 'yyyy-MM-dd')
+          const safeLocal = expense.local.replace(/[^a-z0-9]/gi, '_').substring(0, 20)
+          const valorStr = (expense.valor * expense.quantidade).toFixed(2).replace('.', ',')
+          const extension = url.split('.').pop()?.split('?')[0] || 'jpg'
+          const fileName = `${dateStr}_${safeLocal}_R$${valorStr}${expense.receipt_urls.length > 1 ? `_part${i+1}` : ''}.${extension}`
+
+          const link = document.createElement('a')
+          link.href = blobUrl
+          link.setAttribute('download', fileName)
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+          window.URL.revokeObjectURL(blobUrl)
+          
+          // Pequeno delay para não sobrecarregar o browser
+          await new Promise(resolve => setTimeout(resolve, 400))
+        } catch (error) {
+          console.error('Falha ao baixar:', url, error)
+        }
+      }
     }
   }
 
@@ -178,7 +200,7 @@ export default function DespesasPage() {
     } catch (error: any) { alert(error.message || 'Erro ao exportar Excel.') }
   }
 
-  if (isLoading) return (<div className="flex h-full items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>)
+  if (isLoading) return (<div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground/30" /></div>)
 
   const handleOpenGallery = (urls: string[]) => { setSelectedReceipts(urls); setCurrentIndex(0) }
   const handleCloseGallery = () => { setSelectedReceipts(null) }
@@ -188,30 +210,58 @@ export default function DespesasPage() {
   const clearFilters = () => { setSearch(''); setStatusFilter('all'); setTransportFilter('all'); setReceiptFilter('all'); setDateRange('all'); setSelectedIds([]) }
 
   const GalleryContent = (
-    <div className="relative flex flex-col h-full min-h-[400px]">
-      <div className="flex items-center justify-between p-8"><div className="space-y-1"><span className="text-xl font-bold block">Comprovante</span><span className="text-xs font-bold text-muted-foreground uppercase">{currentIndex + 1} de {selectedReceipts?.length}</span></div>{!isMobile && (<button onClick={handleCloseGallery} className="p-3 rounded-2xl bg-white/5 border border-white/10"><X className="h-6 w-6" /></button>)}</div>
-      <div className="flex-1 flex items-center justify-center p-8 pb-12">{selectedReceipts && <img src={selectedReceipts[currentIndex]} alt="D" className="max-w-full max-h-[60vh] object-contain rounded-3xl shadow-2xl border border-white/5" />}</div>
-      {selectedReceipts && selectedReceipts.length > 1 && (<div className="absolute inset-x-8 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none"><button onClick={prevImage} disabled={currentIndex === 0} className="pointer-events-auto w-14 h-14 rounded-2xl bg-white/5 border border-white/10 disabled:opacity-0 flex items-center justify-center"><ChevronLeft className="h-8 w-8" /></button><button onClick={nextImage} disabled={currentIndex === selectedReceipts.length - 1} className="pointer-events-auto w-14 h-14 rounded-2xl bg-white/5 border border-white/10 disabled:opacity-0 flex items-center justify-center"><ChevronRight className="h-8 w-8" /></button></div>)}
+    <div className="relative flex flex-col h-full min-h-[400px] bg-background">
+      <div className="flex items-center justify-between p-6 border-b border-white/[0.06]">
+        <div className="space-y-1">
+          <span className="text-lg font-semibold block text-foreground">Comprovante</span>
+          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{currentIndex + 1} de {selectedReceipts?.length}</span>
+        </div>
+        <button onClick={handleCloseGallery} className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-colors border border-white/[0.06]">
+          <X className="h-5 w-5 text-foreground" />
+        </button>
+      </div>
+      <div className="flex-1 flex items-center justify-center p-8">
+        {selectedReceipts && <img src={selectedReceipts[currentIndex]} alt="Comprovante" className="max-w-full max-h-[60vh] object-contain rounded-xl border border-white/[0.06]" />}
+      </div>
+      {selectedReceipts && selectedReceipts.length > 1 && (
+        <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
+          <button onClick={prevImage} disabled={currentIndex === 0} className="pointer-events-auto w-12 h-12 rounded-xl bg-background/80 backdrop-blur-md border border-white/[0.1] disabled:opacity-0 flex items-center justify-center hover:bg-white/[0.04] transition-all">
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button onClick={nextImage} disabled={currentIndex === selectedReceipts.length - 1} className="pointer-events-auto w-12 h-12 rounded-xl bg-background/80 backdrop-blur-md border border-white/[0.1] disabled:opacity-0 flex items-center justify-center hover:bg-white/[0.04] transition-all">
+            <ChevronRight className="h-6 w-6" />
+          </button>
+        </div>
+      )}
     </div>
   )
 
   const FiltersContent = (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Status</label>
+      <div className="space-y-3">
+        <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Status de Pagamento</label>
         <div className="flex flex-wrap gap-2">
           {['all', 'pago', 'pendente'].map((f) => (
-            <button key={f} onClick={() => setStatusFilter(f as any)} className={cn("px-4 py-2 rounded-xl text-xs font-bold transition-all border uppercase", statusFilter === f ? "bg-primary text-primary-foreground border-primary" : "bg-white/5 border-white/10 text-muted-foreground")}>{f === 'all' ? 'Todos' : f}</button>
+            <button 
+              key={f} 
+              onClick={() => setStatusFilter(f as any)} 
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all border uppercase tracking-wider", 
+                statusFilter === f ? "bg-foreground text-background border-foreground" : "bg-white/[0.02] border-white/[0.06] text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {f === 'all' ? 'Todos' : f}
+            </button>
           ))}
         </div>
       </div>
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Categoria</label>
+      <div className="space-y-3">
+        <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Categoria</label>
         <Select value={transportFilter} onValueChange={(v) => v && setTransportFilter(v)}>
-          <SelectTrigger className="h-12 rounded-2xl bg-white/[0.03] border-white/5">
-            <SelectValue placeholder="Todas" />
+          <SelectTrigger className="h-10 rounded-xl bg-white/[0.02] border-white/[0.06] w-full">
+            <SelectValue placeholder="Todas as Categorias" />
           </SelectTrigger>
-          <SelectContent className="rounded-2xl border-white/10">
+          <SelectContent className="rounded-xl border-white/[0.08] bg-background/95 backdrop-blur-xl">
             <SelectItem value="all">Todas as Categorias</SelectItem>
             {transportOptions.map(opt => (
               <SelectItem key={opt} value={opt}>{opt}</SelectItem>
@@ -219,155 +269,232 @@ export default function DespesasPage() {
           </SelectContent>
         </Select>
       </div>
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Comprovantes</label>
+      <div className="space-y-3">
+        <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Comprovantes</label>
         <div className="grid grid-cols-3 gap-2">
           {[{ id: 'all', label: 'Todos' }, { id: 'with', label: 'Com' }, { id: 'without', label: 'Sem' }].map((r) => (
-            <button key={r.id} onClick={() => setReceiptFilter(r.id as any)} className={cn("px-2 py-3 rounded-xl text-[10px] font-bold transition-all border uppercase", receiptFilter === r.id ? "bg-primary text-primary-foreground border-primary" : "bg-white/5 border-white/10 text-muted-foreground")}>{r.label}</button>
+            <button 
+              key={r.id} 
+              onClick={() => setReceiptFilter(r.id as any)} 
+              className={cn(
+                "px-2 py-2 rounded-lg text-[10px] font-medium transition-all border uppercase tracking-wider", 
+                receiptFilter === r.id ? "bg-foreground text-background border-foreground" : "bg-white/[0.02] border-white/[0.06] text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {r.label}
+            </button>
           ))}
         </div>
       </div>
-      <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Período</label>
+      <div className="space-y-3">
+        <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Período Temporal</label>
         <div className="flex gap-2">
-          <button className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase border", dateRange === 'all' ? "bg-primary text-primary-foreground" : "bg-white/5 border-white/10")} onClick={() => setDateRange('all')}>Total</button>
-          <button className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase border", dateRange === 'month' ? "bg-primary text-primary-foreground" : "bg-white/5 border-white/10")} onClick={() => setDateRange('month')}>Mês</button>
+          <button 
+            className={cn(
+              "flex-1 py-2 rounded-lg text-[10px] font-medium uppercase tracking-wider border transition-all", 
+              dateRange === 'all' ? "bg-foreground text-background border-foreground" : "bg-white/[0.02] border-white/[0.06] text-muted-foreground"
+            )} 
+            onClick={() => setDateRange('all')}
+          >
+            Histórico Total
+          </button>
+          <button 
+            className={cn(
+              "flex-1 py-2 rounded-lg text-[10px] font-medium uppercase tracking-wider border transition-all", 
+              dateRange === 'month' ? "bg-foreground text-background border-foreground" : "bg-white/[0.02] border-white/[0.06] text-muted-foreground"
+            )} 
+            onClick={() => setDateRange('month')}
+          >
+            Mês Atual
+          </button>
         </div>
       </div>
-      <Button variant="ghost" className="w-full h-12 rounded-2xl text-red-400 font-bold" onClick={clearFilters}><FilterX className="h-4 w-4 mr-2" /> Limpar</Button>
+      <Button variant="ghost" className="w-full h-10 rounded-xl text-destructive font-medium text-[10px] uppercase tracking-wider hover:bg-destructive/5" onClick={clearFilters}>
+        <FilterX className="h-3.5 w-3.5 mr-2" /> Redefinir Filtros
+      </Button>
     </div>
   )
 
+  const activeFiltersCount = [
+    statusFilter !== 'all',
+    transportFilter !== 'all',
+    receiptFilter !== 'all',
+    dateRange !== 'all',
+  ].filter(Boolean).length
+
+  const hasActiveFilters = activeFiltersCount > 0 || search !== ''
+
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-in fade-in duration-700">
+    <div className="max-w-7xl mx-auto space-y-10 pb-20 pt-4 animate-in fade-in duration-1000">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase border border-primary/20">Dashboard</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] text-muted-foreground text-[10px] font-medium uppercase tracking-wider border border-white/[0.08]">Gestão</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tight flex items-baseline gap-2">Despesas<span className="text-primary text-xl font-bold bg-primary/10 w-8 h-8 rounded-full inline-flex items-center justify-center">{stats.count}</span></h1>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground flex items-center gap-4">
+            Despesas
+            <span className="text-muted-foreground text-lg font-normal font-mono opacity-40">/ {stats.count}</span>
+          </h1>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className={cn("h-12 rounded-2xl font-bold border-white/10 hidden md:flex", selectionMode && "bg-primary/20 border-primary text-primary")} onClick={toggleSelectionMode}>
-            <MousePointer2 className="h-4 w-4 mr-2" /> {selectionMode ? 'Sair' : 'Selecionar'}
+          <Button variant="outline" className={cn("h-10 rounded-xl font-medium hidden md:flex border-border/50", selectionMode && "bg-white/[0.06] border-foreground text-foreground")} onClick={toggleSelectionMode}>
+            <MousePointer2 className="h-4 w-4 mr-2" /> {selectionMode ? 'Cancelar' : 'Selecionar'}
           </Button>
           <ExpenseForm onSuccess={() => setSelectedIds([])} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 md:px-0">
-        <div className="relative group p-6 rounded-[2.5rem] bg-white/[0.02] border border-white/5 overflow-hidden shadow-2xl transition-all hover:bg-white/[0.04]">
-          <div className="absolute top-0 right-0 p-4 opacity-10"><TrendingUp className="h-24 w-24 text-primary" /></div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Total Filtrado</p>
-          <div className="flex items-baseline gap-2">
-            <h2 className="text-3xl font-black">R$ {stats.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2>
-            <div className="flex items-center text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full"><ArrowUpRight className="h-3 w-3 mr-1" /> 12%</div>
+      <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0">
+        {[
+          { label: 'Total Filtrado', value: stats.total, icon: TrendingUp },
+          { label: 'Reembolsado', value: stats.paid, icon: CheckCircle2 },
+          { label: 'Pendente', value: stats.pending, icon: Clock },
+        ].map((item, idx) => (
+          <div key={idx} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-white/[0.02] p-8 transition-all duration-300 hover:bg-white/[0.04]">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{item.label}</span>
+              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-muted-foreground transition-colors group-hover:text-foreground">
+                <item.icon className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="text-3xl font-semibold tracking-tight font-mono text-foreground">
+              R$ {item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </div>
           </div>
-        </div>
-        <div className="p-6 rounded-[2.5rem] bg-white/[0.02] border border-white/5 overflow-hidden shadow-2xl">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Reembolsado</p>
-          <div className="flex items-baseline gap-2"><h2 className="text-3xl font-black text-emerald-500">R$ {stats.paid.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2><CheckCircle2 className="h-4 w-4 text-emerald-500/50" /></div>
-        </div>
-        <div className="p-6 rounded-[2.5rem] bg-white/[0.02] border border-white/5 overflow-hidden shadow-2xl">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Pendente</p>
-          <div className="flex items-baseline gap-2"><h2 className="text-3xl font-black text-red-500">R$ {stats.pending.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2><Clock className="h-4 w-4 text-red-500/50" /></div>
-        </div>
+        ))}
       </div>
 
       <div className="sticky top-4 z-40 mx-4 md:mx-0">
-        <div className="bg-background/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-3 flex flex-col md:flex-row items-center gap-3 shadow-3xl">
+        <div className="bg-background/60 backdrop-blur-2xl border border-border/50 rounded-2xl p-2 flex flex-col md:flex-row items-center gap-2">
           <div className="relative w-full md:flex-1 group">
-            <Search className="absolute left-4 top-3.5 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <Input placeholder="Pesquisar..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-11 pl-11 rounded-2xl bg-white/[0.03] border-white/5 focus:border-primary/50" />
+            <Search className="absolute left-4 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
+            <Input placeholder="Pesquisar..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-10 pl-11 rounded-xl bg-transparent border-none focus-visible:bg-white/[0.02] transition-all" />
           </div>
+          
+          <div className="h-6 w-px bg-border/30 hidden md:block" />
+
+          <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto no-scrollbar pb-1 md:pb-0 px-2 md:px-0">
+            {['all', 'pago', 'pendente'].map((f) => (
+              <button 
+                key={f} 
+                onClick={() => setStatusFilter(f as any)} 
+                className={cn(
+                  "px-3 h-8 rounded-lg text-[10px] font-semibold uppercase tracking-widest transition-all whitespace-nowrap", 
+                  statusFilter === f 
+                    ? "bg-foreground text-background shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                )}
+              >
+                {f === 'all' ? 'Tudo' : f}
+              </button>
+            ))}
+          </div>
+
+          <div className="h-6 w-px bg-border/30 hidden md:block" />
+
           <div className="flex w-full md:w-auto items-center gap-2 shrink-0">
             {isMobile ? (
               <Drawer>
-                <DrawerTrigger asChild><Button variant="outline" className="h-11 flex-1 rounded-2xl border-white/10 font-bold bg-white/5"><SlidersHorizontal className="h-4 w-4 mr-2" /> Filtros</Button></DrawerTrigger>
-                <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/10 rounded-t-[3rem] px-8 pb-10">
-                  <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-6" />
-                  <DrawerHeader className="px-0 py-4"><DrawerTitle className="text-3xl font-black text-left">Filtros</DrawerTitle></DrawerHeader>
+                <DrawerTrigger asChild>
+                  <Button variant="outline" className="h-10 flex-1 rounded-xl border-white/[0.08] bg-white/[0.02] relative text-[10px] uppercase font-bold tracking-widest">
+                    <SlidersHorizontal className="h-4 w-4 mr-2" /> Filtros
+                    {activeFiltersCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-foreground text-background text-[8px] font-black">{activeFiltersCount}</span>}
+                  </Button>
+                </DrawerTrigger>
+                <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl px-6 pb-8">
+                  <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-4" />
+                  <DrawerHeader className="px-0 py-4"><DrawerTitle className="text-xl font-semibold text-left">Filtros Avançados</DrawerTitle></DrawerHeader>
                   {FiltersContent}
                 </DrawerContent>
               </Drawer>
             ) : (
               <Popover>
-                <PopoverTrigger className="inline-flex items-center justify-center whitespace-nowrap text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-11 rounded-2xl border border-white/10 font-bold bg-white/5 hover:bg-white/10 transition-all px-4">
-                  <SlidersHorizontal className="h-4 w-4 mr-2" /> Filtros
+                <PopoverTrigger className="inline-flex items-center justify-center whitespace-nowrap text-[10px] font-semibold uppercase tracking-widest transition-all duration-300 outline-none select-none h-10 rounded-xl px-4 border border-border/50 bg-white/[0.02] hover:bg-white/[0.04] text-foreground relative">
+                  <SlidersHorizontal className="h-3.5 w-3.5 mr-2 opacity-60" /> Filtros
+                  {activeFiltersCount > 0 && <span className="ml-2 px-1.5 py-0.5 rounded-md bg-foreground text-background text-[8px] font-black">{activeFiltersCount}</span>}
                 </PopoverTrigger>
-                <PopoverContent className="w-80 p-6 rounded-[2rem] bg-background/95 backdrop-blur-2xl border-white/10 shadow-3xl" align="end">{FiltersContent}</PopoverContent>
+                <PopoverContent className="w-80 p-6 rounded-2xl bg-background/95 backdrop-blur-2xl border-white/[0.06] shadow-sm" align="end">{FiltersContent}</PopoverContent>
               </Popover>
             )}
-            <Button variant="outline" className={cn("h-11 w-11 md:hidden rounded-2xl border-white/10", selectionMode && "bg-primary/20 border-primary text-primary")} onClick={toggleSelectionMode}>{selectionMode ? <X className="h-4 w-4" /> : <CheckSquare className="h-4 w-4" />}</Button>
+            
+            {hasActiveFilters && (
+              <Button variant="ghost" size="icon" onClick={clearFilters} className="h-10 w-10 rounded-xl text-muted-foreground hover:text-foreground hover:bg-white/[0.04]" title="Limpar tudo">
+                <FilterX className="h-4 w-4" />
+              </Button>
+            )}
+
+            <Button variant="outline" className={cn("h-10 w-10 md:hidden rounded-xl border-border/50", selectionMode && "bg-white/[0.06] text-foreground border-foreground")} onClick={toggleSelectionMode}>
+              {selectionMode ? <X className="h-4 w-4" /> : <CheckSquare className="h-4 w-4" />}
+            </Button>
           </div>
         </div>
       </div>
 
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl animate-in slide-in-from-bottom-10">
-          <div className="bg-primary text-primary-foreground p-3 rounded-[2rem] flex items-center justify-between shadow-3xl">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-xl animate-in slide-in-from-bottom-10 duration-500">
+          <div className="bg-foreground text-background p-2 rounded-2xl flex items-center justify-between shadow-2xl border border-white/10">
             <div className="flex items-center gap-3 pl-4">
-              <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center font-black text-sm">{selectedIds.length}</div>
-              <span className="text-[10px] font-black uppercase hidden sm:inline">selecionados</span>
+              <div className="h-7 w-7 rounded-lg bg-background text-foreground flex items-center justify-center font-bold text-xs font-mono">{selectedIds.length}</div>
+              <span className="text-[10px] font-semibold uppercase tracking-widest hidden sm:inline opacity-70">selecionados</span>
             </div>
-            <div className="flex gap-2">
-              <Button size="sm" variant="ghost" className="h-10 rounded-xl text-white font-bold text-[10px]" onClick={handleBatchDownload}><Download className="h-3.5 w-3.5 mr-2" /> DOCS</Button>
-              <Button size="sm" variant="ghost" className="h-10 rounded-xl text-white font-bold text-[10px]" onClick={handleExportExcel}><FileSpreadsheet className="h-3.5 w-3.5 mr-2" /> EXCEL</Button>
-              <Button size="sm" variant="secondary" className="h-10 rounded-xl bg-white text-primary font-black text-[10px]" onClick={handleBatchMarkAsPaid}>PAGO</Button>
+            <div className="flex gap-1.5">
+              <Button size="xs" variant="ghost" className="h-9 px-3 text-background hover:bg-background/10 text-[10px] font-semibold uppercase tracking-wider" onClick={handleBatchDownload} title="Baixar Docs"><Download className="h-3.5 w-3.5 mr-2" /> Docs</Button>
+              <Button size="xs" variant="ghost" className="h-9 px-3 text-background hover:bg-background/10 text-[10px] font-semibold uppercase tracking-wider" onClick={handleExportExcel} title="Exportar Excel"><FileSpreadsheet className="h-3.5 w-3.5 mr-2" /> Excel</Button>
+              <Button size="xs" variant="default" className="h-9 px-4 bg-background text-foreground hover:bg-background/90 text-[10px] font-bold uppercase tracking-widest rounded-xl" onClick={handleBatchMarkAsPaid}>Pagar</Button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="grid gap-6 md:hidden px-4">
-        {filteredExpenses.length === 0 && <div className="py-24 text-center opacity-30"><FileX className="h-16 w-16 mx-auto mb-4" /><p className="font-black uppercase tracking-[0.2em] text-xs">Vazio</p></div>}
+      <div className="grid gap-4 md:hidden px-4">
+        {filteredExpenses.length === 0 && <div className="py-24 text-center opacity-40"><FileX className="h-12 w-12 mx-auto mb-4 text-muted-foreground" /><p className="font-medium text-[10px] tracking-widest uppercase text-muted-foreground">Dataset Vazio</p></div>}
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-[2.5rem] bg-white/[0.03] border border-white/5 p-6 space-y-4 shadow-xl transition-all duration-300", isSelected ? "ring-2 ring-primary bg-primary/[0.05] border-transparent" : "hover:bg-white/[0.05]", selectionMode && "active:scale-[0.97]")}>
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-white/[0.02] border border-border/50 p-5 space-y-4 transition-all duration-300", isSelected ? "ring-2 ring-foreground bg-white/[0.04] border-transparent" : "hover:bg-white/[0.04]", selectionMode && "active:scale-[0.98]")}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={cn("h-10 w-10 rounded-2xl flex items-center justify-center", expense.pago ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500")}>{expense.pago ? <CheckCircle2 className="h-5 w-5" /> : <Clock className="h-5 w-5" />}</div>
-                  <div className="space-y-0.5"><p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</p><h3 className="font-bold text-lg text-foreground leading-none">{expense.local}</h3></div>
+                  <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", expense.pago ? "bg-white/[0.04] text-foreground" : "bg-transparent text-muted-foreground border border-white/[0.04]")}>{expense.pago ? <CheckCircle2 className="h-4 w-4" /> : <Clock className="h-4 w-4" />}</div>
+                  <div className="space-y-0.5"><p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground opacity-50">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</p><h3 className="font-semibold text-base text-foreground leading-none">{expense.local}</h3></div>
                 </div>
-                {selectionMode ? <div className={cn("h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all", isSelected ? "bg-primary border-primary" : "border-white/20")}>{isSelected && <Check className="h-4 w-4 text-white" />}</div> : <div className="flex gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-white/5"><Edit2 className="h-3.5 w-3.5 text-muted-foreground" /></Button>} /><Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-white/5 text-muted-foreground hover:text-red-400" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-3.5 w-3.5" /></Button></div>}
+                {selectionMode ? <div className={cn("h-5 w-5 rounded border flex items-center justify-center transition-all", isSelected ? "bg-foreground border-foreground" : "border-white/20")}>{isSelected && <Check className="h-3 w-3 text-background" />}</div> : <div className="flex gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg"><Edit2 className="h-4 w-4 text-muted-foreground/60 hover:text-foreground" /></Button>} /><Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div>}
               </div>
-              <div className="flex items-center gap-2"><span className="px-3 py-1 rounded-full bg-white/5 border border-white/5 text-[10px] font-bold text-muted-foreground uppercase">{expense.transporte}</span>{expense.receipt_urls && expense.receipt_urls.length > 0 && <button onClick={(e) => { e.stopPropagation(); handleOpenGallery(expense.receipt_urls!) }} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary"><ImageIcon className="h-3 w-3" /> DOCS</button>}</div>
-              <div className="p-4 rounded-3xl bg-white/5 border border-white/5 flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase text-muted-foreground/40 mb-1">Valor Final</p><p className="text-2xl font-black">R$ {(expense.valor * expense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div><button onClick={(e) => { e.stopPropagation(); togglePayment.mutate({ id: expense.id, pago: expense.pago }) }} className={cn("h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all", expense.pago ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20")}>{expense.pago ? 'Pago' : 'Pendente'}</button></div>
+              <div className="flex items-center gap-2"><span className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/[0.04] text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{expense.transporte}</span>{expense.receipt_urls && expense.receipt_urls.length > 0 && <button onClick={(e) => { e.stopPropagation(); handleOpenGallery(expense.receipt_urls!) }} className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-[10px] font-semibold text-foreground tracking-wider"><ImageIcon className="h-3 w-3" /> DOCS</button>}</div>
+              <div className="p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] flex items-center justify-between"><div><p className="text-[10px] font-medium uppercase text-muted-foreground/40 mb-1 tracking-widest">Valor Final</p><p className="text-xl font-semibold font-mono">R$ {(expense.valor * expense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p></div><button onClick={(e) => { e.stopPropagation(); togglePayment.mutate({ id: expense.id, pago: expense.pago }) }} className={cn("h-9 px-3 rounded-lg text-[10px] font-medium uppercase tracking-widest transition-all border", expense.pago ? "bg-white/[0.04] text-foreground border-white/[0.06]" : "bg-transparent text-muted-foreground border-white/[0.04]")}>{expense.pago ? 'Pago' : 'Pendente'}</button></div>
             </div>
           ) 
         })}
       </div>
 
       <div className="hidden md:block px-4 lg:px-0">
-        <div className="rounded-[3rem] border border-white/5 bg-white/[0.01] overflow-hidden shadow-3xl">
+        <div className="rounded-2xl border border-border/50 bg-white/[0.01] overflow-hidden">
           <Table>
-            <TableHeader className="bg-white/[0.03] border-none">
+            <TableHeader className="bg-white/[0.02] border-b border-border/50">
               <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="w-[60px] pl-8"><Checkbox className="rounded-lg border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary" checked={selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0} onCheckedChange={handleSelectAll} /></TableHead>
-                <TableHead className="font-black text-muted-foreground/60 text-[10px] uppercase tracking-[0.2em] py-8">Data</TableHead>
-                <TableHead className="font-black text-muted-foreground/60 text-[10px] uppercase tracking-[0.2em]">Estabelecimento</TableHead>
-                <TableHead className="font-black text-muted-foreground/60 text-[10px] uppercase tracking-[0.2em] text-center">Quant.</TableHead>
-                <TableHead className="font-black text-muted-foreground/60 text-[10px] uppercase tracking-[0.2em] text-right">Total</TableHead>
-                <TableHead className="font-black text-muted-foreground/60 text-[10px] uppercase tracking-[0.2em] text-center">Doc</TableHead>
-                <TableHead className="font-black text-muted-foreground/60 text-[10px] uppercase tracking-[0.2em] text-center">Status</TableHead>
-                <TableHead className="font-black text-muted-foreground/60 text-[10px] uppercase tracking-[0.2em] text-right pr-8">Ações</TableHead>
+                <TableHead className="w-[60px] pl-6"><Checkbox className="rounded-md" checked={selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0} onCheckedChange={handleSelectAll} /></TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] py-6">Data</TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em]">Estabelecimento</TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-center">Quant.</TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-right">Total</TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-center">Doc</TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-center">Status</TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-right pr-6">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredExpenses.length === 0 && <TableRow><TableCell colSpan={8} className="py-32 text-center opacity-20"><FileX className="h-16 w-16 mx-auto mb-4" /><p className="font-black uppercase tracking-[0.3em]">Dataset Vazio</p></TableCell></TableRow>}
+              {filteredExpenses.length === 0 && <TableRow><TableCell colSpan={8} className="py-24 text-center opacity-40"><FileX className="h-12 w-12 mx-auto mb-4 text-muted-foreground" /><p className="font-medium text-xs text-muted-foreground uppercase tracking-widest">Nenhum registro encontrado</p></TableCell></TableRow>}
               {paginatedExpenses.map((expense) => { 
                 const isSelected = selectedIds.includes(expense.id); 
                 return (
-                  <TableRow key={expense.id} className={cn("border-b border-white/[0.02] hover:bg-white/[0.03] transition-all group", isSelected && "bg-primary/[0.06] hover:bg-primary/[0.08]")}>
-                    <TableCell className="pl-8"><Checkbox className="rounded-lg border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary" checked={isSelected} onCheckedChange={(checked) => handleSelectRow(expense.id, !!checked)} /></TableCell>
-                    <TableCell className="font-bold text-muted-foreground/80 py-6">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</TableCell>
-                    <TableCell><div className="flex flex-col"><span className="font-black text-foreground text-lg">{expense.local}</span><span className="text-[10px] uppercase font-bold text-primary/60 flex items-center gap-1.5"><Tag className="h-3 w-3" /> {expense.transporte}</span></div></TableCell>
-                    <TableCell className="text-center"><span className="px-3 py-1 rounded-lg bg-white/5 font-bold">{expense.quantidade}</span></TableCell>
-                    <TableCell className="text-right"><span className="text-xl font-black text-foreground">R$ {(expense.valor * expense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></TableCell>
-                    <TableCell className="text-center">{expense.receipt_urls && expense.receipt_urls.length > 0 ? (<button onClick={() => handleOpenGallery(expense.receipt_urls!)} className="relative h-14 w-14 rounded-2xl border-2 border-white/10 overflow-hidden hover:scale-110 transition-all inline-block"><img src={expense.receipt_urls[0]} alt="T" className="h-full w-full object-cover" />{expense.receipt_urls.length > 1 && (<div className="absolute inset-0 bg-primary/40 flex items-center justify-center text-[10px] font-black text-white">+{expense.receipt_urls.length - 1}</div>)}</button>) : <div className="h-14 w-14 rounded-2xl border border-white/5 bg-white/[0.02] flex items-center justify-center opacity-20 mx-auto"><FileX className="h-5 w-5" /></div>}</TableCell>
-                    <TableCell className="text-center"><button onClick={() => togglePayment.mutate({ id: expense.id, pago: expense.pago })} className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all", expense.pago ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20')}>{expense.pago ? 'Confirmado' : 'Pendente'}</button></TableCell>
-                    <TableCell className="text-right pr-8"><div className="flex items-center justify-end gap-2"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="rounded-xl hover:bg-white/5"><Edit2 className="h-4 w-4" /></Button>} /><Button variant="ghost" size="icon" className="rounded-xl hover:bg-red-500/10 hover:text-red-500" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div></TableCell>
+                  <TableRow key={expense.id} className={cn("border-b border-white/[0.04] hover:bg-white/[0.02] transition-all duration-300", isSelected && "bg-white/[0.04]")}>
+                    <TableCell className="pl-6"><Checkbox className="rounded-md" checked={isSelected} onCheckedChange={(checked) => handleSelectRow(expense.id, !!checked)} /></TableCell>
+                    <TableCell className="font-medium text-muted-foreground text-sm py-5">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</TableCell>
+                    <TableCell><div className="flex flex-col"><span className="font-semibold text-foreground text-base">{expense.local}</span><span className="text-[10px] font-medium uppercase text-muted-foreground/60 flex items-center gap-1.5 mt-0.5 tracking-wider"><Tag className="h-3 w-3" /> {expense.transporte}</span></div></TableCell>
+                    <TableCell className="text-center"><span className="px-2.5 py-1 rounded-md bg-white/[0.04] text-[10px] font-medium font-mono">{expense.quantidade}</span></TableCell>
+                    <TableCell className="text-right"><span className="text-base font-semibold font-mono text-foreground">R$ {(expense.valor * expense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></TableCell>
+                    <TableCell className="text-center">{expense.receipt_urls && expense.receipt_urls.length > 0 ? (<button onClick={() => handleOpenGallery(expense.receipt_urls!)} className="relative h-10 w-10 rounded-lg border border-white/[0.08] overflow-hidden hover:opacity-80 transition-all inline-block shadow-sm"><img src={expense.receipt_urls[0]} alt="Doc" className="h-full w-full object-cover" />{expense.receipt_urls.length > 1 && (<div className="absolute inset-0 bg-background/60 backdrop-blur-xs flex items-center justify-center text-[10px] font-bold text-foreground">+{expense.receipt_urls.length - 1}</div>)}</button>) : <div className="h-10 w-10 rounded-lg border border-transparent bg-white/[0.02] flex items-center justify-center text-muted-foreground/30 mx-auto"><FileX className="h-4 w-4" /></div>}</TableCell>
+                    <TableCell className="text-center"><button onClick={() => togglePayment.mutate({ id: expense.id, pago: expense.pago })} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-medium uppercase tracking-widest transition-all", expense.pago ? 'bg-white/[0.04] text-foreground border border-white/[0.06]' : 'bg-transparent text-muted-foreground border border-white/[0.04] hover:bg-white/[0.02]')}>{expense.pago ? 'Confirmado' : 'Pendente'}</button></TableCell>
+                    <TableCell className="text-right pr-6"><div className="flex items-center justify-end gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-foreground"><Edit2 className="h-4 w-4" /></Button>} /><Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div></TableCell>
                   </TableRow>
                 ) 
               })}
@@ -377,31 +504,31 @@ export default function DespesasPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-8">
-          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="rounded-2xl h-12 px-6 border-white/10 font-bold">Anterior</Button>
-          <div className="h-12 flex items-center px-6 rounded-2xl bg-white/5 border border-white/10 text-xs font-black uppercase">Página {currentPage} de {totalPages}</div>
-          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="rounded-2xl h-12 px-6 border-white/10 font-bold">Próxima</Button>
+        <div className="flex items-center justify-center gap-2 mt-8">
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="h-10 px-4 rounded-xl border-border/50 text-xs uppercase tracking-widest font-medium">Anterior</Button>
+          <div className="h-10 flex items-center px-4 rounded-xl bg-white/[0.02] border border-white/[0.04] text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Página {currentPage} / {totalPages}</div>
+          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="h-10 px-4 rounded-xl border-border/50 text-xs uppercase tracking-widest font-medium">Próxima</Button>
         </div>
       )}
 
       {isMobile ? (
         <>
           <Drawer open={!!selectedReceipts} onOpenChange={(open) => !open && handleCloseGallery()}>
-            <DrawerContent className="max-h-[96vh] bg-background/95 backdrop-blur-2xl border-white/10 rounded-t-[3.5rem]">
-              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-6" />
+            <DrawerContent className="max-h-[96vh] bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl">
+              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-4" />
               {GalleryContent}
             </DrawerContent>
           </Drawer>
           <Drawer open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
-            <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/10 rounded-t-[3.5rem] p-10 pb-16">
-              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 mb-10" />
+            <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl p-6 pb-12">
+              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 mb-8" />
               <DrawerHeader className="p-0 text-left">
-                <DrawerTitle className="text-4xl font-black">Remover?</DrawerTitle>
-                <p className="mt-4 leading-relaxed">Este registro será permanentemente excluído.</p>
+                <DrawerTitle className="text-2xl font-semibold tracking-tight">Remover Registro?</DrawerTitle>
+                <p className="mt-2 text-muted-foreground text-sm font-medium opacity-60">Esta ação excluirá permanentemente o item selecionado.</p>
               </DrawerHeader>
-              <DrawerFooter className="p-0 mt-10 gap-4 flex-row">
-                <Button onClick={() => setExpenseToDelete(null)} variant="outline" className="flex-1 rounded-[1.5rem] h-16 font-bold border-white/10">Voltar</Button>
-                <Button onClick={confirmDelete} className="flex-1 rounded-[1.5rem] h-16 font-black bg-red-600 text-white uppercase">Sim, Excluir</Button>
+              <DrawerFooter className="p-0 mt-8 gap-3 flex-col sm:flex-row">
+                <Button onClick={() => setExpenseToDelete(null)} variant="outline" className="w-full sm:flex-1 h-12 rounded-xl border-border/50 uppercase tracking-widest text-[10px] font-semibold">Manter</Button>
+                <Button onClick={confirmDelete} variant="destructive" className="w-full sm:flex-1 h-12 rounded-xl uppercase tracking-widest text-[10px] font-semibold">Excluir Agora</Button>
               </DrawerFooter>
             </DrawerContent>
           </Drawer>
@@ -409,19 +536,19 @@ export default function DespesasPage() {
       ) : (
         <>
           <Dialog open={!!selectedReceipts} onOpenChange={(open) => !open && handleCloseGallery()}>
-            <DialogContent className="sm:max-w-5xl max-h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-2xl border-white/10 rounded-[3rem] shadow-3xl" showCloseButton={false}>
+            <DialogContent className="sm:max-w-5xl max-h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-2xl shadow-sm" showCloseButton={false}>
               {GalleryContent}
             </DialogContent>
           </Dialog>
           <AlertDialog open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
-            <AlertDialogContent className="rounded-[3rem] border-white/10 bg-background/95 backdrop-blur-3xl p-12 max-w-lg">
+            <AlertDialogContent className="rounded-2xl border-white/[0.06] bg-background/95 backdrop-blur-3xl p-8 max-w-sm">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-4xl font-black">Confirmar Exclusão?</AlertDialogTitle>
-                <AlertDialogDescription className="mt-4 leading-relaxed">Esta ação é irreversível.</AlertDialogDescription>
+                <AlertDialogTitle className="text-xl font-semibold tracking-tight">Confirmar Exclusão?</AlertDialogTitle>
+                <AlertDialogDescription className="text-sm mt-2 opacity-60">Deseja realmente remover este registro? Esta ação não pode ser desfeita.</AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter className="mt-10 gap-4">
-                <AlertDialogCancel className="rounded-[1.5rem] h-14 font-bold px-10 border-white/10">Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={confirmDelete} className="rounded-[1.5rem] h-14 font-black px-10 bg-red-600 text-white uppercase">Confirmar e Excluir</AlertDialogAction>
+              <AlertDialogFooter className="mt-8 gap-2">
+                <AlertDialogCancel className="rounded-xl h-10 px-6 border-white/[0.06] hover:bg-white/[0.04] m-0 text-[10px] uppercase tracking-widest font-semibold">Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmDelete} className="rounded-xl h-10 px-6 bg-destructive text-destructive-foreground m-0 text-[10px] uppercase tracking-widest font-semibold">Excluir</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

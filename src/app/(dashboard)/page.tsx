@@ -27,11 +27,11 @@ const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background/95 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-3xl animate-in fade-in zoom-in-95 duration-200">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">{label}</p>
+      <div className="bg-background/90 backdrop-blur-2xl border border-white/[0.06] p-4 rounded-xl shadow-sm animate-in fade-in zoom-in-95 duration-200">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-2">{label}</p>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
-          <p className="text-sm font-bold text-foreground">
+          <div className="h-1.5 w-1.5 rounded-full bg-foreground shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
+          <p className="text-sm font-semibold font-mono text-foreground">
             {payload[0].value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
         </div>
@@ -44,9 +44,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 const CategoryTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background/95 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-3xl animate-in fade-in zoom-in-95 duration-200">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{payload[0].name}</p>
-        <p className="text-sm font-bold text-foreground">
+      <div className="bg-background/90 backdrop-blur-2xl border border-white/[0.06] p-4 rounded-xl shadow-sm animate-in fade-in zoom-in-95 duration-200">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">{payload[0].name}</p>
+        <p className="text-sm font-semibold font-mono text-foreground">
           {payload[0].value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
         </p>
       </div>
@@ -103,70 +103,65 @@ export default function DashboardPage() {
   if (isLoading) return (
     <div className="flex h-full items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm font-medium text-muted-foreground animate-pulse tracking-widest uppercase">Sincronizando análises...</p>
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/30" />
+        <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Processando dados...</p>
       </div>
     </div>
   )
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <header className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/50">
+    <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-1000 pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
+        <header className="space-y-3">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] text-muted-foreground text-[10px] font-medium uppercase tracking-wider border border-white/[0.08]">Visão Geral</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
             Dashboard
           </h1>
-          <p className="text-muted-foreground font-medium">Análise de gastos e performance financeira</p>
+          <p className="text-muted-foreground text-sm font-medium opacity-60">Sua performance financeira em tempo real.</p>
         </header>
-        <ExpenseForm 
-          trigger={
-            <Button className="h-12 px-6 rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform w-full md:w-auto">
-              <Plus className="h-5 w-5 mr-2" />
-              Nova Despesa
-            </Button>
-          }
-        />
+        <ExpenseForm />
       </div>
       
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0">
         {[
-          { label: 'Total Registrado', value: stats.total, icon: Receipt, color: 'text-primary', bg: 'bg-primary/10' },
-          { label: 'Pendente Reembolso', value: stats.pending, icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-500/10' },
-          { label: 'Total Pago', value: stats.paid, icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+          { label: 'Total Registrado', value: stats.total, icon: Receipt },
+          { label: 'Pendente Reembolso', value: stats.pending, icon: AlertCircle },
+          { label: 'Total Pago', value: stats.paid, icon: CheckCircle2 },
         ].map((stat, i) => (
-          <div key={i} className="group relative overflow-hidden rounded-3xl border border-white/5 bg-white/[0.03] p-8 shadow-2xl">
-            <div className={cn("absolute top-0 right-0 h-32 w-32 -mr-8 -mt-8 rounded-full blur-3xl opacity-10 transition-opacity group-hover:opacity-20", stat.bg)} />
-            <div className="flex items-center justify-between mb-6 relative z-10">
-              <span className="text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground/80">{stat.label}</span>
-              <div className={cn("p-2.5 rounded-xl transition-transform group-hover:scale-110", stat.bg)}>
-                <stat.icon className={cn("h-5 w-5", stat.color)} />
+          <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-white/[0.02] p-8 transition-all duration-300 hover:bg-white/[0.04]">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{stat.label}</span>
+              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-muted-foreground transition-colors group-hover:text-foreground">
+                <stat.icon className="h-4 w-4" />
               </div>
             </div>
-            <div className="text-4xl font-bold tracking-tight relative z-10">
+            <div className="text-3xl font-semibold tracking-tight font-mono text-foreground">
               R$ {stat.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="rounded-[2.5rem] border border-white/5 bg-white/[0.02] p-8 space-y-6 shadow-2xl relative overflow-hidden group hover:bg-white/[0.03] transition-colors">
-          <div className="flex items-center justify-between relative z-10">
+      <div className="grid gap-8 lg:grid-cols-2 px-4 md:px-0">
+        <div className="rounded-2xl border border-border/50 bg-white/[0.01] p-8 space-y-8 transition-all duration-300">
+          <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" /> Evolução Mensal
+              <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                <TrendingUp className="h-4 w-4 opacity-50" /> Evolução Mensal
               </h3>
-              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-[0.2em]">Últimos 6 meses de atividade</p>
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Histórico de atividade</p>
             </div>
           </div>
           
-          <div className="h-[300px] w-full mt-4">
+          <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="white" stopOpacity={0.05}/>
+                    <stop offset="95%" stopColor="white" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
@@ -174,22 +169,22 @@ export default function DashboardPage() {
                   dataKey="month" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }} 
+                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 10, fontWeight: 500 }} 
                   dy={15}
                   tickFormatter={(val) => val.substring(0, 3).toUpperCase()}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 9, fontWeight: 700 }}
-                  tickFormatter={(value) => `R$${value >= 1000 ? (value/1000).toFixed(1) + 'k' : value}`}
+                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9, fontWeight: 500 }}
+                  tickFormatter={(value) => `R$${value >= 1000 ? (value/1000).toFixed(0) + 'k' : value}`}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 2 }} />
+                <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.05)', strokeWidth: 1 }} />
                 <Area 
                   type="monotone" 
                   dataKey="total" 
-                  stroke="#6366f1" 
-                  strokeWidth={4}
+                  stroke="rgba(255,255,255,0.4)" 
+                  strokeWidth={2}
                   fillOpacity={1} 
                   fill="url(#colorTotal)" 
                   animationDuration={1500}
@@ -199,17 +194,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-[2.5rem] border border-white/5 bg-white/[0.02] p-8 space-y-6 shadow-2xl relative overflow-hidden group hover:bg-white/[0.03] transition-colors">
-          <div className="flex items-center justify-between relative z-10">
+        <div className="rounded-2xl border border-border/50 bg-white/[0.01] p-8 space-y-8 transition-all duration-300">
+          <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <PieChartIcon className="h-5 w-5 text-primary" /> Distribuição
+              <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
+                <PieChartIcon className="h-4 w-4 opacity-50" /> Distribuição
               </h3>
-              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-[0.2em]">Gastos filtrados por categoria</p>
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Gastos por categoria</p>
             </div>
           </div>
 
-          <div className="h-[300px] w-full mt-4 flex items-center justify-center">
+          <div className="h-[300px] w-full flex items-center justify-center">
             {categoryData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -218,14 +213,14 @@ export default function DashboardPage() {
                     cx="50%"
                     cy="50%"
                     innerRadius={70}
-                    outerRadius={105}
-                    paddingAngle={10}
+                    outerRadius={95}
+                    paddingAngle={8}
                     dataKey="value"
                     animationBegin={200}
                     animationDuration={1200}
                   >
                     {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
+                      <Cell key={`cell-${index}`} fill={`rgba(255,255,255, ${0.8 - (index * 0.12)})`} stroke="none" />
                     ))}
                   </Pie>
                   <Tooltip content={<CategoryTooltip />} />
@@ -236,8 +231,8 @@ export default function DashboardPage() {
                       <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8">
                         {payload?.map((entry: any, index) => (
                           <div key={index} className="flex items-center gap-2 group/legend cursor-default">
-                            <div className="h-1.5 w-4 rounded-full transition-all group-hover/legend:w-6" style={{ backgroundColor: entry.color }} />
-                            <span className="text-[10px] font-black uppercase text-muted-foreground/70 tracking-tighter group-hover/legend:text-foreground transition-colors">{entry.value}</span>
+                            <div className="h-1 w-3 rounded-full opacity-40 transition-all group-hover/legend:opacity-100" style={{ backgroundColor: entry.color }} />
+                            <span className="text-[10px] font-medium uppercase text-muted-foreground group-hover:text-foreground transition-colors tracking-tight">{entry.value}</span>
                           </div>
                         ))}
                       </div>
@@ -247,35 +242,14 @@ export default function DashboardPage() {
               </ResponsiveContainer>
             ) : (
               <div className="flex flex-col items-center opacity-20 py-20">
-                <BarChart3 className="h-12 w-12 mb-3" />
-                <p className="text-xs font-black uppercase tracking-widest">Sem registros</p>
+                <BarChart3 className="h-10 w-10 mb-3" />
+                <p className="text-[10px] font-medium uppercase tracking-widest">Sem registros</p>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="rounded-[2rem] border border-white/5 bg-white/[0.01] p-8 overflow-hidden relative shadow-inner">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight">Status da Rede</h2>
-            <p className="text-muted-foreground text-sm font-medium">Os gráficos refletem o estado atual do banco de dados em tempo real</p>
-          </div>
-          <div className="flex gap-12">
-            <div className="space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/60">Tickets</p>
-              <p className="text-3xl font-black tracking-tighter">{expenses?.length || 0}</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/60">Data Layer</p>
-              <div className="flex items-center gap-2 text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                <p className="text-[10px] font-black uppercase tracking-widest">Synchronized</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
