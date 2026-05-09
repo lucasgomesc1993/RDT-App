@@ -772,7 +772,7 @@ export default function DespesasPage() {
                 </div>
 
                 <div className="grid gap-3 pt-4">
-                  <Button onClick={confirmDelete} variant="destructive" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-destructive/20 active:scale-[0.98] transition-all">
+                  <Button onClick={confirmDelete} variant="destructive" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-white active:scale-[0.98] transition-all">
                     Confirmar Exclusão
                   </Button>
                   <Button onClick={() => setExpenseToDelete(null)} variant="ghost" className="w-full h-14 rounded-2xl bg-muted/20 dark:bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-muted/40 transition-all">
@@ -808,7 +808,7 @@ export default function DespesasPage() {
                 </div>
 
                 <div className="grid gap-3 pt-4">
-                  <AlertDialogAction onClick={confirmDelete} className="h-14 rounded-2xl bg-destructive text-destructive-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-destructive/20 active:scale-[0.98] transition-all m-0 border-none">
+                  <AlertDialogAction onClick={confirmDelete} className="h-14 rounded-2xl bg-destructive text-white text-[10px] font-black uppercase tracking-[0.2em] active:scale-[0.98] transition-all m-0 border-none">
                     Confirmar Exclusão
                   </AlertDialogAction>
                   <AlertDialogCancel className="h-14 rounded-2xl bg-muted/20 dark:bg-white/[0.02] hover:bg-muted/40 text-[10px] font-black uppercase tracking-[0.2em] transition-all m-0 border-none">
