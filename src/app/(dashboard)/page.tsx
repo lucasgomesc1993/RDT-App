@@ -5,13 +5,13 @@ import { ExpenseForm } from '@/components/expense-form'
 import { Receipt, AlertCircle, CheckCircle2, Loader2, BarChart3, PieChart as PieChartIcon, TrendingUp, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -123,7 +123,7 @@ export default function DashboardPage() {
         </header>
         <ExpenseForm />
       </div>
-      
+
       <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0">
         {[
           { label: 'Total Registrado', value: stats.total, icon: Receipt },
@@ -154,39 +154,39 @@ export default function DashboardPage() {
               <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Histórico de atividade</p>
             </div>
           </div>
-          
+
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.1} />
-                <XAxis 
-                  dataKey="month" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: 'currentColor', opacity: 0.3, fontSize: 10, fontWeight: 500 }} 
+                <XAxis
+                  dataKey="month"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: 'currentColor', opacity: 0.3, fontSize: 10, fontWeight: 500 }}
                   dy={15}
                   tickFormatter={(val) => val.substring(0, 3).toUpperCase()}
                 />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fill: 'currentColor', opacity: 0.3, fontSize: 9, fontWeight: 500 }}
-                  tickFormatter={(value) => `R$${value >= 1000 ? (value/1000).toFixed(0) + 'k' : value}`}
+                  tickFormatter={(value) => `R$${value >= 1000 ? (value / 1000).toFixed(0) + 'k' : value}`}
                 />
                 <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--primary)', strokeOpacity: 0.1, strokeWidth: 1 }} />
-                <Area 
-                  type="monotone" 
-                  dataKey="total" 
-                  stroke="var(--primary)" 
+                <Area
+                  type="monotone"
+                  dataKey="total"
+                  stroke="var(--primary)"
                   strokeWidth={2}
-                  fillOpacity={1} 
-                  fill="url(#colorTotal)" 
+                  fillOpacity={1}
+                  fill="url(#colorTotal)"
                   animationDuration={1500}
                 />
               </AreaChart>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/40 bg-card/30 p-8 space-y-8 transition-all duration-300 shadow-sm">
+        <div className="rounded-2xl border border-border/40 bg-card/30 p-5 pb-10 sm:p-8 space-y-6 sm:space-y-8 transition-all duration-300 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
@@ -204,46 +204,50 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="h-[300px] w-full flex items-center justify-center">
-            {categoryData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={70}
-                    outerRadius={95}
-                    paddingAngle={8}
-                    dataKey="value"
-                    animationBegin={200}
-                    animationDuration={1200}
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={`oklch(from var(--primary) l c h / ${0.9 - (index * 0.15)})`} stroke="none" />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CategoryTooltip />} />
-                  <Legend 
-                    verticalAlign="bottom" 
-                    height={40} 
-                    content={({ payload }) => (
-                      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8">
-                        {payload?.map((entry: any, index) => (
-                          <div key={index} className="flex items-center gap-2 group/legend cursor-default">
-                            <div className="h-1 w-3 rounded-full opacity-40 transition-all group-hover/legend:opacity-100" style={{ backgroundColor: entry.color }} />
-                            <span className="text-[10px] font-medium uppercase text-muted-foreground group-hover:text-foreground transition-colors tracking-tight">{entry.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="flex flex-col items-center opacity-20 py-20">
-                <BarChart3 className="h-10 w-10 mb-3" />
-                <p className="text-[10px] font-medium uppercase tracking-widest">Sem registros</p>
+          <div className="h-full w-full flex flex-col">
+            <div className="h-[240px] sm:h-[220px] w-full">
+              {categoryData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="65%"
+                      outerRadius="95%"
+                      paddingAngle={4}
+                      dataKey="value"
+                      animationBegin={200}
+                      animationDuration={1200}
+                    >
+                      {categoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={`oklch(from var(--primary) l c h / ${0.9 - (index * 0.15)})`} stroke="none" />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CategoryTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex flex-col items-center opacity-20 py-20">
+                  <BarChart3 className="h-10 w-10 mb-3" />
+                  <p className="text-[10px] font-medium uppercase tracking-widest">Sem registros</p>
+                </div>
+              )}
+            </div>
+
+            {categoryData.length > 0 && (
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 mt-6 px-2">
+                {categoryData.map((entry, index) => (
+                  <div key={index} className="flex items-center gap-2 group/legend cursor-default">
+                    <div
+                      className="h-1 w-3 rounded-full opacity-60 transition-all group-hover/legend:opacity-100"
+                      style={{ backgroundColor: `oklch(from var(--primary) l c h / ${0.9 - (index * 0.15)})` }}
+                    />
+                    <span className="text-[8px] font-bold uppercase text-muted-foreground group-hover/legend:text-foreground transition-colors tracking-tight truncate">
+                      {entry.name}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
           </div>

@@ -42,8 +42,8 @@ export function Navbar() {
             <span className="sr-only">Menu</span>
           </button>
         </DrawerTrigger>
-        <DrawerContent className="bg-background/95 backdrop-blur-3xl border-border/40 rounded-t-[40px] pb-10 outline-none">
-          <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted my-4" />
+        <DrawerContent className="bg-background/95 backdrop-blur-3xl border-border/30 rounded-t-[40px] pb-10 outline-none">
+          <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted/30 my-4" />
           
           <div className="px-8 pt-4 pb-6">
             <div className="flex items-center justify-between mb-8">
@@ -70,8 +70,8 @@ export function Navbar() {
                   className={cn(
                     "flex items-center gap-4 px-6 h-14 text-sm font-semibold rounded-2xl transition-all duration-300",
                     isActive 
-                      ? "bg-muted text-foreground border border-border/50" 
-                      : "text-muted-foreground/60 hover:bg-muted/40 hover:text-foreground"
+                      ? "bg-muted/30 text-foreground border border-border/30" 
+                      : "text-muted-foreground/60 hover:bg-muted/20 hover:text-foreground"
                   )}
                 >
                   <Icon className={cn("h-5 w-5 transition-colors", isActive ? "text-primary" : "text-muted-foreground/40")} />
@@ -110,7 +110,7 @@ export function Navbar() {
                         </Button>
                       </form>
                       <DrawerClose asChild>
-                        <Button variant="outline" className="w-full h-12 rounded-xl border-border/40 bg-muted/20 text-[10px] font-black uppercase tracking-[0.2em]">
+                        <Button variant="outline" className="w-full h-12 rounded-xl border-border/20 bg-muted/10 text-[10px] font-black uppercase tracking-[0.2em]">
                           Cancelar
                         </Button>
                       </DrawerClose>
