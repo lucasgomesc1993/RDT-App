@@ -596,7 +596,7 @@ export default function DespesasPage() {
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border border-border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "ring-2 ring-foreground bg-muted border-transparent" : "hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border border-border/40 p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "ring-2 ring-primary/40 bg-primary/5 border-primary/20 shadow-md" : "hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", expense.pago ? "bg-muted/40 text-foreground" : "bg-transparent text-muted-foreground border border-border/40")}>{expense.pago ? <CheckCircle2 className="h-4 w-4" /> : <Clock className="h-4 w-4" />}</div>
