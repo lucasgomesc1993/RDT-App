@@ -35,6 +35,10 @@ import {
 } from '@/components/ui/drawer'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { 
+  ImageIcon, ChevronLeft, ChevronRight, X, Edit2, Trash2, Search, 
+  FilterX, Loader2, FileX, CheckSquare, 
+  CheckCircle2, Clock, Tag, Download, FileSpreadsheet,
+  TrendingUp, SlidersHorizontal, MousePointer2,
   Check, Calendar, MapPin, Receipt,
   Car, Ticket, Bus, Utensils, Layers
 } from 'lucide-react'
