@@ -43,7 +43,7 @@ interface ExpenseFormProps {
 const transportOptions = [
   { label: 'Estacionamento', value: 'Estacionamento', icon: Car, color: 'text-blue-500' },
   { label: 'Pedágio', value: 'Pedágio', icon: Ticket, color: 'text-amber-500' },
-  { label: 'Condução', value: 'Condução', icon: Bus, color: 'text-indigo-500' },
+  { label: 'CPTM/Metrô', value: 'CPTM/Metrô', icon: Bus, color: 'text-indigo-500' },
   { label: 'Almoço', value: 'Almoço Reduzido', icon: Utensils, color: 'text-emerald-500' },
 ]
 
