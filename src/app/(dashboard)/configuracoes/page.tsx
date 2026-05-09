@@ -33,43 +33,6 @@ export default function ConfiguracoesPage() {
         </div>
       </div>
 
-      {/* KPIs Reutilizados para Manter Design */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">
-        <div className="group relative overflow-hidden rounded-2xl border border-border/50 bg-white/[0.02] p-8 transition-all duration-300">
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Cor Ativa</span>
-            <div className="p-2 rounded-lg bg-primary border border-white/[0.06] text-primary-foreground transition-colors">
-              <Palette className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-semibold tracking-tight text-foreground">
-            {accent.label}
-          </div>
-        </div>
-        <div className="group relative overflow-hidden rounded-2xl border border-border/50 bg-white/[0.02] p-8 transition-all duration-300">
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Persistência</span>
-            <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-muted-foreground">
-              <Settings className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-semibold tracking-tight text-foreground">
-            LocalStorage
-          </div>
-        </div>
-        <div className="group relative overflow-hidden rounded-2xl border border-border/50 bg-white/[0.02] p-8 transition-all duration-300">
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Interface</span>
-            <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-muted-foreground">
-              <Palette className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-semibold tracking-tight text-foreground">
-            Glassmorphism
-          </div>
-        </div>
-      </div>
-
       {/* Seleção de Cores */}
       <div className="px-4 md:px-0">
         <Card className="bg-white/[0.01] border-border/50 rounded-2xl overflow-hidden backdrop-blur-md">
