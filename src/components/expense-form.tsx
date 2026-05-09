@@ -308,7 +308,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Data do Gasto</Label>
             {isMobile ? (
@@ -318,7 +318,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                   type="date" 
                   value={dateValue} 
                   onChange={(e) => setValue('date', e.target.value, { shouldDirty: true, shouldValidate: true })}
-                  className="flex h-12 w-full rounded-xl border border-border bg-muted/50 pl-11 pr-4 text-sm font-medium transition-all focus:bg-muted/80 appearance-none"
+                  className="flex h-11 w-full rounded-xl border border-border bg-muted/50 pl-11 pr-4 text-sm font-medium transition-all focus:bg-muted/80 appearance-none"
                 />
               </div>
             ) : (
@@ -335,7 +335,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="pago-status" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Reembolsado?</Label>
-            <div className="flex items-center justify-between h-10 px-4 rounded-xl bg-muted/50 border border-border">
+            <div className="flex items-center justify-between h-11 px-4 rounded-xl bg-muted/50 border border-border">
                <span className="text-[10px] font-bold uppercase text-muted-foreground">{watch('pago') ? 'SIM' : 'NÃO'}</span>
                <Switch id="pago-status" checked={watch('pago')} onCheckedChange={(checked) => setValue('pago', checked, { shouldDirty: true })} className="data-[state=checked]:bg-foreground" />
             </div>
