@@ -224,29 +224,43 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-4 items-end">
-          <div className="col-span-2 grid gap-2">
-            <Label htmlFor="valor" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Valor Unitário</Label>
-            <Input 
-              id="valor" 
-              type="text" 
-              inputMode="decimal" 
-              value={formatCurrency(valorValue || 0)} 
-              onChange={handleCurrencyChange} 
-              className={cn(
-                "h-10 rounded-xl bg-muted/50 border-border font-mono font-semibold",
-                (valorValue === 0 || !valorValue) ? "text-muted-foreground/60" : "text-foreground"
-              )} 
-            />
+        <div className="space-y-6">
+          <div className="grid grid-cols-4 gap-4 items-end">
+            <div className="col-span-3 grid gap-2">
+              <Label htmlFor="valor" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Valor Unitário</Label>
+              <Input 
+                id="valor" 
+                type="text" 
+                inputMode="decimal" 
+                value={formatCurrency(valorValue || 0)} 
+                onChange={handleCurrencyChange} 
+                className={cn(
+                  "h-12 rounded-2xl bg-muted/50 border-border font-mono font-bold text-lg",
+                  (valorValue === 0 || !valorValue) ? "text-muted-foreground/40" : "text-foreground"
+                )} 
+              />
+            </div>
+            <div className="col-span-1 grid gap-2">
+              <Label htmlFor="quantidade" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-center">Qtd</Label>
+              <Input id="quantidade" type="number" inputMode="numeric" min="1" max="10" {...register('quantidade')} className="h-12 rounded-2xl bg-muted/50 border-border text-center font-mono font-bold text-lg" />
+            </div>
           </div>
-          <div className="col-span-1 grid gap-2">
-            <Label htmlFor="quantidade" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider text-center">Qtd</Label>
-            <Input id="quantidade" type="number" inputMode="numeric" min="1" max="10" {...register('quantidade')} className="h-10 rounded-xl bg-muted/50 border-border text-center font-mono font-semibold" />
-          </div>
-          <div className="col-span-1 grid gap-2">
-            <Label className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider text-center">Comprovante</Label>
-            <label htmlFor="receipt" className={cn("flex items-center justify-center h-10 rounded-xl border border-dashed transition-all active:scale-95 bg-muted/50", uploading ? "opacity-50 cursor-not-allowed border-foreground" : "border-border hover:border-foreground/30 cursor-pointer")}>
-              {uploading ? <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /> : <Upload className="h-4 w-4 text-muted-foreground" />}
+
+          <div className="grid gap-2">
+            <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Anexar Comprovante</Label>
+            <label htmlFor="receipt" className={cn(
+              "flex items-center justify-between h-14 px-5 rounded-2xl border border-dashed transition-all active:scale-[0.98] bg-muted/30", 
+              uploading ? "opacity-50 cursor-not-allowed border-primary" : "border-border/60 hover:border-primary/40 cursor-pointer"
+            )}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-background/50 border border-border">
+                  {uploading ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <Upload className="h-4 w-4 text-muted-foreground" />}
+                </div>
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                  {uploading ? 'Enviando...' : 'Selecionar Arquivo'}
+                </span>
+              </div>
+              <Plus className="h-4 w-4 text-muted-foreground/40" />
               <input id="receipt" type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
             </label>
           </div>
