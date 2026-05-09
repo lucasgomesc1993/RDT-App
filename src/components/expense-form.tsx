@@ -153,8 +153,8 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       <div className="flex-1 overflow-y-auto px-8 space-y-6 pb-6 custom-scrollbar">
         <div className="space-y-4 pt-1">
           <div className="grid gap-2">
-            <Label htmlFor="local" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Local / Estabelecimento</Label>
-            <Input id="local" {...register('local')} placeholder="Ex: Shopping Centro, Estacionamento X..." className="h-10 rounded-xl bg-white/[0.02] border-white/[0.06] focus-visible:bg-white/[0.04]" />
+            <Label htmlFor="local" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Local / Estabelecimento</Label>
+            <Input id="local" {...register('local')} placeholder="Ex: Shopping Centro, Estacionamento X..." className="h-10 rounded-xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
             {errors.local && <span className="text-[10px] font-medium text-destructive ml-1">{errors.local.message}</span>}
           </div>
 
@@ -171,15 +171,15 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                     className={cn(
                       "flex items-center gap-3 h-14 px-4 rounded-2xl border text-[11px] font-semibold transition-all duration-300",
                       isActive 
-                        ? "bg-primary/5 border-primary text-foreground shadow-lg shadow-primary/5" 
-                        : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
+                        ? "bg-primary/5 border-primary text-foreground shadow-sm" 
+                        : "bg-muted/30 border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/60"
                     )}
                     onClick={() => {
                       setShowCustomTransport(false)
                       setValue('transporte', opt.value, { shouldDirty: true, shouldValidate: true })
                     }}
                   >
-                    <div className={cn("p-1.5 rounded-lg border transition-colors", isActive ? "bg-primary/10 border-primary/20 text-primary" : "bg-white/[0.03] border-white/5 text-muted-foreground")}>
+                    <div className={cn("p-1.5 rounded-lg border transition-colors", isActive ? "bg-primary/10 border-primary/20 text-primary" : "bg-background/50 border-border text-muted-foreground")}>
                       <Icon className="h-3.5 w-3.5" />
                     </div>
                     <span className="truncate">{opt.label}</span>
@@ -191,8 +191,8 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 className={cn(
                   "flex items-center justify-center h-14 px-4 rounded-2xl border text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 col-span-2",
                   showCustomTransport 
-                    ? "bg-primary/5 border-primary text-primary shadow-lg shadow-primary/5" 
-                    : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03] border-dashed"
+                    ? "bg-primary/5 border-primary text-primary shadow-sm" 
+                    : "bg-muted/30 border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/60 border-dashed"
                 )}
                 onClick={() => {
                   setShowCustomTransport(true)
@@ -202,7 +202,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 Outros / Diversos
               </button>
             </div>
-            {showCustomTransport && (<Input className="h-12 rounded-2xl bg-white/[0.01] border-white/[0.05] focus-visible:bg-white/[0.03] animate-in fade-in slide-in-from-top-2 text-sm" placeholder="Especifique o tipo..." {...register('transporte')} />)}
+            {showCustomTransport && (<Input className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 animate-in fade-in slide-in-from-top-2 text-sm" placeholder="Especifique o tipo..." {...register('transporte')} />)}
           </div>
         </div>
 
@@ -216,18 +216,18 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               value={formatCurrency(valorValue || 0)} 
               onChange={handleCurrencyChange} 
               className={cn(
-                "h-10 rounded-xl bg-white/[0.01] border-white/[0.05] font-mono font-semibold",
-                (valorValue === 0 || !valorValue) ? "text-muted-foreground/40" : "text-foreground"
+                "h-10 rounded-xl bg-muted/50 border-border font-mono font-semibold",
+                (valorValue === 0 || !valorValue) ? "text-muted-foreground/60" : "text-foreground"
               )} 
             />
           </div>
           <div className="col-span-1 grid gap-2">
             <Label htmlFor="quantidade" className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider text-center">Qtd</Label>
-            <Input id="quantidade" type="number" inputMode="numeric" min="1" max="10" {...register('quantidade')} className="h-10 rounded-xl bg-white/[0.02] border-white/[0.06] text-center font-mono font-semibold" />
+            <Input id="quantidade" type="number" inputMode="numeric" min="1" max="10" {...register('quantidade')} className="h-10 rounded-xl bg-muted/50 border-border text-center font-mono font-semibold" />
           </div>
           <div className="col-span-1 grid gap-2">
             <Label className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider text-center">Comprovante</Label>
-            <label htmlFor="receipt" className={cn("flex items-center justify-center h-10 rounded-xl border border-dashed transition-all active:scale-95 bg-white/[0.02]", uploading ? "opacity-50 cursor-not-allowed border-foreground" : "border-white/[0.1] hover:border-white/[0.3] cursor-pointer")}>
+            <label htmlFor="receipt" className={cn("flex items-center justify-center h-10 rounded-xl border border-dashed transition-all active:scale-95 bg-muted/50", uploading ? "opacity-50 cursor-not-allowed border-foreground" : "border-border hover:border-foreground/30 cursor-pointer")}>
               {uploading ? <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /> : <Upload className="h-4 w-4 text-muted-foreground" />}
               <input id="receipt" type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
             </label>
