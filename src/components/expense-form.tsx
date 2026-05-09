@@ -214,7 +214,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
             <Input id="quantidade" type="number" inputMode="numeric" min="1" max="10" {...register('quantidade')} className="h-10 rounded-xl bg-white/[0.02] border-white/[0.06] text-center font-mono font-semibold" />
           </div>
           <div className="col-span-1 grid gap-2">
-            <Label className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider text-center">Doc</Label>
+            <Label className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider text-center">Comprovante</Label>
             <label htmlFor="receipt" className={cn("flex items-center justify-center h-10 rounded-xl border border-dashed transition-all active:scale-95 bg-white/[0.02]", uploading ? "opacity-50 cursor-not-allowed border-foreground" : "border-white/[0.1] hover:border-white/[0.3] cursor-pointer")}>
               {uploading ? <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /> : <FileImage className="h-4 w-4 text-muted-foreground" />}
               <input id="receipt" type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
