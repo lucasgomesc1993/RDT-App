@@ -394,19 +394,33 @@ export default function DespesasPage() {
 
           <div className="flex w-full md:w-auto items-center gap-2 shrink-0">
             {isMobile ? (
-              <Drawer>
-                <DrawerTrigger asChild>
-                  <Button variant="outline" className="h-10 flex-1 rounded-xl border-white/[0.08] bg-white/[0.02] relative text-[10px] uppercase font-bold tracking-widest">
-                    <SlidersHorizontal className="h-4 w-4 mr-2" /> Filtros
-                    {activeFiltersCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-foreground text-background text-[8px] font-black">{activeFiltersCount}</span>}
-                  </Button>
-                </DrawerTrigger>
-                <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl px-6 pb-8">
-                  <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-4" />
-                  <DrawerHeader className="px-0 py-4"><DrawerTitle className="text-xl font-semibold text-left">Filtros Avançados</DrawerTitle></DrawerHeader>
-                  {FiltersContent}
-                </DrawerContent>
-              </Drawer>
+              selectionMode ? (
+                <Button 
+                  variant="outline" 
+                  className="h-10 flex-1 rounded-xl border-white/[0.08] bg-white/[0.04] text-[10px] uppercase font-bold tracking-widest"
+                  onClick={() => handleSelectAll(selectedIds.length !== filteredExpenses.length)}
+                >
+                  {selectedIds.length === filteredExpenses.length ? (
+                    <><X className="h-4 w-4 mr-2" /> Desmarcar</>
+                  ) : (
+                    <><CheckSquare className="h-4 w-4 mr-2" /> Tudo</>
+                  )}
+                </Button>
+              ) : (
+                <Drawer>
+                  <DrawerTrigger asChild>
+                    <Button variant="outline" className="h-10 flex-1 rounded-xl border-white/[0.08] bg-white/[0.02] relative text-[10px] uppercase font-bold tracking-widest">
+                      <SlidersHorizontal className="h-4 w-4 mr-2" /> Filtros
+                      {activeFiltersCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-foreground text-background text-[8px] font-black">{activeFiltersCount}</span>}
+                    </Button>
+                  </DrawerTrigger>
+                  <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl px-6 pb-8">
+                    <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-4" />
+                    <DrawerHeader className="px-0 py-4"><DrawerTitle className="text-xl font-semibold text-left">Filtros Avançados</DrawerTitle></DrawerHeader>
+                    {FiltersContent}
+                  </DrawerContent>
+                </Drawer>
+              )
             ) : (
               <Popover>
                 <PopoverTrigger className="inline-flex items-center justify-center whitespace-nowrap text-[10px] font-semibold uppercase tracking-widest transition-all duration-300 outline-none select-none h-10 rounded-xl px-4 border border-border/50 bg-white/[0.02] hover:bg-white/[0.04] text-foreground relative">
