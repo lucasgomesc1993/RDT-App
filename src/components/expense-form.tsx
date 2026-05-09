@@ -311,15 +311,27 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Data do Gasto</Label>
-            <Popover>
-              <PopoverTrigger className="flex h-10 w-full items-center rounded-xl border border-border bg-muted/50 px-4 text-sm font-medium transition-all hover:bg-muted/80 text-left cursor-pointer">
-                <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                {dateValue ? format(new Date(dateValue + 'T12:00:00'), "dd MMM, yy", { locale: ptBR }) : 'Data'}
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 rounded-2xl border-border bg-background/95 backdrop-blur-2xl z-[100]" align="start">
-                <Calendar mode="single" selected={dateValue ? new Date(dateValue + 'T12:00:00') : undefined} onSelect={(date) => date && setValue('date', format(date, 'yyyy-MM-dd'), { shouldDirty: true, shouldValidate: true })} locale={ptBR} />
-              </PopoverContent>
-            </Popover>
+            {isMobile ? (
+              <div className="relative">
+                <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <input 
+                  type="date" 
+                  value={dateValue} 
+                  onChange={(e) => setValue('date', e.target.value, { shouldDirty: true, shouldValidate: true })}
+                  className="flex h-12 w-full rounded-xl border border-border bg-muted/50 pl-11 pr-4 text-sm font-medium transition-all focus:bg-muted/80 appearance-none"
+                />
+              </div>
+            ) : (
+              <Popover>
+                <PopoverTrigger className="flex h-10 w-full items-center rounded-xl border border-border bg-muted/50 px-4 text-sm font-medium transition-all hover:bg-muted/80 text-left cursor-pointer">
+                  <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
+                  {dateValue ? format(new Date(dateValue + 'T12:00:00'), "dd MMM, yy", { locale: ptBR }) : 'Data'}
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 rounded-2xl border-border bg-background/95 backdrop-blur-2xl z-[100]" align="start">
+                  <Calendar mode="single" selected={dateValue ? new Date(dateValue + 'T12:00:00') : undefined} onSelect={(date) => date && setValue('date', format(date, 'yyyy-MM-dd'), { shouldDirty: true, shouldValidate: true })} locale={ptBR} />
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="pago-status" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Reembolsado?</Label>
