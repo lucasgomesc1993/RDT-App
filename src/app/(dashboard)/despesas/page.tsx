@@ -35,11 +35,8 @@ import {
 } from '@/components/ui/drawer'
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { 
-  ImageIcon, ChevronLeft, ChevronRight, X, Edit2, Trash2, Search, 
-  FilterX, Loader2, FileX, CheckSquare, 
-  CheckCircle2, Clock, Tag, Download, FileSpreadsheet,
-  TrendingUp, SlidersHorizontal, MousePointer2,
-  Check, Calendar, MapPin, Receipt
+  Check, Calendar, MapPin, Receipt,
+  Car, Ticket, Bus, Utensils, Layers
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -437,24 +434,33 @@ export default function DespesasPage() {
           <button 
             onClick={() => setTransportFilter('all')}
             className={cn(
-              "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider", 
+              "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider flex items-center gap-2", 
               transportFilter === 'all' ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30 dark:hover:bg-muted/60"
             )}
           >
+            <Layers className="h-3.5 w-3.5 opacity-60" />
             Todas
           </button>
-          {transportOptions.map(opt => (
-            <button 
-              key={opt} 
-              onClick={() => setTransportFilter(opt)} 
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider", 
-                transportFilter === opt ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30 dark:hover:bg-muted/60"
-              )}
-            >
-              {opt}
-            </button>
-          ))}
+          {transportOptions.map(opt => {
+            const Icon = opt === 'Estacionamento' ? Car : 
+                        opt === 'Pedágio' ? Ticket : 
+                        opt === 'CPTM/Metrô' ? Bus : 
+                        (opt === 'Almoço' || opt === 'Almoço Reduzido') ? Utensils : Tag
+            
+            return (
+              <button 
+                key={opt} 
+                onClick={() => setTransportFilter(opt)} 
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider flex items-center gap-2", 
+                  transportFilter === opt ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30 dark:hover:bg-muted/60"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5 opacity-60" />
+                {opt}
+              </button>
+            )
+          })}
         </div>
       </div>
       <div className="space-y-3">
