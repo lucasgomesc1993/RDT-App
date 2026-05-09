@@ -48,11 +48,14 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 group",
                 isActive 
-                  ? "bg-white/[0.06] text-foreground" 
+                  ? "bg-white/[0.06] text-foreground shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)]" 
                   : "text-muted-foreground hover:bg-white/[0.03] hover:text-foreground"
               )}
             >
-              <Icon className={cn("h-4 w-4", isActive ? "text-foreground" : "text-muted-foreground transition-colors")} />
+              <Icon className={cn(
+                "h-4 w-4 transition-colors duration-300", 
+                isActive ? "text-primary shadow-[0_0_10px_var(--primary)]/20" : "text-muted-foreground group-hover:text-primary/70"
+              )} />
               {item.label}
             </Link>
           )
