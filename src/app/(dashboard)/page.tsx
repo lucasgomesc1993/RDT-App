@@ -130,14 +130,14 @@ export default function DashboardPage() {
           { label: 'Pendente Reembolso', value: stats.pending, icon: AlertCircle },
           { label: 'Total Pago', value: stats.paid, icon: CheckCircle2 },
         ].map((stat, i) => (
-          <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:bg-card/40 dark:hover:bg-card/60 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20">
+          <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{stat.label}</span>
-              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-[0_0_20px_rgba(var(--primary),0.3)]">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
-            <div className="text-3xl font-semibold tracking-tight font-mono text-foreground group-hover:scale-[1.02] origin-left transition-transform duration-500">
+            <div className="text-3xl font-semibold tracking-tight font-mono text-foreground transition-transform duration-500 group-hover:translate-x-1">
               R$ {stat.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </div>
           </div>

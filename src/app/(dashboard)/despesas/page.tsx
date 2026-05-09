@@ -553,14 +553,14 @@ export default function DespesasPage() {
           { label: 'Reembolsado', value: stats.paid, icon: CheckCircle2 },
           { label: 'Pendente', value: stats.pending, icon: Clock },
         ].map((item, idx) => (
-          <div key={idx} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-300 hover:bg-muted/10 dark:hover:bg-muted/20 shadow-sm">
+          <div key={idx} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
             <div className="flex items-center justify-between mb-6">
-              <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{item.label}</span>
+              <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
               <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <item.icon className="h-4 w-4" />
               </div>
             </div>
-            <div className="text-3xl font-semibold tracking-tight font-mono text-foreground">
+            <div className="text-3xl font-semibold tracking-tight font-mono text-foreground transition-transform duration-500 group-hover:translate-x-1">
               R$ {item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </div>
           </div>
