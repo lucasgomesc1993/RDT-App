@@ -39,7 +39,7 @@ import {
   FilterX, Loader2, FileX, CheckSquare, 
   CheckCircle2, Clock, Tag, Download, FileSpreadsheet,
   TrendingUp, SlidersHorizontal, MousePointer2,
-  Check
+  Check, Calendar, MapPin, Receipt
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -268,35 +268,44 @@ export default function DespesasPage() {
     </div>
   )
 
-  const handleDownloadImage = async () => {
-    if (!selectedReceipts || !selectedReceipts[currentIndex]) return
-    const url = selectedReceipts[currentIndex]
-    try {
-      const response = await fetch(url)
-      const blob = await response.blob()
-      const blobUrl = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = blobUrl
-      link.download = `comprovante-${activeGalleryExpense?.local || 'rdt'}-${currentIndex + 1}.jpg`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(blobUrl)
-    } catch (error) {
-      window.open(url, '_blank')
-    }
-  }
 
   const GalleryContent = (
     <div className="relative flex flex-col h-full max-h-[90vh] min-h-[400px]">
       <div className="flex items-center justify-between p-8">
         <div className="space-y-1">
           <span className="text-xl font-bold tracking-tight block text-foreground">Visualizar Comprovante</span>
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{currentIndex + 1} de {selectedReceipts?.length} arquivos</span>
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[9px] font-black uppercase tracking-[0.15em] border border-primary/20">
+              {currentIndex + 1} / {selectedReceipts?.length}
+            </span>
+            <div className="h-3 w-px bg-white/10 mx-1 hidden sm:block" />
+            {activeGalleryExpense && (
+              <>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
+                  <Calendar className="h-3 w-3 text-muted-foreground/60" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    {format(parseISO(activeGalleryExpense.date), 'dd MMM yyyy', { locale: ptBR })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
+                  <MapPin className="h-3 w-3 text-muted-foreground/60" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground truncate max-w-[120px]">
+                    {activeGalleryExpense.local}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-primary/5 border border-primary/10">
+                  <Receipt className="h-3 w-3 text-primary/60" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground">
+                    R$ {(activeGalleryExpense.valor * activeGalleryExpense.quantidade).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2 z-50">
           <button 
-            onClick={handleDownloadImage} 
+            onClick={handleIndividualDownload} 
             className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-foreground transition-all border border-white/10"
             title="Baixar Comprovante"
           >
@@ -380,7 +389,7 @@ export default function DespesasPage() {
               onClick={() => setStatusFilter(f as any)} 
               className={cn(
                 "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider", 
-                statusFilter === f ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                statusFilter === f ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30 dark:hover:bg-muted/60"
               )}
             >
               {f === 'all' ? 'Todos' : f}
@@ -413,7 +422,7 @@ export default function DespesasPage() {
               onClick={() => setReceiptFilter(r.id as any)} 
               className={cn(
                 "px-2 py-2 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider", 
-                receiptFilter === r.id ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 border-border/30 text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                receiptFilter === r.id ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30 dark:hover:bg-muted/60"
               )}
             >
               {r.label}
@@ -425,20 +434,20 @@ export default function DespesasPage() {
         <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Período Temporal</label>
         <div className="flex gap-2">
           <button 
+            onClick={() => setDateRange('all')}
             className={cn(
               "flex-1 py-2 rounded-lg text-[10px] font-medium uppercase tracking-wider border transition-all", 
-              dateRange === 'all' ? "bg-primary text-primary-foreground border-primary shadow-sm font-semibold" : "bg-muted/20 border-border/30 text-muted-foreground font-semibold hover:bg-muted/30"
+              dateRange === 'all' ? "bg-primary text-primary-foreground border-primary shadow-sm font-semibold" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground font-semibold hover:bg-muted/30 dark:hover:bg-muted/60"
             )} 
-            onClick={() => setDateRange('all')}
           >
             Histórico Total
           </button>
           <button 
+            onClick={() => setDateRange('month')}
             className={cn(
               "flex-1 py-2 rounded-lg text-[10px] font-medium uppercase tracking-wider border transition-all", 
-              dateRange === 'month' ? "bg-primary text-primary-foreground border-primary shadow-sm font-semibold" : "bg-muted/20 border-border/30 text-muted-foreground font-semibold hover:bg-muted/30"
+              dateRange === 'month' ? "bg-primary text-primary-foreground border-primary shadow-sm font-semibold" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground font-semibold hover:bg-muted/30 dark:hover:bg-muted/60"
             )} 
-            onClick={() => setDateRange('month')}
           >
             Mês Atual
           </button>
@@ -483,7 +492,7 @@ export default function DespesasPage() {
           { label: 'Reembolsado', value: stats.paid, icon: CheckCircle2 },
           { label: 'Pendente', value: stats.pending, icon: Clock },
         ].map((item, idx) => (
-          <div key={idx} className="group relative overflow-hidden rounded-2xl border border-border/30 bg-card/20 p-8 transition-all duration-300 hover:bg-muted/10 shadow-sm">
+          <div key={idx} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-300 hover:bg-muted/10 dark:hover:bg-muted/20 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{item.label}</span>
               <div className="p-2 rounded-lg bg-muted/20 border border-border/30 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
@@ -498,7 +507,7 @@ export default function DespesasPage() {
       </div>
 
       <div className="sticky top-4 z-40 mx-4 md:mx-0">
-        <div className="bg-card/25 backdrop-blur-2xl border border-border/30 rounded-2xl p-2 flex flex-col md:flex-row items-center gap-2 shadow-sm">
+        <div className="bg-card/25 dark:bg-card/50 backdrop-blur-2xl border border-border/30 dark:border-border/50 rounded-2xl p-2 flex flex-col md:flex-row items-center gap-2 shadow-sm">
           <div className="relative w-full md:flex-1 group">
             <Search className="absolute left-4 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
             <Input placeholder="Pesquisar..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-10 pl-11 rounded-xl bg-transparent border-none focus-visible:bg-white/[0.02] transition-all" />
@@ -556,7 +565,7 @@ export default function DespesasPage() {
               )
             ) : (
               <Popover>
-                <PopoverTrigger className="inline-flex items-center justify-center whitespace-nowrap text-[10px] font-bold uppercase tracking-widest transition-all duration-300 outline-none select-none h-10 rounded-xl px-4 border border-border/30 bg-muted/20 hover:bg-muted/30 text-foreground relative">
+                <PopoverTrigger className="inline-flex items-center justify-center whitespace-nowrap text-[10px] font-bold uppercase tracking-widest transition-all duration-300 outline-none select-none h-10 rounded-xl px-4 border border-border/30 dark:border-border/50 bg-muted/20 dark:bg-muted/40 hover:bg-muted/30 dark:hover:bg-muted/60 text-foreground relative">
                   <SlidersHorizontal className="h-3.5 w-3.5 mr-2 opacity-60" /> Filtros
                   {activeFiltersCount > 0 && <span className="ml-2 px-1.5 py-0.5 rounded-md bg-foreground text-background text-[8px] font-black">{activeFiltersCount}</span>}
                 </PopoverTrigger>

@@ -41,53 +41,54 @@ export default function ConfiguracoesPage() {
 
       <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
         {/* Modo de Exibição */}
-        <Card className="lg:col-span-1 bg-card/25 border-border/30 rounded-2xl overflow-hidden shadow-sm h-fit transition-all duration-300 group">
+        <Card className="lg:col-span-1 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm h-fit transition-all duration-300 group">
           <CardContent className="p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="space-y-1">
                 <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Exibição</span>
                 <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Modo de Interface</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/20 border border-border/30 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
                 <Settings className="h-4 w-4" />
               </div>
             </div>
-            {[
-              { id: 'light', label: 'Claro', icon: Sun },
-              { id: 'dark', label: 'Escuro', icon: Moon },
-              { id: 'system', label: 'Sistema', icon: Monitor },
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTheme(t.id)}
-                className={cn(
-                  "flex items-center justify-between w-full p-4 rounded-xl border transition-all duration-300",
-                  theme === t.id 
-                    ? "border-primary bg-primary/10 shadow-sm" 
-                    : "border-border/40 bg-muted/20 hover:bg-muted/40 text-muted-foreground"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={cn("p-2 rounded-lg border", theme === t.id ? "bg-primary/10 border-primary/20 text-primary" : "bg-background border-border")}>
-                    <t.icon className="h-4 w-4" />
+            <div className="flex flex-col gap-3">
+              {[
+                { id: 'light', label: 'Claro', icon: Sun },
+                { id: 'dark', label: 'Escuro', icon: Moon },
+              ].map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setTheme(t.id)}
+                  className={cn(
+                    "flex items-center justify-between w-full p-4 rounded-xl border transition-all duration-300",
+                    theme === t.id 
+                      ? "border-primary bg-primary/10 shadow-sm" 
+                      : "border-border/30 dark:border-border/50 bg-muted/20 dark:bg-muted/40 hover:bg-muted/40 text-muted-foreground"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={cn("p-2 rounded-lg border", theme === t.id ? "bg-primary/10 border-primary/20 text-primary" : "bg-background border-border/30 dark:border-border/50")}>
+                      <t.icon className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm font-semibold">{t.label}</span>
                   </div>
-                  <span className="text-sm font-semibold">{t.label}</span>
-                </div>
-                {theme === t.id && <Check className="h-4 w-4 text-primary" />}
-              </button>
-            ))}
+                  {theme === t.id && <Check className="h-4 w-4 text-primary" />}
+                </button>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
         {/* Seleção de Cores */}
-        <Card className="lg:col-span-2 bg-card/25 border-border/30 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group">
+        <Card className="lg:col-span-2 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group">
           <CardContent className="p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="space-y-1">
                 <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Cor de Destaque</span>
                 <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Identidade Visual</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/20 border border-border/30 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
                 <Palette className="h-4 w-4" />
               </div>
             </div>
@@ -100,7 +101,7 @@ export default function ConfiguracoesPage() {
                     "flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 group",
                     accent.name === color.name 
                       ? "border-primary bg-primary/10 shadow-sm" 
-                      : "border-border/30 bg-muted/20 hover:bg-muted/30"
+                      : "border-border/30 dark:border-border/50 bg-muted/20 dark:bg-muted/40 hover:bg-muted/30 dark:hover:bg-muted/60"
                   )}
                 >
                   <div 
