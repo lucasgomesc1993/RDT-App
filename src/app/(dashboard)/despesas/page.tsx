@@ -349,12 +349,12 @@ export default function DespesasPage() {
             className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
           >
             {selectedReceipts.map((url, index) => (
-              <div key={index} className="flex-none w-full h-full flex items-center justify-center snap-center p-8">
-                <div className="relative group/img-container max-w-full max-h-full">
+              <div key={index} className="flex-none w-full h-full flex items-center justify-center snap-center p-4 md:p-8">
+                <div className="relative group/img-container max-w-full max-h-full flex items-center justify-center">
                   <img 
                     src={url} 
                     alt={`Comprovante ${index + 1}`} 
-                    className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-xl shadow-black/10 border border-white/[0.08]" 
+                    className="max-w-full max-h-full object-contain rounded-2xl shadow-xl shadow-black/10 border border-white/[0.08]" 
                   />
                   <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
                 </div>
