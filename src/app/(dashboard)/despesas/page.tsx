@@ -152,12 +152,13 @@ export default function DespesasPage() {
           const blob = await response.blob()
           const blobUrl = window.URL.createObjectURL(blob)
           
-          // Gerar nome inteligente: DATA-LOCAL-VALOR-INDEX.ext
+          // Gerar nome inteligente: LOCAL-CATEGORIA-DATA-VALOR-INDEX.ext
           const dateStr = format(parseISO(expense.date), 'dd-MM-yyyy')
           const safeLocal = expense.local.replace(/[^a-z0-9]/gi, '_').substring(0, 20)
+          const safeCategoria = expense.transporte.replace(/[^a-z0-9]/gi, '_')
           const valorStr = (expense.valor * expense.quantidade).toFixed(2).replace('.', ',')
           const extension = url.split('.').pop()?.split('?')[0] || 'jpg'
-          const fileName = `${dateStr}_${safeLocal}_R$${valorStr}${expense.receipt_urls.length > 1 ? `_part${i+1}` : ''}.${extension}`
+          const fileName = `${safeLocal}-${safeCategoria}-${dateStr}-R$${valorStr}${expense.receipt_urls.length > 1 ? `-part${i+1}` : ''}.${extension}`
 
           const link = document.createElement('a')
           link.href = blobUrl
@@ -263,9 +264,10 @@ export default function DespesasPage() {
       
       const dateStr = format(parseISO(activeGalleryExpense.date), 'dd-MM-yyyy')
       const safeLocal = activeGalleryExpense.local.replace(/[^a-z0-9]/gi, '_').substring(0, 20)
+      const safeCategoria = activeGalleryExpense.transporte.replace(/[^a-z0-9]/gi, '_')
       const valorStr = (activeGalleryExpense.valor * activeGalleryExpense.quantidade).toFixed(2).replace('.', ',')
       const extension = url.split('.').pop()?.split('?')[0] || 'jpg'
-      const fileName = `${dateStr}_${safeLocal}_R$${valorStr}${selectedReceipts.length > 1 ? `_part${currentIndex+1}` : ''}.${extension}`
+      const fileName = `${safeLocal}-${safeCategoria}-${dateStr}-R$${valorStr}${selectedReceipts.length > 1 ? `-part${currentIndex+1}` : ''}.${extension}`
 
       const link = document.createElement('a')
       link.href = blobUrl
