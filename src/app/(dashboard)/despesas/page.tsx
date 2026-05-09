@@ -153,7 +153,7 @@ export default function DespesasPage() {
           const blobUrl = window.URL.createObjectURL(blob)
           
           // Gerar nome inteligente: DATA-LOCAL-VALOR-INDEX.ext
-          const dateStr = format(parseISO(expense.date), 'yyyy-MM-dd')
+          const dateStr = format(parseISO(expense.date), 'dd-MM-yyyy')
           const safeLocal = expense.local.replace(/[^a-z0-9]/gi, '_').substring(0, 20)
           const valorStr = (expense.valor * expense.quantidade).toFixed(2).replace('.', ',')
           const extension = url.split('.').pop()?.split('?')[0] || 'jpg'
@@ -261,7 +261,7 @@ export default function DespesasPage() {
       const blob = await response.blob()
       const blobUrl = window.URL.createObjectURL(blob)
       
-      const dateStr = format(parseISO(activeGalleryExpense.date), 'yyyy-MM-dd')
+      const dateStr = format(parseISO(activeGalleryExpense.date), 'dd-MM-yyyy')
       const safeLocal = activeGalleryExpense.local.replace(/[^a-z0-9]/gi, '_').substring(0, 20)
       const valorStr = (activeGalleryExpense.valor * activeGalleryExpense.quantidade).toFixed(2).replace('.', ',')
       const extension = url.split('.').pop()?.split('?')[0] || 'jpg'
