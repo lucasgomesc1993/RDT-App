@@ -310,7 +310,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
                 {dateValue ? format(new Date(dateValue + 'T12:00:00'), "dd MMM, yy", { locale: ptBR }) : 'Data'}
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 rounded-2xl border-border bg-background/95 backdrop-blur-2xl" align="start">
+              <PopoverContent className="w-auto p-0 rounded-2xl border-border bg-background/95 backdrop-blur-2xl z-[100]" align="start">
                 <Calendar mode="single" selected={dateValue ? new Date(dateValue + 'T12:00:00') : undefined} onSelect={(date) => date && setValue('date', format(date, 'yyyy-MM-dd'), { shouldDirty: true, shouldValidate: true })} locale={ptBR} />
               </PopoverContent>
             </Popover>
