@@ -278,7 +278,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   )
 
   const commonTrigger = trigger || (
-    <button className="h-10 px-5 rounded-xl font-medium bg-foreground text-background shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2 w-full md:w-auto justify-center">
+    <button className="h-10 px-5 rounded-xl font-medium bg-foreground text-background shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2 w-auto justify-center whitespace-nowrap">
       <Plus className="h-4 w-4" />
       Nova Despesa
     </button>
