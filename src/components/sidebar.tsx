@@ -1,7 +1,7 @@
 "use client"
 
 import Link from 'next/link'
-import { Home, Receipt, LogOut } from 'lucide-react'
+import { Home, Receipt, LogOut, Settings } from 'lucide-react'
 import { Button } from './ui/button'
 import { signOut } from '@/app/login/actions'
 import { usePathname } from 'next/navigation'
