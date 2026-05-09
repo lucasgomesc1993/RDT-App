@@ -171,7 +171,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                     className={cn(
                       "flex items-center gap-3 h-14 px-4 rounded-2xl border text-[11px] font-semibold transition-all duration-300",
                       isActive 
-                        ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10" 
+                        ? "bg-primary/5 border-primary text-foreground shadow-lg shadow-primary/5" 
                         : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
                     )}
                     onClick={() => {
@@ -179,7 +179,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                       setValue('transporte', opt.value, { shouldDirty: true, shouldValidate: true })
                     }}
                   >
-                    <div className={cn("p-1.5 rounded-lg border", isActive ? "bg-white/10 border-white/20" : "bg-white/[0.03] border-white/5")}>
+                    <div className={cn("p-1.5 rounded-lg border transition-colors", isActive ? "bg-primary/10 border-primary/20 text-primary" : "bg-white/[0.03] border-white/5 text-muted-foreground")}>
                       <Icon className="h-3.5 w-3.5" />
                     </div>
                     <span className="truncate">{opt.label}</span>
@@ -191,7 +191,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 className={cn(
                   "flex items-center justify-center h-14 px-4 rounded-2xl border text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 col-span-2",
                   showCustomTransport 
-                    ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10" 
+                    ? "bg-primary/5 border-primary text-primary shadow-lg shadow-primary/5" 
                     : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03] border-dashed"
                 )}
                 onClick={() => {
