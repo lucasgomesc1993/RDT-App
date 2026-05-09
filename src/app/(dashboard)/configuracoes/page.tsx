@@ -48,7 +48,7 @@ export default function ConfiguracoesPage() {
                 <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Exibição</span>
                 <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Modo de Interface</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <Settings className="h-4 w-4" />
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function ConfiguracoesPage() {
                 <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Cor de Destaque</span>
                 <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Identidade Visual</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <Palette className="h-4 w-4" />
               </div>
             </div>

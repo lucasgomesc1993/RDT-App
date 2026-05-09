@@ -133,7 +133,7 @@ export default function DashboardPage() {
           <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-300 hover:bg-muted/10 dark:hover:bg-muted/20 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{stat.label}</span>
-              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-colors group-hover:bg-primary/10 group-hover:border-primary/20">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
