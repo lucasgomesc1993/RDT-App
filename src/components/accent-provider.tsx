@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useTheme } from "next-themes"
 
 export type AccentColor = {
   name: string
@@ -10,7 +11,7 @@ export type AccentColor = {
 }
 
 export const accentColors: AccentColor[] = [
-  { name: "default", label: "Branco (Padrão)", value: "oklch(0.98 0 0)", foreground: "oklch(0.04 0 0)" },
+  { name: "default", label: "Automático", value: "oklch(0.98 0 0)", foreground: "oklch(0.04 0 0)" },
   { name: "indigo", label: "Índigo", value: "oklch(0.65 0.2 260)", foreground: "oklch(0.98 0 0)" },
   { name: "emerald", label: "Esmeralda", value: "oklch(0.75 0.18 160)", foreground: "oklch(0.04 0 0)" },
   { name: "acid", label: "Verde Ácido", value: "oklch(0.85 0.22 110)", foreground: "oklch(0.04 0 0)" },
@@ -28,6 +29,7 @@ const AccentContext = React.createContext<AccentContextType | undefined>(undefin
 
 export function AccentProvider({ children }: { children: React.ReactNode }) {
   const [accent, setAccentState] = React.useState<AccentColor>(accentColors[0])
+  const { theme, resolvedTheme } = useTheme()
 
   // Load from localstorage on mount
   React.useEffect(() => {
@@ -41,10 +43,23 @@ export function AccentProvider({ children }: { children: React.ReactNode }) {
   // Apply CSS variable
   React.useEffect(() => {
     const root = document.documentElement
-    root.style.setProperty("--primary", accent.value)
-    root.style.setProperty("--primary-foreground", accent.foreground)
+    const currentTheme = resolvedTheme || theme
+
+    if (accent.name === "default") {
+      if (currentTheme === "light") {
+        root.style.setProperty("--primary", "oklch(0.14 0.01 240)")
+        root.style.setProperty("--primary-foreground", "oklch(0.98 0 0)")
+      } else {
+        root.style.setProperty("--primary", "oklch(0.98 0 0)")
+        root.style.setProperty("--primary-foreground", "oklch(0.04 0 0)")
+      }
+    } else {
+      root.style.setProperty("--primary", accent.value)
+      root.style.setProperty("--primary-foreground", accent.foreground)
+    }
+    
     localStorage.setItem("app-accent-color", accent.name)
-  }, [accent])
+  }, [accent, theme, resolvedTheme])
 
   const setAccent = (name: string) => {
     const found = accentColors.find(c => c.name === name)
