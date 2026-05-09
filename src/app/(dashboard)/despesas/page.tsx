@@ -433,19 +433,29 @@ export default function DespesasPage() {
       </div>
       <div className="space-y-3">
         <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Categoria</label>
-        <Select value={transportFilter} onValueChange={(v) => v && setTransportFilter(v)}>
-          <SelectTrigger className="h-11 rounded-xl bg-muted/30 border-border/30 w-full text-[10px] font-bold uppercase tracking-widest px-4 shadow-sm">
-            <SelectValue>
-              {transportFilter === 'all' ? 'Todas as Categorias' : transportFilter}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent className="rounded-xl border border-border/30 bg-background/95 backdrop-blur-2xl">
-            <SelectItem value="all" className="text-[10px] font-bold uppercase tracking-widest">Todas as Categorias</SelectItem>
-            {transportOptions.map(opt => (
-              <SelectItem key={opt} value={opt} className="text-[10px] font-bold uppercase tracking-widest">{opt}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap gap-2">
+          <button 
+            onClick={() => setTransportFilter('all')}
+            className={cn(
+              "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider", 
+              transportFilter === 'all' ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30 dark:hover:bg-muted/60"
+            )}
+          >
+            Todas
+          </button>
+          {transportOptions.map(opt => (
+            <button 
+              key={opt} 
+              onClick={() => setTransportFilter(opt)} 
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider", 
+                transportFilter === opt ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/20 dark:bg-muted/40 border-border/30 dark:border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/30 dark:hover:bg-muted/60"
+              )}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="space-y-3">
         <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Comprovantes</label>
