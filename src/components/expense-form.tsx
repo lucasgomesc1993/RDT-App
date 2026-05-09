@@ -115,18 +115,35 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
     setUploading(true)
     try {
-      const imageFile = files[0]
-      const options = { maxSizeMB: 0.8, maxWidthOrHeight: 1280, useWebWorker: true }
-      const compressedFile = await imageCompression(imageFile, options)
-      const fileExt = imageFile.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-      const filePath = `${fileName}`
-      const { error: uploadError } = await supabase.storage.from('receipts').upload(filePath, compressedFile)
-      if (uploadError) throw uploadError
-      const { data: { publicUrl } } = supabase.storage.from('receipts').getPublicUrl(filePath)
-      const currentUrls = receiptUrls || []
-      setValue('receipt_urls', [...currentUrls, publicUrl], { shouldDirty: true })
-    } catch (error) { console.error('Upload error:', error) } finally { setUploading(false) }
+      const newUrls: string[] = []
+      
+      for (const file of Array.from(files)) {
+        const options = { maxSizeMB: 0.8, maxWidthOrHeight: 1280, useWebWorker: true }
+        const compressedFile = await imageCompression(file, options)
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+        const filePath = `${fileName}`
+        
+        const { error: uploadError } = await supabase.storage.from('receipts').upload(filePath, compressedFile)
+        if (uploadError) throw uploadError
+        
+        const { data: { publicUrl } } = supabase.storage.from('receipts').getPublicUrl(filePath)
+        newUrls.push(publicUrl)
+      }
+
+      const currentUrls = watch('receipt_urls') || []
+      setValue('receipt_urls', [...currentUrls, ...newUrls], { 
+        shouldDirty: true, 
+        shouldValidate: true,
+        shouldTouch: true 
+      })
+    } catch (error) { 
+      console.error('Upload error:', error)
+      alert('Erro ao enviar imagem. Verifique sua conexão.')
+    } finally { 
+      setUploading(false)
+      if (e.target) e.target.value = '' // Reset input
+    }
   }
 
   const formatCurrency = (value: number) => {
@@ -261,7 +278,15 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 </span>
               </div>
               <Plus className="h-4 w-4 text-muted-foreground/40" />
-              <input id="receipt" type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
+              <input 
+                id="receipt" 
+                type="file" 
+                accept="image/*" 
+                multiple 
+                onChange={handleFileUpload} 
+                className="hidden" 
+                disabled={uploading} 
+              />
             </label>
           </div>
         </div>
