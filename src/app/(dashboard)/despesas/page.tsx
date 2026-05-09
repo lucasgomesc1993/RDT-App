@@ -425,7 +425,7 @@ export default function DespesasPage() {
           <button 
             className={cn(
               "flex-1 py-2 rounded-lg text-[10px] font-medium uppercase tracking-wider border transition-all", 
-              dateRange === 'all' ? "bg-foreground text-background border-foreground font-semibold" : "bg-muted/40 border-border/50 text-muted-foreground font-semibold"
+              dateRange === 'all' ? "bg-primary text-primary-foreground border-primary shadow-sm font-semibold" : "bg-muted/40 border-border/50 text-muted-foreground font-semibold"
             )} 
             onClick={() => setDateRange('all')}
           >
@@ -434,7 +434,7 @@ export default function DespesasPage() {
           <button 
             className={cn(
               "flex-1 py-2 rounded-lg text-[10px] font-medium uppercase tracking-wider border transition-all", 
-              dateRange === 'month' ? "bg-foreground text-background border-foreground font-semibold" : "bg-muted/40 border-border/50 text-muted-foreground font-semibold"
+              dateRange === 'month' ? "bg-primary text-primary-foreground border-primary shadow-sm font-semibold" : "bg-muted/40 border-border/50 text-muted-foreground font-semibold"
             )} 
             onClick={() => setDateRange('month')}
           >
@@ -596,7 +596,7 @@ export default function DespesasPage() {
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.03] shadow-md" : "border-border/40 hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.03] shadow-md" : "border-border/40 hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center", expense.pago ? "bg-muted/40 text-foreground" : "bg-transparent text-muted-foreground border border-border/40")}>{expense.pago ? <CheckCircle2 className="h-4 w-4" /> : <Clock className="h-4 w-4" />}</div>
