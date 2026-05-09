@@ -31,9 +31,10 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerFooter,
+  DrawerClose,
 } from '@/components/ui/drawer'
 import { useState, useMemo, useEffect } from 'react'
-import { ImageIcon, ChevronLeft, ChevronRight, X, Edit2, Trash2, Search, FilterX, Loader2, FileX, CalendarIcon, Wallet, Filter, CheckSquare, CheckCircle2, Clock, MapPin, Tag, Download } from 'lucide-react'
+import { ImageIcon, ChevronLeft, ChevronRight, X, Edit2, Trash2, Search, FilterX, Loader2, FileX, CalendarIcon, Wallet, Filter, CheckSquare, CheckCircle2, Clock, MapPin, Tag, Download, FileSpreadsheet } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
@@ -110,8 +111,6 @@ export default function DespesasPage() {
 
       return matchesSearch && matchesStatus && matchesTransport && matchesReceipt && matchesDate
     })
-    
-    // Reseta para a primeira página quando os filtros mudam
     return result
   }, [expenses, search, statusFilter, transportFilter, receiptFilter, dateRange])
 
@@ -177,11 +176,53 @@ export default function DespesasPage() {
         link.click();
         link.remove();
         window.URL.revokeObjectURL(blobUrl);
-        // Pequeno atraso para não bloquear o navegador
         await new Promise(resolve => setTimeout(resolve, 300));
       } catch (error) {
         console.error('Falha ao baixar:', url, error);
       }
+    }
+  }
+
+  const handleExportExcel = async () => {
+    if (selectedIds.length === 0) return
+
+    const chunkSize = 10
+    const chunks = []
+    for (let i = 0; i < selectedIds.length; i += chunkSize) {
+      chunks.push(selectedIds.slice(i, i + chunkSize))
+    }
+
+    try {
+      for (let i = 0; i < chunks.length; i++) {
+        const response = await fetch('/api/export-excel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ expenseIds: chunks[i] }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Erro na exportação')
+        }
+
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `Relatorio_RDT_Parte_${i + 1}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.xlsx`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        
+        if (chunks.length > 1) {
+          await new Promise(resolve => setTimeout(resolve, 800))
+        }
+      }
+      setSelectedIds([])
+    } catch (error: any) {
+      console.error('Erro ao exportar Excel:', error)
+      alert(error.message || 'Ocorreu um erro ao gerar os arquivos Excel.')
     }
   }
 
@@ -354,9 +395,6 @@ export default function DespesasPage() {
               >Mês Atual</button>
             </div>
           </div>
-          <div className="lg:col-span-3 h-10 flex items-end">
-             {/* Espaço reservado ou outros filtros futuros */}
-          </div>
         </div>
       </div>
 
@@ -367,7 +405,16 @@ export default function DespesasPage() {
             <CheckSquare className="h-5 w-5" />
             <span className="text-sm md:text-base">{selectedIds.length} {selectedIds.length === 1 ? 'item' : 'itens'} selecionados</span>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              size="sm" 
+              variant="secondary"
+              className="rounded-xl font-bold bg-white/10 text-white hover:bg-white/20 gap-2 h-9 border border-white/10"
+              onClick={handleExportExcel}
+            >
+              <FileSpreadsheet className="h-3.5 w-3.5" />
+              EXPORTAR EXCEL
+            </Button>
             <Button 
               size="sm" 
               variant="secondary"
@@ -399,7 +446,7 @@ export default function DespesasPage() {
             </div>
           </div>
         )}
-        {filteredExpenses.map((expense) => (
+        {paginatedExpenses.map((expense) => (
           <div 
             key={expense.id} 
             className={cn(
@@ -530,7 +577,7 @@ export default function DespesasPage() {
                 </TableCell>
               </TableRow>
             )}
-            {filteredExpenses.map((expense) => (
+            {paginatedExpenses.map((expense) => (
               <TableRow key={expense.id} className={cn(
                 "border-b border-white/[0.03] hover:bg-white/[0.04] transition-all group",
                 selectedIds.includes(expense.id) && "bg-primary/[0.08] hover:bg-primary/[0.1]"
@@ -607,6 +654,33 @@ export default function DespesasPage() {
         </Table>
       </div>
 
+      {/* Paginação */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="rounded-xl border-white/10"
+          >
+            Anterior
+          </Button>
+          <span className="text-sm font-bold text-muted-foreground px-4">
+            Página {currentPage} de {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="rounded-xl border-white/10"
+          >
+            Próxima
+          </Button>
+        </div>
+      )}
+
       {/* Galeria e Alerta Modernos (Drawer no Mobile, Dialog no Desktop) */}
       {isMobile ? (
         <>
@@ -621,13 +695,13 @@ export default function DespesasPage() {
             <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/10 rounded-t-[2.5rem] p-8 pb-12">
               <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 mb-8" />
               <DrawerHeader className="p-0 text-left">
-                <DrawerTitle className="text-3xl font-bold tracking-tight">Excluir Registro?</DrawerTitle>
+                <DrawerTitle className="text-3xl font-bold tracking-tight text-foreground">Excluir Registro?</DrawerTitle>
                 <p className="text-lg font-medium text-muted-foreground mt-2">
                   Esta ação removerá permanentemente a despesa do seu histórico.
                 </p>
               </DrawerHeader>
               <DrawerFooter className="p-0 mt-8 gap-3 flex-row">
-                <Button onClick={() => setExpenseToDelete(null)} variant="outline" className="flex-1 rounded-2xl h-14 font-bold border-white/10 hover:bg-white/5">Voltar</Button>
+                <Button onClick={() => setExpenseToDelete(null)} variant="outline" className="flex-1 rounded-2xl h-14 font-bold border-white/10 hover:bg-white/5 text-foreground">Voltar</Button>
                 <Button onClick={confirmDelete} className="flex-1 rounded-2xl h-14 font-bold bg-destructive text-white hover:bg-destructive/90">Sim, Excluir</Button>
               </DrawerFooter>
             </DrawerContent>
@@ -644,13 +718,13 @@ export default function DespesasPage() {
           <AlertDialog open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
             <AlertDialogContent className="rounded-[2.5rem] border-white/10 bg-background/95 backdrop-blur-3xl p-10">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-3xl font-bold tracking-tight">Excluir Registro?</AlertDialogTitle>
-                <AlertDialogDescription className="text-lg font-medium text-muted-foreground">
+                <AlertDialogTitle className="text-3xl font-bold tracking-tight text-foreground">Excluir Registro?</AlertDialogTitle>
+                <AlertDialogDescription className="text-lg font-medium text-muted-foreground text-foreground">
                   Esta ação removerá permanentemente a despesa do seu histórico.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="mt-8 gap-3">
-                <AlertDialogCancel className="rounded-2xl h-12 font-bold px-8 border-white/10 hover:bg-white/5">Voltar</AlertDialogCancel>
+                <AlertDialogCancel className="rounded-2xl h-12 font-bold px-8 border-white/10 hover:bg-white/5 text-foreground">Voltar</AlertDialogCancel>
                 <AlertDialogAction onClick={confirmDelete} className="rounded-2xl h-12 font-bold px-8 bg-destructive text-white hover:bg-destructive/90">Sim, Excluir</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
