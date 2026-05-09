@@ -201,7 +201,6 @@ export default function DespesasPage() {
     } catch (error: any) { alert(error.message || 'Erro ao exportar Excel.') }
   }
 
-  if (isLoading) return (<div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground/30" /></div>)
 
   const handleOpenGallery = (expense: any) => { 
     setActiveGalleryExpense(expense)
@@ -209,9 +208,29 @@ export default function DespesasPage() {
     setCurrentIndex(0) 
   }
   const handleCloseGallery = () => { setSelectedReceipts(null); setActiveGalleryExpense(null) }
-  const nextImage = () => { if (selectedReceipts && currentIndex < selectedReceipts.length - 1) { setCurrentIndex(prev => prev + 1) } }
-  const prevImage = () => { if (currentIndex > 0) { setCurrentIndex(prev => prev - 1) } }
+  const nextImage = () => {
+    if (selectedReceipts && currentIndex < selectedReceipts.length - 1) {
+      setCurrentIndex(prev => prev + 1)
+    }
+  }
 
+  const prevImage = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1)
+    }
+  }
+
+  // Atalhos de teclado para a galeria
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedReceipts) return
+      if (e.key === 'ArrowRight') nextImage()
+      if (e.key === 'ArrowLeft') prevImage()
+      if (e.key === 'Escape') handleCloseGallery()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedReceipts, currentIndex])
   const handleIndividualDownload = async () => {
     if (!selectedReceipts || !activeGalleryExpense) return
     const url = selectedReceipts[currentIndex]
@@ -240,49 +259,65 @@ export default function DespesasPage() {
   const confirmDelete = async () => { if (expenseToDelete) { await deleteExpense.mutateAsync(expenseToDelete); setExpenseToDelete(null); setSelectedIds(prev => prev.filter(id => id !== expenseToDelete)) } }
   const clearFilters = () => { setSearch(''); setStatusFilter('all'); setTransportFilter('all'); setReceiptFilter('all'); setDateRange('all'); setSelectedIds([]) }
 
+  if (isLoading) return (
+    <div className="flex h-full items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm font-medium text-muted-foreground animate-pulse tracking-widest uppercase">Carregando despesas...</p>
+      </div>
+    </div>
+  )
+
+  const handleDownloadImage = async () => {
+    if (!selectedReceipts || !selectedReceipts[currentIndex]) return
+    const url = selectedReceipts[currentIndex]
+    try {
+      const response = await fetch(url)
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = `comprovante-${activeGalleryExpense?.local || 'rdt'}-${currentIndex + 1}.jpg`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(blobUrl)
+    } catch (error) {
+      window.open(url, '_blank')
+    }
+  }
+
   const GalleryContent = (
-    <div className="relative flex flex-col h-full min-h-[500px] bg-[#050505] overflow-hidden group/gallery">
-      {/* Imagem Principal com Efeito de Glow */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute inset-0 bg-primary/20 blur-[120px] animate-pulse" />
-      </div>
-
-      <div className="relative z-10 flex items-center justify-between p-6 border-b border-white/[0.03] bg-black/20 backdrop-blur-md">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-3">
-            <div className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_var(--primary)]" />
-            <span className="text-sm font-semibold text-white tracking-tight uppercase">{activeGalleryExpense?.local || 'Comprovante'}</span>
-          </div>
-          <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block pl-5">
-            Vista {currentIndex + 1} de {selectedReceipts?.length}
-          </span>
+    <div className="relative flex flex-col h-full max-h-[90vh] min-h-[400px]">
+      <div className="flex items-center justify-between p-8">
+        <div className="space-y-1">
+          <span className="text-xl font-bold tracking-tight block text-foreground">Visualizar Comprovante</span>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{currentIndex + 1} de {selectedReceipts?.length} arquivos</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 z-50">
           <button 
-            onClick={handleIndividualDownload} 
-            className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-primary/20 hover:text-primary transition-all duration-300 border border-white/[0.06] text-white/80 group/dl"
-            title="Download Original"
+            onClick={handleDownloadImage} 
+            className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-foreground transition-all border border-white/10"
+            title="Baixar Comprovante"
           >
-            <Download className="h-5 w-5 group-hover/dl:scale-110 transition-transform" />
+            <Download className="h-5 w-5" />
           </button>
-          <button 
-            onClick={handleCloseGallery} 
-            className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.1] transition-all duration-300 border border-white/[0.06] text-white/80"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          {!isMobile && (
+            <button onClick={handleCloseGallery} className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-foreground transition-all border border-white/10">
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </div>
-
-      <div className="relative flex-1 flex items-center justify-center p-4 md:p-12 overflow-hidden">
+      
+      <div className="flex-1 flex items-center justify-center p-8 relative group/gallery overflow-hidden">
         {selectedReceipts && (
           <div className="relative group/img-container max-w-full max-h-full">
             <img 
               src={selectedReceipts[currentIndex]} 
               alt="Comprovante" 
-              className="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/[0.08] animate-in fade-in zoom-in-95 duration-500" 
+              className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/[0.08] animate-in fade-in zoom-in-95 duration-500" 
             />
-            {/* Overlay de Zoom sutil */}
             <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
           </div>
         )}
@@ -290,7 +325,7 @@ export default function DespesasPage() {
         {/* Controles de Navegação Flutuantes */}
         {selectedReceipts && selectedReceipts.length > 1 && (
           <>
-            <div className="absolute inset-y-0 left-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-gallery:opacity-100 transition-opacity duration-500">
+            <div className="absolute inset-y-0 left-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500">
               <button 
                 onClick={prevImage} 
                 disabled={currentIndex === 0} 
@@ -299,7 +334,7 @@ export default function DespesasPage() {
                 <ChevronLeft className="h-6 w-6 text-white" />
               </button>
             </div>
-            <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-gallery:opacity-100 transition-opacity duration-500">
+            <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500">
               <button 
                 onClick={nextImage} 
                 disabled={currentIndex === selectedReceipts.length - 1} 
@@ -312,19 +347,23 @@ export default function DespesasPage() {
         )}
       </div>
 
-      {/* Footer com Miniaturas/Bullets */}
+      {/* Rodapé da Galeria com Dots */}
       {selectedReceipts && selectedReceipts.length > 1 && (
-        <div className="p-6 bg-black/20 backdrop-blur-md border-t border-white/[0.03] flex justify-center gap-2">
-          {selectedReceipts.map((_, i) => (
-            <button 
-              key={i} 
-              onClick={() => setCurrentIndex(i)}
-              className={cn(
-                "h-1 rounded-full transition-all duration-500",
-                currentIndex === i ? "w-8 bg-primary shadow-[0_0_10px_var(--primary)]" : "w-2 bg-white/20 hover:bg-white/40"
-              )}
-            />
-          ))}
+        <div className="h-20 flex items-center justify-center bg-black/40 backdrop-blur-xl border-t border-white/5 shrink-0">
+          <div className="flex gap-3 p-2.5 rounded-full bg-white/5 border border-white/10 shadow-2xl">
+            {selectedReceipts.map((_, i) => (
+              <button 
+                key={i} 
+                onClick={() => setCurrentIndex(i)}
+                className={cn(
+                  "h-2 rounded-full transition-all duration-500 ease-out",
+                  currentIndex === i 
+                    ? "w-2 bg-primary shadow-[0_0_12px_var(--primary)] scale-125" 
+                    : "w-2 bg-white/20 hover:bg-white/40 hover:scale-110"
+                )}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -574,25 +613,25 @@ export default function DespesasPage() {
                 {expense.receipt_urls && expense.receipt_urls.length > 0 && (
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleOpenGallery(expense) }} 
-                    className="relative flex items-center h-10 w-16 group/stack-mobile ml-1"
+                    className="relative flex items-center h-12 w-16 group/stack-mobile ml-1"
                   >
                     {expense.receipt_urls.slice(0, 3).reverse().map((url, i, arr) => {
                       const reverseIndex = arr.length - 1 - i;
                       return (
                         <div 
                           key={i}
-                          className="absolute h-10 w-10 rounded-lg border border-white/[0.1] overflow-hidden shadow-xl transition-all duration-300"
+                          className="absolute h-10 w-10 rounded-xl ring-1 ring-white/10 overflow-hidden shadow-[0_8px_16px_rgba(0,0,0,0.4)] transition-all duration-500"
                           style={{ 
                             left: `${reverseIndex * 8}px`,
                             zIndex: reverseIndex,
-                            transform: `rotate(${reverseIndex * 3}deg)`,
+                            transform: `rotate(${reverseIndex * 3}deg) translateY(${reverseIndex * -2}px)`,
                             opacity: 1 - (reverseIndex * 0.15)
                           }}
                         >
                           <img src={url} alt="Comprovante" className="h-full w-full object-cover" />
                           {reverseIndex === 0 && expense.receipt_urls!.length > 3 && (
-                            <div className="absolute inset-0 bg-background/60 backdrop-blur-xs flex items-center justify-center text-[8px] font-black text-white">
-                              +{expense.receipt_urls!.length - 3}
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                              <span className="text-[10px] font-black text-white tracking-tighter">+{expense.receipt_urls!.length - 3}</span>
                             </div>
                           )}
                         </div>
@@ -637,36 +676,37 @@ export default function DespesasPage() {
                       {expense.receipt_urls && expense.receipt_urls.length > 0 ? (
                         <button 
                           onClick={() => handleOpenGallery(expense)} 
-                          className="relative flex items-center justify-center h-10 w-16 mx-auto group/stack"
+                          className="relative flex items-center justify-center h-12 w-20 mx-auto group/stack"
                         >
                           {expense.receipt_urls.slice(0, 3).reverse().map((url, i, arr) => {
                             const reverseIndex = arr.length - 1 - i;
                             return (
                               <div 
                                 key={i}
-                                className="absolute h-10 w-10 rounded-lg border border-white/[0.1] overflow-hidden shadow-xl transition-all duration-300 group-hover/stack:scale-105"
+                                className={cn(
+                                  "absolute h-10 w-10 rounded-xl ring-1 ring-white/10 overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out",
+                                  "group-hover/stack:scale-110 group-hover/stack:translate-x-[var(--hx)] group-hover/stack:rotate-[var(--hr)]"
+                                )}
                                 style={{ 
-                                  left: `${reverseIndex * 8}px`,
+                                  left: `calc(50% - 20px)`,
                                   zIndex: reverseIndex,
-                                  transform: `rotate(${reverseIndex * 3}deg)`,
-                                  opacity: 1 - (reverseIndex * 0.15)
-                                }}
+                                  transform: `translateX(${reverseIndex * 8}px) rotate(${reverseIndex * 4}deg) translateY(${reverseIndex * -2}px)`,
+                                  "--hx": `${(reverseIndex - 1) * 20}px`,
+                                  "--hr": `${(reverseIndex - 1) * 12}deg`,
+                                  opacity: 1 - (reverseIndex * 0.1)
+                                } as any}
                               >
                                 <img src={url} alt="Comprovante" className="h-full w-full object-cover" />
                                 {reverseIndex === 0 && expense.receipt_urls!.length > 3 && (
-                                  <div className="absolute inset-0 bg-background/60 backdrop-blur-xs flex items-center justify-center text-[8px] font-black text-white">
-                                    +{expense.receipt_urls!.length - 3}
+                                  <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                                    <span className="text-[10px] font-black text-white tracking-tighter">+{expense.receipt_urls!.length - 3}</span>
                                   </div>
                                 )}
                               </div>
                             )
                           })}
                         </button>
-                      ) : (
-                        <div className="h-10 w-10 rounded-lg border border-transparent bg-white/[0.02] flex items-center justify-center text-muted-foreground/30 mx-auto">
-                          <FileX className="h-4 w-4" />
-                        </div>
-                      )}
+                      ) : null}
                     </TableCell>
                     <TableCell className="text-center"><button onClick={() => togglePayment.mutate({ id: expense.id, pago: expense.pago })} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-medium uppercase tracking-widest transition-all", expense.pago ? 'bg-white/[0.04] text-foreground border border-white/[0.06]' : 'bg-transparent text-muted-foreground border border-white/[0.04] hover:bg-white/[0.02]')}>{expense.pago ? 'Confirmado' : 'Pendente'}</button></TableCell>
                     <TableCell className="text-right pr-6"><div className="flex items-center justify-end gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-foreground"><Edit2 className="h-4 w-4" /></Button>} /><Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div></TableCell>
