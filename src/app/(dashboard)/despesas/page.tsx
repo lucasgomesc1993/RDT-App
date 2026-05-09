@@ -341,12 +341,12 @@ export default function DespesasPage() {
         </div>
       </div>
       
-      <div className="flex-1 relative group/gallery overflow-hidden">
+      <div className="relative group/gallery overflow-hidden h-[50vh] md:h-[70vh] w-full">
         {selectedReceipts && (
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
+            className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
           >
             {selectedReceipts.map((url, index) => (
               <div key={index} className="flex-none w-full h-full flex items-center justify-center snap-center p-4 md:p-8">
@@ -780,9 +780,11 @@ export default function DespesasPage() {
       {isMobile ? (
         <>
           <Drawer open={!!selectedReceipts} onOpenChange={(open) => !open && handleCloseGallery()}>
-            <DrawerContent className="max-h-[96vh] bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl">
-              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-4" />
-              {GalleryContent}
+            <DrawerContent className="h-[90vh] bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl overflow-hidden">
+              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-4 shrink-0" />
+              <div className="flex-1 overflow-hidden">
+                {GalleryContent}
+              </div>
             </DrawerContent>
           </Drawer>
           <Drawer open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
@@ -818,7 +820,7 @@ export default function DespesasPage() {
       ) : (
         <>
           <Dialog open={!!selectedReceipts} onOpenChange={(open) => !open && handleCloseGallery()}>
-            <DialogContent className="sm:max-w-5xl max-h-[90vh] p-0 overflow-hidden bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-2xl shadow-sm" showCloseButton={false}>
+            <DialogContent className="sm:max-w-5xl h-[85vh] p-0 overflow-hidden bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-2xl shadow-sm" showCloseButton={false}>
               {GalleryContent}
             </DialogContent>
           </Dialog>
