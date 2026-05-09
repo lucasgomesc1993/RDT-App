@@ -651,9 +651,9 @@ export default function DespesasPage() {
       </div>
 
       <div className="hidden md:block px-4 lg:px-0">
-        <div className="rounded-2xl border border-border/40 bg-card/30 overflow-hidden shadow-sm">
+        <div className="rounded-2xl border border-border/30 bg-card/25 overflow-hidden shadow-sm">
           <Table>
-            <TableHeader className="bg-muted/50 border-b border-border/50">
+            <TableHeader className="bg-muted/25 border-b border-border/30">
               <TableRow className="hover:bg-transparent border-none">
                 <TableHead className="w-[60px] pl-6"><Checkbox className="rounded-md" checked={selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0} onCheckedChange={handleSelectAll} /></TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] py-6">Data</TableHead>
@@ -670,7 +670,7 @@ export default function DespesasPage() {
               {paginatedExpenses.map((expense) => { 
                 const isSelected = selectedIds.includes(expense.id); 
                 return (
-                  <TableRow key={expense.id} className={cn("border-b border-white/[0.04] hover:bg-white/[0.02] transition-all duration-300", isSelected && "bg-white/[0.04]")}>
+                  <TableRow key={expense.id} className={cn("border-b border-border/20 hover:bg-muted/10 transition-all duration-300", isSelected && "bg-primary/[0.04]")}>
                     <TableCell className="pl-6"><Checkbox className="rounded-md" checked={isSelected} onCheckedChange={(checked) => handleSelectRow(expense.id, !!checked)} /></TableCell>
                     <TableCell className="font-medium text-muted-foreground text-sm py-5">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</TableCell>
                     <TableCell><div className="flex flex-col"><span className="font-semibold text-foreground text-base">{expense.local}</span><span className="text-[10px] font-medium uppercase text-muted-foreground/60 flex items-center gap-1.5 mt-0.5 tracking-wider"><Tag className="h-3 w-3" /> {expense.transporte}</span></div></TableCell>
@@ -688,7 +688,7 @@ export default function DespesasPage() {
                               <div 
                                 key={i}
                                 className={cn(
-                                  "absolute h-10 w-10 rounded-xl ring-1 ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
+                                  "absolute h-10 w-10 rounded-xl ring-1 ring-border/30 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
                                   "group-hover/stack:scale-110 group-hover/stack:translate-x-[var(--hx)] group-hover/stack:rotate-[var(--hr)]"
                                 )}
                                 style={{ 
