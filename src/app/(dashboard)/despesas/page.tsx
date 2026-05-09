@@ -241,32 +241,90 @@ export default function DespesasPage() {
   const clearFilters = () => { setSearch(''); setStatusFilter('all'); setTransportFilter('all'); setReceiptFilter('all'); setDateRange('all'); setSelectedIds([]) }
 
   const GalleryContent = (
-    <div className="relative flex flex-col h-full min-h-[400px] bg-background">
-      <div className="flex items-center justify-between p-6 border-b border-white/[0.06]">
-        <div className="space-y-1">
-          <span className="text-lg font-semibold block text-foreground">Comprovante</span>
-          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{currentIndex + 1} de {selectedReceipts?.length}</span>
+    <div className="relative flex flex-col h-full min-h-[500px] bg-[#050505] overflow-hidden group/gallery">
+      {/* Imagem Principal com Efeito de Glow */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <div className="absolute inset-0 bg-primary/20 blur-[120px] animate-pulse" />
+      </div>
+
+      <div className="relative z-10 flex items-center justify-between p-6 border-b border-white/[0.03] bg-black/20 backdrop-blur-md">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-3">
+            <div className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_var(--primary)]" />
+            <span className="text-sm font-semibold text-white tracking-tight uppercase">{activeGalleryExpense?.local || 'Documento'}</span>
+          </div>
+          <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block pl-5">
+            Vista {currentIndex + 1} de {selectedReceipts?.length}
+          </span>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleIndividualDownload} className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-colors border border-white/[0.06]" title="Baixar Imagem">
-            <Download className="h-5 w-5 text-foreground" />
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleIndividualDownload} 
+            className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-primary/20 hover:text-primary transition-all duration-300 border border-white/[0.06] text-white/80 group/dl"
+            title="Download Original"
+          >
+            <Download className="h-5 w-5 group-hover/dl:scale-110 transition-transform" />
           </button>
-          <button onClick={handleCloseGallery} className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] transition-colors border border-white/[0.06]">
-            <X className="h-5 w-5 text-foreground" />
+          <button 
+            onClick={handleCloseGallery} 
+            className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.1] transition-all duration-300 border border-white/[0.06] text-white/80"
+          >
+            <X className="h-5 w-5" />
           </button>
         </div>
       </div>
-      <div className="flex-1 flex items-center justify-center p-8">
-        {selectedReceipts && <img src={selectedReceipts[currentIndex]} alt="Comprovante" className="max-w-full max-h-[60vh] object-contain rounded-xl border border-white/[0.06]" />}
+
+      <div className="relative flex-1 flex items-center justify-center p-4 md:p-12 overflow-hidden">
+        {selectedReceipts && (
+          <div className="relative group/img-container max-w-full max-h-full">
+            <img 
+              src={selectedReceipts[currentIndex]} 
+              alt="Comprovante" 
+              className="max-w-full max-h-[70vh] object-contain rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/[0.08] animate-in fade-in zoom-in-95 duration-500" 
+            />
+            {/* Overlay de Zoom sutil */}
+            <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
+          </div>
+        )}
+
+        {/* Controles de Navegação Flutuantes */}
+        {selectedReceipts && selectedReceipts.length > 1 && (
+          <>
+            <div className="absolute inset-y-0 left-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-gallery:opacity-100 transition-opacity duration-500">
+              <button 
+                onClick={prevImage} 
+                disabled={currentIndex === 0} 
+                className="pointer-events-auto w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/5 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 -translate-x-4 group-hover/gallery:translate-x-0"
+              >
+                <ChevronLeft className="h-6 w-6 text-white" />
+              </button>
+            </div>
+            <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-gallery:opacity-100 transition-opacity duration-500">
+              <button 
+                onClick={nextImage} 
+                disabled={currentIndex === selectedReceipts.length - 1} 
+                className="pointer-events-auto w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/5 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 translate-x-4 group-hover/gallery:translate-x-0"
+              >
+                <ChevronRight className="h-6 w-6 text-white" />
+              </button>
+            </div>
+          </>
+        )}
       </div>
+
+      {/* Footer com Miniaturas/Bullets */}
       {selectedReceipts && selectedReceipts.length > 1 && (
-        <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
-          <button onClick={prevImage} disabled={currentIndex === 0} className="pointer-events-auto w-12 h-12 rounded-xl bg-background/80 backdrop-blur-md border border-white/[0.1] disabled:opacity-0 flex items-center justify-center hover:bg-white/[0.04] transition-all">
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button onClick={nextImage} disabled={currentIndex === selectedReceipts.length - 1} className="pointer-events-auto w-12 h-12 rounded-xl bg-background/80 backdrop-blur-md border border-white/[0.1] disabled:opacity-0 flex items-center justify-center hover:bg-white/[0.04] transition-all">
-            <ChevronRight className="h-6 w-6" />
-          </button>
+        <div className="p-6 bg-black/20 backdrop-blur-md border-t border-white/[0.03] flex justify-center gap-2">
+          {selectedReceipts.map((_, i) => (
+            <button 
+              key={i} 
+              onClick={() => setCurrentIndex(i)}
+              className={cn(
+                "h-1 rounded-full transition-all duration-500",
+                currentIndex === i ? "w-8 bg-primary shadow-[0_0_10px_var(--primary)]" : "w-2 bg-white/20 hover:bg-white/40"
+              )}
+            />
+          ))}
         </div>
       )}
     </div>
