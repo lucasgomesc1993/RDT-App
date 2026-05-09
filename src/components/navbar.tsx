@@ -42,13 +42,13 @@ export function Navbar() {
             <span className="sr-only">Menu</span>
           </button>
         </DrawerTrigger>
-        <DrawerContent className="bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] pb-10 outline-none">
-          <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 my-4" />
+        <DrawerContent className="bg-background/95 backdrop-blur-3xl border-border/40 rounded-t-[40px] pb-10 outline-none">
+          <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted my-4" />
           
           <div className="px-8 pt-4 pb-6">
             <div className="flex items-center justify-between mb-8">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Menu</span>
-              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+              <div className="p-2 rounded-lg bg-muted/40 border border-border/50 text-primary">
                 <Menu className="h-4 w-4" />
               </div>
             </div>
@@ -70,8 +70,8 @@ export function Navbar() {
                   className={cn(
                     "flex items-center gap-4 px-6 h-14 text-sm font-semibold rounded-2xl transition-all duration-300",
                     isActive 
-                      ? "bg-white/[0.04] text-foreground shadow-lg shadow-black/20" 
-                      : "text-muted-foreground/60 hover:bg-white/[0.02] hover:text-foreground"
+                      ? "bg-muted text-foreground border border-border/50" 
+                      : "text-muted-foreground/60 hover:bg-muted/40 hover:text-foreground"
                   )}
                 >
                   <Icon className={cn("h-5 w-5 transition-colors", isActive ? "text-primary" : "text-muted-foreground/40")} />
@@ -88,12 +88,12 @@ export function Navbar() {
                     Sair do Sistema
                   </button>
                 </DrawerTrigger>
-                <DrawerContent className="bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-8 pb-12 outline-none">
-                  <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 mb-10" />
+                <DrawerContent className="bg-background/95 backdrop-blur-3xl border-border/40 rounded-t-[40px] p-8 pb-12 outline-none">
+                  <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-muted mb-10" />
                   <div className="space-y-8">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Sistema</span>
-                      <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+                      <div className="p-2 rounded-lg bg-muted/40 border border-border/50 text-primary">
                         <LogOut className="h-4 w-4" />
                       </div>
                     </div>
@@ -110,7 +110,7 @@ export function Navbar() {
                         </Button>
                       </form>
                       <DrawerClose asChild>
-                        <Button variant="outline" className="w-full h-12 rounded-xl border-white/[0.06] bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] border-none">
+                        <Button variant="outline" className="w-full h-12 rounded-xl border-border/40 bg-muted/20 text-[10px] font-black uppercase tracking-[0.2em]">
                           Cancelar
                         </Button>
                       </DrawerClose>

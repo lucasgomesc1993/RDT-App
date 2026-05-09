@@ -48,8 +48,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 group",
                 isActive 
-                  ? "bg-white/[0.06] text-foreground shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)]" 
-                  : "text-muted-foreground hover:bg-white/[0.03] hover:text-foreground"
+                  ? "bg-muted text-foreground border border-border/50" 
+                  : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
               )}
             >
               <Icon className={cn(
@@ -70,11 +70,11 @@ export function Sidebar() {
             <LogOut className="h-4 w-4 group-hover:rotate-12 transition-transform" />
             Sair do Sistema
           </AlertDialogTrigger>
-          <AlertDialogContent className="rounded-2xl border border-white/[0.06] bg-background/95 backdrop-blur-3xl p-8 max-w-[380px] shadow-2xl outline-none">
+          <AlertDialogContent className="rounded-2xl border border-border/40 bg-background/95 backdrop-blur-3xl p-8 max-w-[380px] shadow-2xl outline-none">
             <div className="space-y-8">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50">Sistema</span>
-                <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+                <div className="p-2 rounded-lg bg-muted/40 border border-border/50 text-primary">
                   <LogOut className="h-4 w-4" />
                 </div>
               </div>
@@ -92,7 +92,7 @@ export function Sidebar() {
                     Confirmar Saída
                   </Button>
                 </form>
-                <AlertDialogCancel className="h-12 rounded-xl border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] text-[10px] font-black uppercase tracking-[0.2em] transition-all m-0 border-none">
+                <AlertDialogCancel className="h-12 rounded-xl border-border/40 bg-muted/20 text-[10px] font-black uppercase tracking-[0.2em] transition-all m-0">
                   Voltar ao App
                 </AlertDialogCancel>
               </div>

@@ -380,7 +380,7 @@ export default function DespesasPage() {
               onClick={() => setStatusFilter(f as any)} 
               className={cn(
                 "px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all border uppercase tracking-wider", 
-                statusFilter === f ? "bg-foreground text-background border-foreground" : "bg-muted/40 border-border/50 text-muted-foreground hover:text-foreground"
+                statusFilter === f ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/60 border-border/50 text-muted-foreground hover:text-foreground"
               )}
             >
               {f === 'all' ? 'Todos' : f}
@@ -528,7 +528,7 @@ export default function DespesasPage() {
               selectionMode ? (
                 <Button 
                   variant="outline" 
-                  className="h-10 flex-1 rounded-xl border-white/[0.08] bg-white/[0.04] text-[10px] uppercase font-bold tracking-widest"
+                  className="h-10 flex-1 rounded-xl border-border/50 bg-muted text-[10px] uppercase font-bold tracking-widest shadow-sm"
                   onClick={() => handleSelectAll(selectedIds.length !== filteredExpenses.length)}
                 >
                   {selectedIds.length === filteredExpenses.length ? (
@@ -540,13 +540,13 @@ export default function DespesasPage() {
               ) : (
                 <Drawer>
                   <DrawerTrigger asChild>
-                    <Button variant="outline" className="h-10 flex-1 rounded-xl border-white/[0.08] bg-white/[0.02] relative text-[10px] uppercase font-bold tracking-widest">
+                    <Button variant="outline" className="h-10 flex-1 rounded-xl border-border/50 bg-muted relative text-[10px] uppercase font-bold tracking-widest shadow-sm">
                       <SlidersHorizontal className="h-4 w-4 mr-2" /> Filtros
-                      {activeFiltersCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-foreground text-background text-[8px] font-black">{activeFiltersCount}</span>}
+                      {activeFiltersCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[8px] font-black">{activeFiltersCount}</span>}
                     </Button>
                   </DrawerTrigger>
-                  <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl px-6 pb-8">
-                    <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 my-4" />
+                  <DrawerContent className="bg-background/95 backdrop-blur-2xl border-border/40 rounded-t-3xl px-6 pb-8">
+                    <div className="mx-auto w-12 h-1.5 rounded-full bg-muted my-4" />
                     <DrawerHeader className="px-0 py-4"><DrawerTitle className="text-xl font-semibold text-left">Filtros Avançados</DrawerTitle></DrawerHeader>
                     {FiltersContent}
                   </DrawerContent>
@@ -558,12 +558,12 @@ export default function DespesasPage() {
                   <SlidersHorizontal className="h-3.5 w-3.5 mr-2 opacity-60" /> Filtros
                   {activeFiltersCount > 0 && <span className="ml-2 px-1.5 py-0.5 rounded-md bg-foreground text-background text-[8px] font-black">{activeFiltersCount}</span>}
                 </PopoverTrigger>
-                <PopoverContent className="w-80 p-6 rounded-2xl bg-background/95 backdrop-blur-2xl border-white/[0.06] shadow-sm" align="end">{FiltersContent}</PopoverContent>
+                <PopoverContent className="w-80 p-6 rounded-2xl bg-background/95 backdrop-blur-2xl border-border/40 shadow-sm" align="end">{FiltersContent}</PopoverContent>
               </Popover>
             )}
             
             {hasActiveFilters && (
-              <Button variant="ghost" size="icon" onClick={clearFilters} className="h-10 w-10 rounded-xl text-muted-foreground hover:text-foreground hover:bg-white/[0.04]" title="Limpar tudo">
+              <Button variant="ghost" size="icon" onClick={clearFilters} className="h-10 w-10 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted" title="Limpar tudo">
                 <FilterX className="h-4 w-4" />
               </Button>
             )}
