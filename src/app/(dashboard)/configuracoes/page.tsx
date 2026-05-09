@@ -41,14 +41,14 @@ export default function ConfiguracoesPage() {
 
       <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
         {/* Modo de Exibição */}
-        <Card className="lg:col-span-1 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm h-fit transition-all duration-300 group">
+        <Card className="lg:col-span-1 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm h-fit transition-all duration-500 group hover:-translate-y-1 hover:bg-card/40 dark:hover:bg-card/60 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20">
           <CardContent className="p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="space-y-1">
                 <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Exibição</span>
                 <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Modo de Interface</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-[0_0_20px_rgba(var(--primary),0.3)]">
                 <Settings className="h-4 w-4" />
               </div>
             </div>
@@ -81,14 +81,14 @@ export default function ConfiguracoesPage() {
         </Card>
 
         {/* Seleção de Cores */}
-        <Card className="lg:col-span-2 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group">
+        <Card className="lg:col-span-2 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group hover:-translate-y-1 hover:bg-card/40 dark:hover:bg-card/60 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20">
           <CardContent className="p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="space-y-1">
                 <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Cor de Destaque</span>
                 <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Identidade Visual</p>
               </div>
-              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
+              <div className="p-2 rounded-lg bg-muted/20 dark:bg-muted/40 border border-border/30 dark:border-border/50 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-[0_0_20px_rgba(var(--primary),0.3)]">
                 <Palette className="h-4 w-4" />
               </div>
             </div>
