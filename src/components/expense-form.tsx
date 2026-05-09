@@ -150,7 +150,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
   const FormContent = (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-8 space-y-5 pb-32 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto px-8 space-y-5 pb-12 custom-scrollbar">
         {isMobile && (
           <div className="pt-8 pb-4">
             <div className="flex items-center justify-between mb-4">
