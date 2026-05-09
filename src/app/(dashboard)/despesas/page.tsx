@@ -305,28 +305,76 @@ export default function DespesasPage() {
   )
 
 
+  const getTransportIcon = (type: string) => {
+    switch (type) {
+      case 'Estacionamento': return Car
+      case 'Pedágio': return Ticket
+      case 'CPTM/Metrô': return Bus
+      case 'Almoço Reduzido': return Utensils
+      default: return Layers
+    }
+  }
+
   const GalleryContent = (
-    <div className="flex flex-col h-full bg-transparent overflow-hidden">
-      <div className="h-20 flex items-center justify-between px-8 shrink-0 bg-transparent border-b border-white/[0.04]">
-        <div className="space-y-1">
-          <span className="text-xl font-bold tracking-tight block text-foreground">Visualizar Comprovante</span>
-          <div className="flex flex-wrap items-center gap-2 mt-2">
+    <div className="flex flex-col w-full h-full bg-background/95 backdrop-blur-2xl">
+      {/* Cabeçalho Sincronizado */}
+      <div className="p-8 pb-6 border-b border-white/[0.04] shrink-0 bg-background/50 backdrop-blur-xl">
+        <div className="flex items-center justify-between mb-8">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Visualizador</span>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={handleIndividualDownload} 
+              className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary hover:bg-primary/10 transition-all"
+              title="Baixar Comprovante"
+            >
+              <Download className="h-4 w-4" />
+            </button>
+            <div className="w-px h-4 bg-white/10" />
+            <button 
+              onClick={handleCloseGallery} 
+              className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-muted-foreground hover:text-foreground transition-all"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-3xl font-semibold tracking-tight">Comprovantes</h2>
+            {activeGalleryExpense && (
+              <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed mt-1">
+                {activeGalleryExpense.local}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
             <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[9px] font-black uppercase tracking-[0.15em] border border-primary/20">
-              {currentIndex + 1} / {selectedReceipts?.length}
+              {currentIndex + 1} / {selectedReceipts?.length || 1}
             </span>
-            <div className="h-3 w-px bg-white/10 mx-1 hidden sm:block" />
+            
             {activeGalleryExpense && (
               <>
+                <div className="h-3 w-px bg-white/10 mx-1 hidden sm:block" />
+                
+                {/* Categoria com Ícone */}
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
+                  {(() => {
+                    const Icon = getTransportIcon(activeGalleryExpense.transporte)
+                    return <Icon className="h-3 w-3 text-muted-foreground/60" />
+                  })()}
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    {activeGalleryExpense.transporte}
+                  </span>
+                </div>
+
+                <div className="h-3 w-px bg-white/10 mx-1 hidden sm:block" />
+                
                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
                   <Calendar className="h-3 w-3 text-muted-foreground/60" />
                   <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                     {format(parseISO(activeGalleryExpense.date), 'dd MMM yyyy', { locale: ptBR })}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5 border border-white/10">
-                  <MapPin className="h-3 w-3 text-muted-foreground/60" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground truncate max-w-[120px]">
-                    {activeGalleryExpense.local}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-primary/5 border border-primary/10">
@@ -339,82 +387,62 @@ export default function DespesasPage() {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 z-50">
-          <button 
-            onClick={handleIndividualDownload} 
-            className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-foreground transition-all border border-white/10"
-            title="Baixar Comprovante"
-          >
-            <Download className="h-5 w-5" />
-          </button>
-          {!isMobile && (
-            <button onClick={handleCloseGallery} className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-foreground transition-all border border-white/10">
-              <X className="h-5 w-5" />
-            </button>
-          )}
-        </div>
       </div>
-      
-      <div className="relative group/gallery overflow-hidden flex-1 w-full">
+
+      {/* Área da Imagem (Carrossel) */}
+      <div className="relative flex-1 w-full min-h-0 overflow-hidden">
         {selectedReceipts && (
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
+            className="absolute inset-0 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
           >
             {selectedReceipts.map((url, index) => (
-              <div key={index} className="flex-none w-full h-full flex items-center justify-center snap-center p-4 md:p-8">
-                <div className="relative group/img-container max-w-full max-h-full flex items-center justify-center">
-                  <img 
-                    src={url} 
-                    alt={`Comprovante ${index + 1}`} 
-                    className="max-w-full max-h-full object-contain rounded-2xl shadow-xl shadow-black/10 border border-white/[0.08]" 
-                  />
-                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
-                </div>
+              <div key={index} className="flex-none w-full h-full snap-center flex items-center justify-center p-4 sm:p-12">
+                <img 
+                  src={url} 
+                  alt={`Comprovante ${index + 1}`} 
+                  className="max-w-full max-h-full object-contain rounded-xl border border-white/10"
+                />
               </div>
             ))}
           </div>
         )}
 
-        {/* Controles de Navegação Flutuantes (Sempre visíveis no hover ou visíveis condicionalmente no mobile) */}
+        {/* Setas de Navegação (Desktop) */}
         {selectedReceipts && selectedReceipts.length > 1 && (
           <>
-            <div className="absolute inset-y-0 left-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500 hidden md:flex">
-              <button 
-                onClick={prevImage} 
-                disabled={currentIndex === 0} 
-                className="pointer-events-auto w-12 h-12 rounded-full bg-background/80 backdrop-blur-xl border border-white/10 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 -translate-x-4 group-hover/gallery:translate-x-0"
-              >
-                <ChevronLeft className="h-6 w-6 text-foreground" />
-              </button>
-            </div>
-            <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500 hidden md:flex">
-              <button 
-                onClick={nextImage} 
-                disabled={currentIndex === selectedReceipts.length - 1} 
-                className="pointer-events-auto w-12 h-12 rounded-full bg-background/80 backdrop-blur-xl border border-white/10 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 translate-x-4 group-hover/gallery:translate-x-0"
-              >
-                <ChevronRight className="h-6 w-6 text-foreground" />
-              </button>
-            </div>
+            <button 
+              onClick={prevImage} 
+              disabled={currentIndex === 0} 
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white disabled:opacity-0 hover:bg-primary transition-all z-20 hidden md:flex"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <button 
+              onClick={nextImage} 
+              disabled={currentIndex === selectedReceipts.length - 1} 
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white disabled:opacity-0 hover:bg-primary transition-all z-20 hidden md:flex"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
           </>
         )}
       </div>
 
-      {/* Rodapé da Galeria com Dots */}
+      {/* Rodapé (Pontinhos) */}
       {selectedReceipts && selectedReceipts.length > 1 && (
-        <div className="h-20 flex items-center justify-center bg-transparent border-t border-white/[0.04] shrink-0">
-          <div className="flex gap-3 p-2.5 rounded-full bg-white/[0.04] border border-white/10">
+        <div className="flex items-center justify-center p-4 border-t border-white/[0.04] shrink-0">
+          <div className="flex gap-2 p-2 rounded-full bg-black/20 border border-white/5">
             {selectedReceipts.map((_, i) => (
               <button 
                 key={i} 
                 onClick={() => setCurrentIndex(i)}
                 className={cn(
-                  "h-2 rounded-full transition-all duration-500 ease-out",
+                  "h-2 rounded-full transition-all duration-300",
                   currentIndex === i 
-                    ? "w-4 bg-primary shadow-[0_0_8px_var(--primary)]/40" 
-                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    ? "w-6 bg-primary" 
+                    : "w-2 bg-white/20 hover:bg-white/40"
                 )}
               />
             ))}
@@ -861,7 +889,7 @@ export default function DespesasPage() {
       ) : (
         <>
           <Dialog open={!!selectedReceipts} onOpenChange={(open) => !open && handleCloseGallery()}>
-            <DialogContent className="sm:max-w-5xl h-[85vh] p-0 overflow-hidden bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-2xl shadow-sm" showCloseButton={false}>
+            <DialogContent className="sm:max-w-3xl w-[95vw] h-[85vh] p-0 overflow-hidden bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-2xl shadow-sm" showCloseButton={false}>
               {GalleryContent}
             </DialogContent>
           </Dialog>
