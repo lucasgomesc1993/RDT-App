@@ -115,6 +115,12 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
     setUploading(true)
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        alert('Sessão expirada. Por favor, faça login novamente.')
+        return
+      }
+
       const newUrls: string[] = []
       
       for (const file of Array.from(files)) {
@@ -122,7 +128,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         const compressedFile = await imageCompression(file, options)
         const fileExt = file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-        const filePath = `${fileName}`
+        const filePath = `${user.id}/${fileName}`
         
         const { error: uploadError } = await supabase.storage.from('receipts').upload(filePath, compressedFile)
         if (uploadError) throw uploadError
@@ -139,7 +145,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       })
     } catch (error) { 
       console.error('Upload error:', error)
-      alert('Erro ao enviar imagem. Verifique sua conexão.')
+      alert('Erro de permissão no upload. Verifique sua conexão ou tente novamente.')
     } finally { 
       setUploading(false)
       if (e.target) e.target.value = '' // Reset input
