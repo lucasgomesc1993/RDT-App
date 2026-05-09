@@ -754,28 +754,28 @@ export default function DespesasPage() {
             </DrawerContent>
           </Drawer>
           <Drawer open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
-            <DrawerContent className="bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[32px] p-8 pb-12 outline-none">
-              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 mb-10" />
+            <DrawerContent className="bg-background/95 backdrop-blur-3xl border-border/30 dark:border-white/[0.06] rounded-t-[32px] p-8 pb-12 outline-none">
+              <div className="mx-auto w-12 h-1.5 rounded-full bg-muted/40 dark:bg-white/10 mb-10" />
               <div className="space-y-8">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50">Confirmação</span>
-                  <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-destructive">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Confirmação</span>
+                  <div className="p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
                     <Trash2 className="h-4 w-4" />
                   </div>
                 </div>
 
                 <div className="space-y-2 text-left">
-                  <DrawerTitle className="text-3xl font-semibold tracking-tight text-white">Excluir Registro?</DrawerTitle>
-                  <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed">
+                  <DrawerTitle className="text-3xl font-semibold tracking-tight text-foreground">Excluir Registro?</DrawerTitle>
+                  <p className="text-sm font-medium text-muted-foreground/60 leading-relaxed">
                     Esta ação removerá permanentemente o item selecionado e não poderá ser desfeita.
                   </p>
                 </div>
 
                 <div className="grid gap-3 pt-4">
-                  <Button onClick={confirmDelete} variant="destructive" className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-destructive/20 active:scale-[0.98] transition-all">
+                  <Button onClick={confirmDelete} variant="destructive" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-destructive/20 active:scale-[0.98] transition-all">
                     Confirmar Exclusão
                   </Button>
-                  <Button onClick={() => setExpenseToDelete(null)} variant="outline" className="w-full h-12 rounded-xl border-white/[0.06] bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] border-none">
+                  <Button onClick={() => setExpenseToDelete(null)} variant="ghost" className="w-full h-14 rounded-2xl bg-muted/20 dark:bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-muted/40 transition-all">
                     Cancelar
                   </Button>
                 </div>
@@ -791,27 +791,27 @@ export default function DespesasPage() {
             </DialogContent>
           </Dialog>
           <AlertDialog open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
-            <AlertDialogContent className="rounded-2xl border border-white/[0.06] bg-background/95 backdrop-blur-3xl p-8 max-w-[400px] shadow-2xl outline-none">
+            <AlertDialogContent className="rounded-3xl border border-border/30 dark:border-white/[0.06] bg-background/95 backdrop-blur-3xl p-8 max-w-[400px] shadow-2xl outline-none">
               <div className="space-y-8">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50">Confirmação</span>
-                  <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-destructive">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Confirmação</span>
+                  <div className="p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
                     <Trash2 className="h-4 w-4" />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <AlertDialogTitle className="text-3xl font-semibold tracking-tight text-foreground">Excluir Registro?</AlertDialogTitle>
-                  <AlertDialogDescription className="text-sm font-medium text-muted-foreground/40 leading-relaxed">
+                  <AlertDialogDescription className="text-sm font-medium text-muted-foreground/60 leading-relaxed">
                     Deseja realmente remover este item? Esta ação é irreversível e os dados não poderão ser recuperados.
                   </AlertDialogDescription>
                 </div>
 
                 <div className="grid gap-3 pt-4">
-                  <AlertDialogAction onClick={confirmDelete} className="h-12 rounded-xl bg-destructive text-destructive-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-destructive/20 active:scale-[0.98] transition-all m-0 border-none">
+                  <AlertDialogAction onClick={confirmDelete} className="h-14 rounded-2xl bg-destructive text-destructive-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-destructive/20 active:scale-[0.98] transition-all m-0 border-none">
                     Confirmar Exclusão
                   </AlertDialogAction>
-                  <AlertDialogCancel className="h-12 rounded-xl border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] text-[10px] font-black uppercase tracking-[0.2em] transition-all m-0 border-none">
+                  <AlertDialogCancel className="h-14 rounded-2xl bg-muted/20 dark:bg-white/[0.02] hover:bg-muted/40 text-[10px] font-black uppercase tracking-[0.2em] transition-all m-0 border-none">
                     Cancelar
                   </AlertDialogCancel>
                 </div>
