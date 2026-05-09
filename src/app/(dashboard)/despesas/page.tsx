@@ -391,13 +391,15 @@ export default function DespesasPage() {
       <div className="space-y-3">
         <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Categoria</label>
         <Select value={transportFilter} onValueChange={(v) => v && setTransportFilter(v)}>
-          <SelectTrigger className="h-10 rounded-xl bg-muted/50 border-border w-full">
-            <SelectValue placeholder="Todas as Categorias" />
+          <SelectTrigger className="h-11 rounded-xl bg-muted/30 border-border/30 w-full text-[10px] font-bold uppercase tracking-widest px-4 shadow-sm">
+            <SelectValue>
+              {transportFilter === 'all' ? 'Todas as Categorias' : transportFilter}
+            </SelectValue>
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-white/[0.08] bg-background/95 backdrop-blur-xl">
-            <SelectItem value="all">Todas as Categorias</SelectItem>
+          <SelectContent className="rounded-xl border border-border/30 bg-background/95 backdrop-blur-2xl">
+            <SelectItem value="all" className="text-[10px] font-bold uppercase tracking-widest">Todas as Categorias</SelectItem>
             {transportOptions.map(opt => (
-              <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+              <SelectItem key={opt} value={opt} className="text-[10px] font-bold uppercase tracking-widest">{opt}</SelectItem>
             ))}
           </SelectContent>
         </Select>
