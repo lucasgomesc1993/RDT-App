@@ -254,6 +254,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
             <Input 
               id="valor" 
               type="text"
+              inputMode="decimal"
               value={formatCurrency(valorValue || 0)}
               onChange={handleCurrencyChange}
               className="h-12 rounded-2xl bg-white/[0.03] border-white/5 focus:border-primary/50 pl-4 font-bold"
@@ -264,6 +265,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
             <Input 
               id="quantidade" 
               type="number" 
+              inputMode="numeric"
               min="1" 
               max="10" 
               {...register('quantidade')} 
