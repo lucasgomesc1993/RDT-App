@@ -171,7 +171,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                     className={cn(
                       "flex items-center gap-3 h-14 px-4 rounded-2xl border text-[11px] font-semibold transition-all duration-300",
                       isActive 
-                        ? "bg-foreground text-background border-foreground shadow-lg shadow-white/5" 
+                        ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10" 
                         : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
                     )}
                     onClick={() => {
@@ -179,7 +179,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                       setValue('transporte', opt.value, { shouldDirty: true, shouldValidate: true })
                     }}
                   >
-                    <div className={cn("p-1.5 rounded-lg border", isActive ? "bg-background/10 border-background/20" : "bg-white/[0.03] border-white/5")}>
+                    <div className={cn("p-1.5 rounded-lg border", isActive ? "bg-white/10 border-white/20" : "bg-white/[0.03] border-white/5")}>
                       <Icon className="h-3.5 w-3.5" />
                     </div>
                     <span className="truncate">{opt.label}</span>
@@ -191,7 +191,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 className={cn(
                   "flex items-center justify-center h-14 px-4 rounded-2xl border text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 col-span-2",
                   showCustomTransport 
-                    ? "bg-foreground text-background border-foreground shadow-lg shadow-white/5" 
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10" 
                     : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03] border-dashed"
                 )}
                 onClick={() => {
@@ -277,7 +277,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         <button 
           type="submit" 
           disabled={isSubmitting || uploading}
-          className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase tracking-[0.2em] text-[10px] hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-xl shadow-white/5"
+          className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-xl shadow-primary/20"
         >
           {(createExpense.isPending || updateExpense.isPending) ? (
             <><Loader2 className="h-4 w-4 animate-spin" /><span>Processando...</span></>
