@@ -149,8 +149,8 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   }
 
   const FormContent = (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-8 space-y-6 pb-6 custom-scrollbar">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full overflow-hidden">
+      <div className="flex-1 overflow-y-auto px-8 space-y-6 pb-24 custom-scrollbar">
         <div className="space-y-4 pt-1">
           <div className="grid gap-2">
             <Label htmlFor="local" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Local / Estabelecimento</Label>
@@ -300,7 +300,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger>{commonTrigger}</DrawerTrigger>
-        <DrawerContent className="max-h-[96vh] bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none">
+        <DrawerContent className="h-[96%] bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none flex flex-col overflow-hidden">
           <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 my-4" />
           <div className="px-8 pt-4 pb-6">
             <div className="flex items-center justify-between mb-8">
