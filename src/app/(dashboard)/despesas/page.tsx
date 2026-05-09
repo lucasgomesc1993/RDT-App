@@ -468,6 +468,7 @@ export default function DespesasPage() {
             Despesas
             <span className="text-muted-foreground text-lg font-normal font-mono opacity-40">/ {stats.count}</span>
           </h1>
+          <p className="text-muted-foreground text-sm font-medium opacity-60">Gerencie e monitore todos os seus gastos registrados.</p>
         </div>
         <div className="flex gap-3">
           <ExpenseForm onSuccess={() => setSelectedIds([])} />
@@ -732,16 +733,32 @@ export default function DespesasPage() {
             </DrawerContent>
           </Drawer>
           <Drawer open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
-            <DrawerContent className="bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl p-6 pb-12">
-              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 mb-8" />
-              <DrawerHeader className="p-0 text-left">
-                <DrawerTitle className="text-2xl font-semibold tracking-tight">Remover Registro?</DrawerTitle>
-                <p className="mt-2 text-muted-foreground text-sm font-medium opacity-60">Esta ação excluirá permanentemente o item selecionado.</p>
-              </DrawerHeader>
-              <DrawerFooter className="p-0 mt-8 gap-3 flex-col sm:flex-row">
-                <Button onClick={() => setExpenseToDelete(null)} variant="outline" className="w-full sm:flex-1 h-12 rounded-xl border-border/50 uppercase tracking-widest text-[10px] font-semibold">Manter</Button>
-                <Button onClick={confirmDelete} variant="destructive" className="w-full sm:flex-1 h-12 rounded-xl uppercase tracking-widest text-[10px] font-semibold">Excluir Agora</Button>
-              </DrawerFooter>
+            <DrawerContent className="bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[32px] p-8 pb-12 outline-none">
+              <div className="mx-auto w-12 h-1.5 rounded-full bg-white/10 mb-10" />
+              <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50">Confirmação</span>
+                  <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-left">
+                  <DrawerTitle className="text-3xl font-semibold tracking-tight text-white">Excluir Registro?</DrawerTitle>
+                  <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed">
+                    Esta ação removerá permanentemente o item selecionado e não poderá ser desfeita.
+                  </p>
+                </div>
+
+                <div className="grid gap-3 pt-4">
+                  <Button onClick={confirmDelete} variant="destructive" className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-destructive/20 active:scale-[0.98] transition-all">
+                    Confirmar Exclusão
+                  </Button>
+                  <Button onClick={() => setExpenseToDelete(null)} variant="outline" className="w-full h-12 rounded-xl border-white/[0.06] bg-white/[0.02] text-[10px] font-black uppercase tracking-[0.2em] border-none">
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
             </DrawerContent>
           </Drawer>
         </>
@@ -753,15 +770,31 @@ export default function DespesasPage() {
             </DialogContent>
           </Dialog>
           <AlertDialog open={!!expenseToDelete} onOpenChange={(open) => !open && setExpenseToDelete(null)}>
-            <AlertDialogContent className="rounded-2xl border-white/[0.06] bg-background/95 backdrop-blur-3xl p-8 max-w-sm">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-xl font-semibold tracking-tight">Confirmar Exclusão?</AlertDialogTitle>
-                <AlertDialogDescription className="text-sm mt-2 opacity-60">Deseja realmente remover este registro? Esta ação não pode ser desfeita.</AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter className="mt-8 gap-2">
-                <AlertDialogCancel className="rounded-xl h-10 px-6 border-white/[0.06] hover:bg-white/[0.04] m-0 text-[10px] uppercase tracking-widest font-semibold">Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={confirmDelete} className="rounded-xl h-10 px-6 bg-destructive text-destructive-foreground m-0 text-[10px] uppercase tracking-widest font-semibold">Excluir</AlertDialogAction>
-              </AlertDialogFooter>
+            <AlertDialogContent className="rounded-2xl border border-white/[0.06] bg-background/95 backdrop-blur-3xl p-8 max-w-[400px] shadow-2xl outline-none">
+              <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50">Confirmação</span>
+                  <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <AlertDialogTitle className="text-3xl font-semibold tracking-tight text-foreground">Excluir Registro?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-sm font-medium text-muted-foreground/40 leading-relaxed">
+                    Deseja realmente remover este item? Esta ação é irreversível e os dados não poderão ser recuperados.
+                  </AlertDialogDescription>
+                </div>
+
+                <div className="grid gap-3 pt-4">
+                  <AlertDialogAction onClick={confirmDelete} className="h-12 rounded-xl bg-destructive text-destructive-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-destructive/20 active:scale-[0.98] transition-all m-0 border-none">
+                    Confirmar Exclusão
+                  </AlertDialogAction>
+                  <AlertDialogCancel className="h-12 rounded-xl border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] text-[10px] font-black uppercase tracking-[0.2em] transition-all m-0 border-none">
+                    Cancelar
+                  </AlertDialogCancel>
+                </div>
+              </div>
             </AlertDialogContent>
           </AlertDialog>
         </>

@@ -159,7 +159,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
           </div>
 
           <div className="grid gap-3">
-            <Label className="ml-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Categoria</Label>
+            <Label className="ml-1 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Categoria do Gasto</Label>
             <div className="grid grid-cols-2 gap-2">
               {transportOptions.map((opt) => {
                 const Icon = opt.icon
@@ -169,17 +169,19 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                     key={opt.value}
                     type="button"
                     className={cn(
-                      "flex items-center gap-3 h-12 px-3 rounded-xl border text-xs font-medium transition-all duration-300",
+                      "flex items-center gap-3 h-14 px-4 rounded-2xl border text-[11px] font-semibold transition-all duration-300",
                       isActive 
-                        ? "bg-primary text-primary-foreground border-primary shadow-sm" 
-                        : "bg-white/[0.02] border-white/[0.06] text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                        ? "bg-foreground text-background border-foreground shadow-lg shadow-white/5" 
+                        : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
                     )}
                     onClick={() => {
                       setShowCustomTransport(false)
                       setValue('transporte', opt.value, { shouldDirty: true, shouldValidate: true })
                     }}
                   >
-                    <Icon className={cn("h-3.5 w-3.5", isActive ? "text-background" : "text-muted-foreground")} />
+                    <div className={cn("p-1.5 rounded-lg border", isActive ? "bg-background/10 border-background/20" : "bg-white/[0.03] border-white/5")}>
+                      <Icon className="h-3.5 w-3.5" />
+                    </div>
                     <span className="truncate">{opt.label}</span>
                   </button>
                 )
@@ -187,20 +189,20 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               <button
                 type="button"
                 className={cn(
-                  "flex items-center justify-center h-12 px-3 rounded-xl border text-[10px] font-medium uppercase tracking-wider transition-all duration-300 col-span-2",
+                  "flex items-center justify-center h-14 px-4 rounded-2xl border text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 col-span-2",
                   showCustomTransport 
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm" 
-                    : "bg-white/[0.02] border-white/[0.06] text-muted-foreground hover:text-foreground hover:bg-white/[0.04] border-dashed"
+                    ? "bg-foreground text-background border-foreground shadow-lg shadow-white/5" 
+                    : "bg-white/[0.01] border-white/[0.05] text-muted-foreground hover:text-foreground hover:bg-white/[0.03] border-dashed"
                 )}
                 onClick={() => {
                   setShowCustomTransport(true)
                   setValue('transporte', '', { shouldDirty: true })
                 }}
               >
-                Outro Gasto / Diversos
+                Outros / Diversos
               </button>
             </div>
-            {showCustomTransport && (<Input className="h-10 rounded-xl bg-white/[0.02] border-white/[0.06] focus-visible:bg-white/[0.04] animate-in fade-in slide-in-from-top-2" placeholder="Especifique o tipo..." {...register('transporte')} />)}
+            {showCustomTransport && (<Input className="h-12 rounded-2xl bg-white/[0.01] border-white/[0.05] focus-visible:bg-white/[0.03] animate-in fade-in slide-in-from-top-2 text-sm" placeholder="Especifique o tipo..." {...register('transporte')} />)}
           </div>
         </div>
 
@@ -261,16 +263,16 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         </div>
       </div>
 
-      <div className="p-8 pt-4 border-t border-white/[0.06] bg-background/50 backdrop-blur-xl">
+      <div className="p-8 border-t border-white/[0.05] bg-background/50 backdrop-blur-xl">
         <button 
           type="submit" 
           disabled={isSubmitting || uploading}
-          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold uppercase tracking-wider text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+          className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase tracking-[0.2em] text-[10px] hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-xl shadow-white/5"
         >
           {(createExpense.isPending || updateExpense.isPending) ? (
-            <><Loader2 className="h-4 w-4 animate-spin" /><span>Salvando...</span></>
+            <><Loader2 className="h-4 w-4 animate-spin" /><span>Processando...</span></>
           ) : (
-            <span>{isEditing ? 'Salvar Alterações' : 'Registrar Despesa'}</span>
+            <span>{isEditing ? 'Salvar Alterações' : 'Finalizar Registro'}</span>
           )}
         </button>
       </div>
@@ -288,13 +290,24 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger>{commonTrigger}</DrawerTrigger>
-        <DrawerContent className="max-h-[96vh] bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-t-3xl">
+        <DrawerContent className="max-h-[96vh] bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none">
           <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 my-4" />
-          <DrawerHeader className="px-8 pt-2 pb-4">
-            <DrawerTitle className="text-xl font-semibold tracking-tight text-center">
-              {isEditing ? 'Editar Registro' : 'Nova Despesa'}
-            </DrawerTitle>
-          </DrawerHeader>
+          <div className="px-8 pt-4 pb-6">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Financeiro</span>
+              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+                <CreditCard className="h-4 w-4" />
+              </div>
+            </div>
+            <DrawerHeader className="p-0 text-left">
+              <DrawerTitle className="text-3xl font-semibold tracking-tight">
+                {isEditing ? 'Editar Registro' : 'Nova Despesa'}
+              </DrawerTitle>
+              <p className="text-sm font-medium text-muted-foreground/40 mt-1">
+                Insira as informações do seu gasto abaixo.
+              </p>
+            </DrawerHeader>
+          </div>
           {FormContent}
         </DrawerContent>
       </Drawer>
@@ -304,20 +317,22 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>{commonTrigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[480px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-2xl border-white/[0.06] rounded-2xl shadow-sm">
+      <DialogContent className="sm:max-w-[480px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-[32px] shadow-2xl" showCloseButton={false}>
         <div className="flex flex-col h-full overflow-hidden">
-          <div className="p-8 pb-4">
-            <DialogHeader className="mb-4">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-xl bg-white/[0.04] flex items-center justify-center border border-white/[0.08]">
-                  <CreditCard className="h-5 w-5 text-foreground" />
-                </div>
-                <div>
-                  <DialogTitle className="text-xl font-semibold tracking-tight">
-                    {isEditing ? 'Editar Registro' : 'Nova Despesa'}
-                  </DialogTitle>
-                </div>
+          <div className="p-8 pb-6">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Financeiro</span>
+              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+                <CreditCard className="h-4 w-4" />
               </div>
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-3xl font-semibold tracking-tight">
+                {isEditing ? 'Editar Registro' : 'Nova Despesa'}
+              </DialogTitle>
+              <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed mt-2">
+                Preencha os detalhes do gasto para manter seu controle financeiro atualizado.
+              </p>
             </DialogHeader>
           </div>
           {FormContent}

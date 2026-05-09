@@ -110,7 +110,7 @@ export default function DashboardPage() {
   )
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-1000 pb-20">
+    <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-1000 pb-20 pt-4">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
         <header className="space-y-3">
           <div className="flex items-center gap-2 mb-1">

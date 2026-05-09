@@ -70,19 +70,33 @@ export function Sidebar() {
             <LogOut className="h-4 w-4 group-hover:rotate-12 transition-transform" />
             Sair do Sistema
           </AlertDialogTrigger>
-          <AlertDialogContent className="rounded-2xl border-white/[0.06] bg-background/90 backdrop-blur-3xl p-8 max-w-sm">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-xl font-medium tracking-tight">Sair da Conta?</AlertDialogTitle>
-              <AlertDialogDescription className="text-sm text-muted-foreground">
-                Sua sessão atual será encerrada. Você precisará fazer login novamente para acessar seus dados.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="mt-6 gap-2">
-              <AlertDialogCancel className="rounded-xl h-10 px-6 border-white/[0.06] hover:bg-white/[0.04] m-0">Cancelar</AlertDialogCancel>
-              <form action={signOut} className="m-0">
-                <Button type="submit" variant="destructive" className="w-full rounded-xl h-10 px-6">Confirmar Saída</Button>
-              </form>
-            </AlertDialogFooter>
+          <AlertDialogContent className="rounded-2xl border border-white/[0.06] bg-background/95 backdrop-blur-3xl p-8 max-w-[380px] shadow-2xl outline-none">
+            <div className="space-y-8">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50">Sistema</span>
+                <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+                  <LogOut className="h-4 w-4" />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <AlertDialogTitle className="text-3xl font-semibold tracking-tight text-foreground">Sair da Conta?</AlertDialogTitle>
+                <AlertDialogDescription className="text-sm font-medium text-muted-foreground/40 leading-relaxed">
+                  Sua sessão será encerrada. Você precisará se autenticar novamente para acessar o painel.
+                </AlertDialogDescription>
+              </div>
+
+              <div className="grid gap-3 pt-4">
+                <form action={signOut} className="m-0">
+                  <Button type="submit" variant="default" className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] bg-foreground text-background hover:bg-foreground/90 transition-all">
+                    Confirmar Saída
+                  </Button>
+                </form>
+                <AlertDialogCancel className="h-12 rounded-xl border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] text-[10px] font-black uppercase tracking-[0.2em] transition-all m-0 border-none">
+                  Voltar ao App
+                </AlertDialogCancel>
+              </div>
+            </div>
           </AlertDialogContent>
         </AlertDialog>
       </div>
