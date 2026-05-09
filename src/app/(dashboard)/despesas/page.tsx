@@ -306,8 +306,8 @@ export default function DespesasPage() {
 
 
   const GalleryContent = (
-    <div className="relative flex flex-col h-full max-h-[90vh] min-h-[400px]">
-      <div className="flex items-center justify-between p-8">
+    <div className="flex flex-col h-full bg-transparent overflow-hidden">
+      <div className="h-20 flex items-center justify-between px-8 shrink-0 bg-transparent border-b border-white/[0.04]">
         <div className="space-y-1">
           <span className="text-xl font-bold tracking-tight block text-foreground">Visualizar Comprovante</span>
           <div className="flex flex-wrap items-center gap-2 mt-2">
@@ -355,7 +355,7 @@ export default function DespesasPage() {
         </div>
       </div>
       
-      <div className="relative group/gallery overflow-hidden h-[50vh] md:h-[70vh] w-full">
+      <div className="relative group/gallery overflow-hidden flex-1 w-full">
         {selectedReceipts && (
           <div 
             ref={scrollRef}
