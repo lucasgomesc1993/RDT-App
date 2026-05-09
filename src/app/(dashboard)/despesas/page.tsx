@@ -202,12 +202,34 @@ export default function DespesasPage() {
   }
 
 
+  const scrollRef = useRef<HTMLDivElement>(null)
   const handleOpenGallery = (expense: any) => { 
     setActiveGalleryExpense(expense)
     setSelectedReceipts(expense.receipt_urls)
     setCurrentIndex(0) 
   }
   const handleCloseGallery = () => { setSelectedReceipts(null); setActiveGalleryExpense(null) }
+
+  // Sincroniza o scroll quando o currentIndex muda via dots ou setas
+  useEffect(() => {
+    if (scrollRef.current && selectedReceipts) {
+      const container = scrollRef.current
+      const targetScroll = container.offsetWidth * currentIndex
+      if (Math.abs(container.scrollLeft - targetScroll) > 10) {
+        container.scrollTo({ left: targetScroll, behavior: 'smooth' })
+      }
+    }
+  }, [currentIndex, selectedReceipts])
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (!selectedReceipts) return
+    const container = e.currentTarget
+    const index = Math.round(container.scrollLeft / container.offsetWidth)
+    if (index !== currentIndex && index >= 0 && index < selectedReceipts.length) {
+      setCurrentIndex(index)
+    }
+  }
+
   const nextImage = () => {
     if (selectedReceipts && currentIndex < selectedReceipts.length - 1) {
       setCurrentIndex(prev => prev + 1)
@@ -319,22 +341,32 @@ export default function DespesasPage() {
         </div>
       </div>
       
-      <div className="flex-1 flex items-center justify-center p-8 relative group/gallery overflow-hidden">
+      <div className="flex-1 relative group/gallery overflow-hidden">
         {selectedReceipts && (
-          <div className="relative group/img-container max-w-full max-h-full">
-            <img 
-              src={selectedReceipts[currentIndex]} 
-              alt="Comprovante" 
-              className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-xl shadow-black/10 border border-white/[0.08] animate-in fade-in zoom-in-95 duration-500" 
-            />
-            <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
+          <div 
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
+          >
+            {selectedReceipts.map((url, index) => (
+              <div key={index} className="flex-none w-full h-full flex items-center justify-center snap-center p-8">
+                <div className="relative group/img-container max-w-full max-h-full">
+                  <img 
+                    src={url} 
+                    alt={`Comprovante ${index + 1}`} 
+                    className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-xl shadow-black/10 border border-white/[0.08]" 
+                  />
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
-        {/* Controles de Navegação Flutuantes */}
+        {/* Controles de Navegação Flutuantes (Sempre visíveis no hover ou visíveis condicionalmente no mobile) */}
         {selectedReceipts && selectedReceipts.length > 1 && (
           <>
-            <div className="absolute inset-y-0 left-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500">
+            <div className="absolute inset-y-0 left-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500 hidden md:flex">
               <button 
                 onClick={prevImage} 
                 disabled={currentIndex === 0} 
@@ -343,7 +375,7 @@ export default function DespesasPage() {
                 <ChevronLeft className="h-6 w-6 text-foreground" />
               </button>
             </div>
-            <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500">
+            <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500 hidden md:flex">
               <button 
                 onClick={nextImage} 
                 disabled={currentIndex === selectedReceipts.length - 1} 
