@@ -37,6 +37,7 @@ export function Sidebar() {
         {[
           { href: '/', label: 'Dashboard', icon: Home },
           { href: '/despesas', label: 'Despesas', icon: Receipt },
+          { href: '/configuracoes', label: 'Configurações', icon: Settings },
         ].map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon

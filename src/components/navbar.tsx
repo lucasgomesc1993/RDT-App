@@ -23,6 +23,7 @@ export function Navbar() {
   const navItems = [
     { href: '/', label: 'Dashboard', icon: Home },
     { href: '/despesas', label: 'Despesas', icon: Receipt },
+    { href: '/configuracoes', label: 'Configurações', icon: Settings },
   ]
 
   return (

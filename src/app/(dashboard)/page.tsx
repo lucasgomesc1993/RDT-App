@@ -160,11 +160,11 @@ export default function DashboardPage() {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="white" stopOpacity={0.05}/>
-                    <stop offset="95%" stopColor="white" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.02)" />
                 <XAxis 
                   dataKey="month" 
                   axisLine={false} 
@@ -179,11 +179,11 @@ export default function DashboardPage() {
                   tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9, fontWeight: 500 }}
                   tickFormatter={(value) => `R$${value >= 1000 ? (value/1000).toFixed(0) + 'k' : value}`}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.05)', strokeWidth: 1 }} />
+                <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--primary)', strokeOpacity: 0.1, strokeWidth: 1 }} />
                 <Area 
                   type="monotone" 
                   dataKey="total" 
-                  stroke="rgba(255,255,255,0.4)" 
+                  stroke="var(--primary)" 
                   strokeWidth={2}
                   fillOpacity={1} 
                   fill="url(#colorTotal)" 

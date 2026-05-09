@@ -5,8 +5,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/query-provider";
 import { InstallPrompt } from "@/components/pwa-install-prompt";
 import { OfflineStatus } from "@/components/pwa-offline-status";
+import { AccentProvider } from "@/components/accent-provider";
 
-const geistSans = Geist({
+export const metadata: Metadata = {
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -54,13 +55,15 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem={false}
+          enableSystem
           disableTransitionOnChange
         >
           <QueryProvider>
-            {children}
-            <InstallPrompt />
-            <OfflineStatus />
+            <AccentProvider>
+              {children}
+              <InstallPrompt />
+              <OfflineStatus />
+            </AccentProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

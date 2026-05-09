@@ -417,7 +417,7 @@ export default function DespesasPage() {
                 className={cn(
                   "px-3 h-8 rounded-lg text-[10px] font-semibold uppercase tracking-widest transition-all whitespace-nowrap", 
                   statusFilter === f 
-                    ? "bg-foreground text-background shadow-sm" 
+                    ? "bg-primary text-primary-foreground shadow-sm" 
                     : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
                 )}
               >
@@ -490,7 +490,7 @@ export default function DespesasPage() {
             <div className="flex gap-1.5">
               <Button size="xs" variant="ghost" className="h-9 px-3 text-background hover:bg-background/10 text-[10px] font-semibold uppercase tracking-wider" onClick={handleBatchDownload} title="Baixar Docs"><Download className="h-3.5 w-3.5 mr-2" /> Docs</Button>
               <Button size="xs" variant="ghost" className="h-9 px-3 text-background hover:bg-background/10 text-[10px] font-semibold uppercase tracking-wider" onClick={handleExportExcel} title="Exportar Excel"><FileSpreadsheet className="h-3.5 w-3.5 mr-2" /> Excel</Button>
-              <Button size="xs" variant="default" className="h-9 px-4 bg-background text-foreground hover:bg-background/90 text-[10px] font-bold uppercase tracking-widest rounded-xl" onClick={handleBatchMarkAsPaid}>Pagar</Button>
+              <Button size="xs" variant="default" className="h-9 px-4 bg-primary text-primary-foreground hover:opacity-90 text-[10px] font-bold uppercase tracking-widest rounded-xl" onClick={handleBatchMarkAsPaid}>Pagar</Button>
             </div>
           </div>
         </div>

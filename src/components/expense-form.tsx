@@ -171,7 +171,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                     className={cn(
                       "flex items-center gap-3 h-12 px-3 rounded-xl border text-xs font-medium transition-all duration-300",
                       isActive 
-                        ? "bg-foreground text-background border-foreground shadow-sm" 
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm" 
                         : "bg-white/[0.02] border-white/[0.06] text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
                     )}
                     onClick={() => {
@@ -189,7 +189,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 className={cn(
                   "flex items-center justify-center h-12 px-3 rounded-xl border text-[10px] font-medium uppercase tracking-wider transition-all duration-300 col-span-2",
                   showCustomTransport 
-                    ? "bg-foreground text-background border-foreground shadow-sm" 
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm" 
                     : "bg-white/[0.02] border-white/[0.06] text-muted-foreground hover:text-foreground hover:bg-white/[0.04] border-dashed"
                 )}
                 onClick={() => {
@@ -265,7 +265,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         <button 
           type="submit" 
           disabled={isSubmitting || uploading}
-          className="w-full h-12 rounded-xl bg-foreground text-background font-semibold uppercase tracking-wider text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold uppercase tracking-wider text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
         >
           {(createExpense.isPending || updateExpense.isPending) ? (
             <><Loader2 className="h-4 w-4 animate-spin" /><span>Salvando...</span></>
@@ -278,7 +278,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   )
 
   const commonTrigger = trigger || (
-    <button className="h-10 px-5 rounded-xl font-medium bg-foreground text-background shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2 w-auto justify-center whitespace-nowrap">
+    <button className="h-10 px-5 rounded-xl font-medium bg-primary text-primary-foreground shadow-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2 w-auto justify-center whitespace-nowrap">
       <Plus className="h-4 w-4" />
       Nova Despesa
     </button>
