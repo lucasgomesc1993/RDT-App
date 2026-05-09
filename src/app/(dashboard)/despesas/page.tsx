@@ -316,7 +316,7 @@ export default function DespesasPage() {
             <img 
               src={selectedReceipts[currentIndex]} 
               alt="Comprovante" 
-              className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/[0.08] animate-in fade-in zoom-in-95 duration-500" 
+              className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-xl shadow-black/10 border border-white/[0.08] animate-in fade-in zoom-in-95 duration-500" 
             />
             <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
           </div>
@@ -329,18 +329,18 @@ export default function DespesasPage() {
               <button 
                 onClick={prevImage} 
                 disabled={currentIndex === 0} 
-                className="pointer-events-auto w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/5 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 -translate-x-4 group-hover/gallery:translate-x-0"
+                className="pointer-events-auto w-12 h-12 rounded-full bg-background/80 backdrop-blur-xl border border-white/10 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 -translate-x-4 group-hover/gallery:translate-x-0"
               >
-                <ChevronLeft className="h-6 w-6 text-white" />
+                <ChevronLeft className="h-6 w-6 text-foreground" />
               </button>
             </div>
             <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center pointer-events-none opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-500">
               <button 
                 onClick={nextImage} 
                 disabled={currentIndex === selectedReceipts.length - 1} 
-                className="pointer-events-auto w-12 h-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/5 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 translate-x-4 group-hover/gallery:translate-x-0"
+                className="pointer-events-auto w-12 h-12 rounded-full bg-background/80 backdrop-blur-xl border border-white/10 disabled:opacity-0 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 translate-x-4 group-hover/gallery:translate-x-0"
               >
-                <ChevronRight className="h-6 w-6 text-white" />
+                <ChevronRight className="h-6 w-6 text-foreground" />
               </button>
             </div>
           </>
@@ -349,8 +349,8 @@ export default function DespesasPage() {
 
       {/* Rodapé da Galeria com Dots */}
       {selectedReceipts && selectedReceipts.length > 1 && (
-        <div className="h-20 flex items-center justify-center bg-black/40 backdrop-blur-xl border-t border-white/5 shrink-0">
-          <div className="flex gap-3 p-2.5 rounded-full bg-white/5 border border-white/10 shadow-2xl">
+        <div className="h-20 flex items-center justify-center bg-transparent border-t border-white/[0.04] shrink-0">
+          <div className="flex gap-3 p-2.5 rounded-full bg-white/[0.04] border border-white/10">
             {selectedReceipts.map((_, i) => (
               <button 
                 key={i} 
@@ -358,8 +358,8 @@ export default function DespesasPage() {
                 className={cn(
                   "h-2 rounded-full transition-all duration-500 ease-out",
                   currentIndex === i 
-                    ? "w-2 bg-primary shadow-[0_0_12px_var(--primary)] scale-125" 
-                    : "w-2 bg-white/20 hover:bg-white/40 hover:scale-110"
+                    ? "w-4 bg-primary shadow-[0_0_8px_var(--primary)]/40" 
+                    : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
                 )}
               />
             ))}
@@ -618,7 +618,7 @@ export default function DespesasPage() {
                       return (
                         <div 
                           key={i}
-                          className="absolute h-10 w-10 rounded-xl ring-1 ring-white/10 overflow-hidden shadow-[0_8px_16px_rgba(0,0,0,0.4)] transition-all duration-500"
+                          className="absolute h-10 w-10 rounded-xl ring-1 ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500"
                           style={{ 
                             left: `${reverseIndex * 8}px`,
                             zIndex: reverseIndex,
@@ -682,7 +682,7 @@ export default function DespesasPage() {
                               <div 
                                 key={i}
                                 className={cn(
-                                  "absolute h-10 w-10 rounded-xl ring-1 ring-white/10 overflow-hidden shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out",
+                                  "absolute h-10 w-10 rounded-xl ring-1 ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
                                   "group-hover/stack:scale-110 group-hover/stack:translate-x-[var(--hx)] group-hover/stack:rotate-[var(--hr)]"
                                 )}
                                 style={{ 
