@@ -220,7 +220,7 @@ export default function DashboardPage() {
                     animationDuration={1200}
                   >
                     {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={`rgba(255,255,255, ${0.8 - (index * 0.12)})`} stroke="none" />
+                      <Cell key={`cell-${index}`} fill={`oklch(from var(--primary) l c h / ${0.9 - (index * 0.15)})`} stroke="none" />
                     ))}
                   </Pie>
                   <Tooltip content={<CategoryTooltip />} />
