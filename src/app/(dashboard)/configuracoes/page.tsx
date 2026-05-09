@@ -17,7 +17,7 @@ export default function ConfiguracoesPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] text-muted-foreground text-[10px] font-medium uppercase tracking-wider border border-white/[0.08]">Preferências</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-muted border border-border text-muted-foreground text-[10px] font-bold uppercase tracking-wider">Preferências</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground flex items-center gap-4">
             Ajustes
@@ -41,8 +41,8 @@ export default function ConfiguracoesPage() {
 
       <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
         {/* Modo de Exibição */}
-        <Card className="lg:col-span-1 bg-white/[0.01] border-border/50 rounded-2xl overflow-hidden backdrop-blur-md h-fit">
-          <CardHeader className="p-8 border-b border-white/[0.04]">
+        <Card className="lg:col-span-1 bg-card border-border/50 rounded-2xl overflow-hidden shadow-sm h-fit">
+          <CardHeader className="p-8 border-b border-border/40">
             <CardTitle className="text-xl font-semibold">Exibição</CardTitle>
             <CardDescription>Alterne entre os modos claro e escuro.</CardDescription>
           </CardHeader>
@@ -58,12 +58,12 @@ export default function ConfiguracoesPage() {
                 className={cn(
                   "flex items-center justify-between w-full p-4 rounded-xl border transition-all duration-300",
                   theme === t.id 
-                    ? "border-primary bg-primary/10 shadow-sm shadow-primary/5" 
-                    : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] text-muted-foreground"
+                    ? "border-primary bg-primary/5 shadow-sm" 
+                    : "border-border bg-muted/40 hover:bg-muted/60 text-muted-foreground"
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <div className={cn("p-2 rounded-lg border", theme === t.id ? "bg-white/10 border-white/20 text-primary" : "bg-white/[0.03] border-white/5")}>
+                  <div className={cn("p-2 rounded-lg border", theme === t.id ? "bg-primary/10 border-primary/20 text-primary" : "bg-background border-border")}>
                     <t.icon className="h-4 w-4" />
                   </div>
                   <span className="text-sm font-semibold">{t.label}</span>
@@ -75,8 +75,8 @@ export default function ConfiguracoesPage() {
         </Card>
 
         {/* Seleção de Cores */}
-        <Card className="lg:col-span-2 bg-white/[0.01] border-border/50 rounded-2xl overflow-hidden backdrop-blur-md">
-          <CardHeader className="p-8 border-b border-white/[0.04]">
+        <Card className="lg:col-span-2 bg-card border-border/50 rounded-2xl overflow-hidden shadow-sm">
+          <CardHeader className="p-8 border-b border-border/40">
             <CardTitle className="text-xl font-semibold">Cor de Destaque</CardTitle>
             <CardDescription>Escolha a cor que será aplicada em botões e indicadores.</CardDescription>
           </CardHeader>
@@ -89,13 +89,13 @@ export default function ConfiguracoesPage() {
                   className={cn(
                     "flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 group",
                     accent.name === color.name 
-                      ? "border-primary bg-primary/10 shadow-sm shadow-primary/5" 
-                      : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]"
+                      ? "border-primary bg-primary/5 shadow-sm" 
+                      : "border-border bg-muted/40 hover:bg-muted/60"
                   )}
                 >
                   <div 
-                    className="h-10 w-10 rounded-full flex items-center justify-center border border-white/10 shadow-inner"
-                    style={{ backgroundColor: color.value.includes('oklch') ? color.value : color.value }}
+                    className="h-10 w-10 rounded-full flex items-center justify-center border border-black/5 shadow-inner"
+                    style={{ backgroundColor: color.value }}
                   >
                     {accent.name === color.name && <Check className="h-5 w-5" style={{ color: color.foreground }} />}
                   </div>
@@ -109,7 +109,7 @@ export default function ConfiguracoesPage() {
               ))}
             </div>
 
-            <div className="mt-12 p-6 rounded-2xl bg-white/[0.02] border border-dashed border-white/[0.1] flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="mt-12 p-6 rounded-2xl bg-muted/40 border border-dashed border-border flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-1">
                 <h4 className="text-sm font-semibold text-foreground">Visualização em Tempo Real</h4>
                 <p className="text-xs text-muted-foreground">A cor selecionada é aplicada instantaneamente em toda a aplicação.</p>
