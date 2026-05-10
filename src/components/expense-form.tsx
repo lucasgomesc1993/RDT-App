@@ -63,7 +63,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     resolver: zodResolver(expenseSchema) as any,
     defaultValues: {
       local: '',
-      transporte: '',
+      transporte: 'Estacionamento',
       valor: 0,
       motivo: '',
       date: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
@@ -91,7 +91,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       } else {
         reset({
           local: '',
-          transporte: '',
+          transporte: 'Estacionamento',
           valor: 0,
           motivo: '',
           date: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
@@ -220,7 +220,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                       setValue('transporte', opt.value, { shouldDirty: true, shouldValidate: true })
                     }}
                   >
-                    <div className={cn("p-1.5 rounded-lg border transition-colors", isActive ? "bg-primary/10 border-primary/20 text-primary" : "bg-background/50 border-border text-muted-foreground")}>
+                    <div className={cn("p-1.5 rounded-lg border transition-colors", isActive ? "bg-primary/10 border-primary/20 text-primary" : "bg-background/50 border-border text-primary")}>
                       <Icon className="h-3.5 w-3.5" />
                     </div>
                     <span className="truncate">{opt.label}</span>
