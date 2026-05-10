@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Info, CreditCard, Clock, TramFront, BusFront, Navigation } from 'lucide-react'
+import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Minus, Info, CreditCard, Clock, TramFront, BusFront, Navigation } from 'lucide-react'
 import { Expense } from '@/types/database'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -268,25 +268,51 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
             {isMobile && (
               <div className="pt-4 pb-2 text-left">
                 <h2 className="text-3xl font-semibold tracking-tight">Quanto foi?</h2>
-                <p className="text-sm font-medium text-muted-foreground/40 mt-1">Agora informe o valor e o motivo deste gasto.</p>
+                <p className="text-sm font-medium text-muted-foreground/40 mt-1">Informe o valor e ajuste a quantidade com os botões.</p>
               </div>
             )}
             
-            <div className="grid grid-cols-4 gap-4 items-end">
-              <div className="col-span-3 grid gap-2">
+            <div className="grid grid-cols-2 gap-4 items-end">
+              <div className="grid gap-2">
                 <Label htmlFor="valor" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Valor Unitário</Label>
                 <Input id="valor" type="text" inputMode="decimal" value={formatCurrency(valorValue || 0)} onChange={handleCurrencyChange} className={cn("h-14 rounded-2xl bg-muted/50 border-border font-mono font-bold text-lg", (valorValue > 0) ? "text-primary shadow-[0_0_15px_var(--primary)]/5" : "text-muted-foreground/40")} />
                 {errors.valor && <span className="text-[10px] font-medium text-destructive ml-1">{errors.valor.message}</span>}
               </div>
-              <div className="col-span-1 grid gap-2">
-                <Label htmlFor="quantidade" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-center">Qtd</Label>
-                <Input id="quantidade" type="number" inputMode="numeric" min="1" max="10" {...register('quantidade')} className="h-14 rounded-2xl bg-muted/50 border-border text-center font-mono font-bold text-lg" />
+
+              <div className="grid gap-3">
+                <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-center">Quantidade</Label>
+                <div className="flex items-center justify-between bg-muted/30 rounded-2xl border border-border/60 p-1 h-14">
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const current = Number(watch('quantidade')) || 1
+                      if (current > 1) setValue('quantidade', current - 1, { shouldDirty: true })
+                    }}
+                    className="h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary active:scale-90 transition-all text-muted-foreground"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  
+                  <span className="text-xl font-black font-mono text-primary select-none">{watch('quantidade')}</span>
+
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const current = Number(watch('quantidade')) || 1
+                      if (current < 10) setValue('quantidade', current + 1, { shouldDirty: true })
+                    }}
+                    className="h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary active:scale-90 transition-all text-muted-foreground"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+                <input type="hidden" {...register('quantidade')} />
               </div>
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="motivo" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Motivo</Label>
-              <Input id="motivo" {...register('motivo')} placeholder="Ex: Visita ao cliente, Reunião técnica..." className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
+              <Label htmlFor="motivo" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Motivo do Gasto</Label>
+              <Input id="motivo" {...register('motivo')} placeholder="Chamado 1234567, Reunião" className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
               {errors.motivo && <span className="text-[10px] font-medium text-destructive ml-1">{errors.motivo.message}</span>}
             </div>
 
