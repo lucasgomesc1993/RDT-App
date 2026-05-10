@@ -21,7 +21,6 @@ export default function ConfiguracoesPage() {
           </div>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground flex items-center gap-4">
             Ajustes
-            <span className="text-muted-foreground text-lg font-normal font-mono opacity-40">/ Sistema</span>
           </h1>
           <p className="text-muted-foreground text-sm font-medium opacity-60">Personalize sua experiência visual e gerencie suas preferências de interface.</p>
         </div>

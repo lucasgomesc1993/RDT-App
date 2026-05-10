@@ -597,49 +597,7 @@ export default function DespesasPage() {
         </header>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-3">
-          <div className="order-2 sm:order-1 flex items-center gap-1 p-1 bg-muted/20 rounded-2xl border border-border/40 w-full sm:w-auto">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 rounded-xl hover:bg-background/50 text-muted-foreground"
-              onClick={() => {
-                const date = parseISO(selectedMonth + "-01")
-                setSelectedMonth(format(subMonths(date, 1), "yyyy-MM"))
-              }}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            
-            <Select value={selectedMonth} onValueChange={(val) => val && setSelectedMonth(val)}>
-              <SelectTrigger className="flex-1 sm:w-[180px] h-10 bg-transparent border-none focus:ring-0 font-bold uppercase tracking-widest text-[10px]">
-                <SelectValue>{format(parseISO(selectedMonth + "-01"), "MMMM 'de' yyyy", { locale: ptBR })}</SelectValue>
-              </SelectTrigger>
-              <SelectContent className="bg-background/95 backdrop-blur-2xl border-white/10 rounded-2xl">
-                {Array.from({ length: 12 }).map((_, i) => {
-                  const date = subMonths(new Date(), i)
-                  const value = format(date, "yyyy-MM")
-                  return (
-                    <SelectItem key={value} value={value} className="text-[10px] font-bold uppercase tracking-widest">
-                      {format(date, "MMMM 'de' yyyy", { locale: ptBR })}
-                    </SelectItem>
-                  )
-                })}
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 rounded-xl hover:bg-background/50 text-muted-foreground"
-              onClick={() => {
-                const date = parseISO(selectedMonth + "-01")
-                setSelectedMonth(format(addMonths(date, 1), "yyyy-MM"))
-              }}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="order-1 sm:order-2 w-full sm:w-auto">
+          <div className="w-full sm:w-auto ml-auto">
             <ExpenseForm onSuccess={() => setSelectedMonth(format(new Date(), "yyyy-MM"))} />
           </div>
         </div>

@@ -251,50 +251,54 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               </div>
             )}
             
-            <div className="grid gap-2">
-              <Label htmlFor="local" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Origem / Destino</Label>
-              <Input id="local" {...register('local')} placeholder="Agência 0123-45" className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
-              {errors.local && <span className="text-[10px] font-medium text-destructive ml-1">{errors.local.message}</span>}
-            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="local" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Origem / Destino</Label>
+                  <Input id="local" {...register('local')} placeholder="Agência 0123-45" className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
+                  {errors.local && <span className="text-[10px] font-medium text-destructive ml-1">{errors.local.message}</span>}
+                </div>
 
-            <div className="space-y-3">
-              <Label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] ml-1">Data do Gasto</Label>
-              {isMobile ? (
-                <Drawer>
-                  <DrawerTrigger asChild>
-                    <button type="button" className="w-full h-14 flex items-center justify-between text-left font-semibold rounded-2xl bg-muted/30 border border-border/60 px-5 outline-none">
-                      <span className="text-sm tracking-tight">{dateValue ? format(parseISO(dateValue), "EEEE, dd 'de' MMMM", { locale: ptBR }) : "Selecionar data..."}</span>
-                      <CalendarIcon className="h-4 w-4 text-primary" />
-                    </button>
-                  </DrawerTrigger>
-                  <DrawerContent className="bg-background/95 backdrop-blur-3xl border-white/10 rounded-t-[32px]">
-                    <div className="p-6 flex justify-center pb-12"><Calendar mode="single" selected={dateValue ? parseISO(dateValue) : undefined} onSelect={(date) => date && setValue('date', date.toISOString().split('T')[0], { shouldDirty: true, shouldValidate: true })} className="rounded-2xl border border-border/50 bg-muted/20 p-4" /></div>
-                  </DrawerContent>
-                </Drawer>
-              ) : (
-                <Popover>
-                  <PopoverTrigger className="w-full h-14 flex items-center justify-between text-left font-semibold rounded-2xl bg-muted/30 border border-border/60 hover:border-primary/30 px-5 outline-none group"><span className="text-sm tracking-tight">{dateValue ? format(parseISO(dateValue), "EEEE, dd 'de' MMMM", { locale: ptBR }) : "Selecionar data..."}</span><CalendarIcon className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" /></PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 rounded-[24px] border-white/10 bg-background/95 backdrop-blur-3xl" align="start"><Calendar mode="single" selected={dateValue ? parseISO(dateValue) : undefined} onSelect={(date) => date && setValue('date', date.toISOString().split('T')[0], { shouldDirty: true, shouldValidate: true })} className="p-4" /></PopoverContent>
-                </Popover>
-              )}
-            </div>
-
-            <div className="grid gap-3">
-              <Label className="ml-1 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Meio de Transporte</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {transportOptions.map((opt) => {
-                  const Icon = opt.icon
-                  const isActive = !showCustomTransport && transporteValue === opt.value
-                  return (
-                    <button key={opt.value} type="button" onClick={() => { setShowCustomTransport(false); setValue('transporte', opt.value, { shouldDirty: true, shouldValidate: true }) }} className={cn("flex items-center gap-3 h-14 px-4 rounded-2xl border text-[11px] font-semibold transition-all duration-300", isActive ? "bg-primary/5 border-primary text-foreground shadow-sm" : "bg-muted/30 border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/60")}>
-                      <div className={cn("p-1.5 rounded-lg border transition-colors", isActive ? "bg-primary/10 border-primary/20 text-primary" : "bg-background/50 border-border text-primary")}><Icon className="h-3.5 w-3.5" /></div>
-                      <span className="truncate">{opt.label}</span>
-                    </button>
-                  )
-                })}
-                <button type="button" onClick={() => { setShowCustomTransport(true); setValue('transporte', '', { shouldDirty: true }) }} className={cn("flex items-center justify-center h-14 px-4 rounded-2xl border border-dashed text-[9px] font-bold uppercase tracking-[0.15em] transition-all duration-300", showCustomTransport ? "bg-primary/5 border-primary text-primary shadow-sm" : "bg-transparent border-border/30 text-muted-foreground/30 hover:text-muted-foreground/60 hover:border-border/60")}>Outros</button>
+                <div className="space-y-3">
+                  <Label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] ml-1">Data do Gasto</Label>
+                  {isMobile ? (
+                    <Drawer>
+                      <DrawerTrigger asChild>
+                        <button type="button" className="w-full h-14 flex items-center justify-between text-left font-semibold rounded-2xl bg-muted/30 border border-border/60 px-5 outline-none">
+                          <span className="text-sm tracking-tight">{dateValue ? format(parseISO(dateValue), "EEEE, dd 'de' MMMM", { locale: ptBR }) : "Selecionar data..."}</span>
+                          <CalendarIcon className="h-4 w-4 text-primary" />
+                        </button>
+                      </DrawerTrigger>
+                      <DrawerContent className="bg-background/95 backdrop-blur-3xl border-white/10 rounded-t-[32px]">
+                        <div className="p-6 flex justify-center pb-12"><Calendar mode="single" selected={dateValue ? parseISO(dateValue) : undefined} onSelect={(date) => date && setValue('date', date.toISOString().split('T')[0], { shouldDirty: true, shouldValidate: true })} className="rounded-2xl border border-border/50 bg-muted/20 p-4" /></div>
+                      </DrawerContent>
+                    </Drawer>
+                  ) : (
+                    <Popover>
+                      <PopoverTrigger className="w-full h-14 flex items-center justify-between text-left font-semibold rounded-2xl bg-muted/30 border border-border/60 hover:border-primary/30 px-5 outline-none group"><span className="text-sm tracking-tight">{dateValue ? format(parseISO(dateValue), "EEEE, dd 'de' MMMM", { locale: ptBR }) : "Selecionar data..."}</span><CalendarIcon className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" /></PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 rounded-[24px] border-white/10 bg-background/95 backdrop-blur-3xl" align="start"><Calendar mode="single" selected={dateValue ? parseISO(dateValue) : undefined} onSelect={(date) => date && setValue('date', date.toISOString().split('T')[0], { shouldDirty: true, shouldValidate: true })} className="p-4" /></PopoverContent>
+                    </Popover>
+                  )}
+                </div>
               </div>
-              {showCustomTransport && (<Input className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 animate-in fade-in slide-in-from-top-2 text-sm" placeholder="Especifique o tipo..." {...register('transporte')} />)}
+
+              <div className="grid gap-3">
+                <Label className="ml-1 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Meio de Transporte</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {transportOptions.map((opt) => {
+                    const Icon = opt.icon
+                    const isActive = !showCustomTransport && transporteValue === opt.value
+                    return (
+                      <button key={opt.value} type="button" onClick={() => { setShowCustomTransport(false); setValue('transporte', opt.value, { shouldDirty: true, shouldValidate: true }) }} className={cn("flex items-center gap-3 h-14 px-4 rounded-2xl border text-[11px] font-semibold transition-all duration-300", isActive ? "bg-primary/5 border-primary text-foreground shadow-sm" : "bg-muted/30 border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/60")}>
+                        <div className={cn("p-1.5 rounded-lg border transition-colors", isActive ? "bg-primary/10 border-primary/20 text-primary" : "bg-background/50 border-border text-primary")}><Icon className="h-3.5 w-3.5" /></div>
+                        <span className="truncate">{opt.label}</span>
+                      </button>
+                    )
+                  })}
+                  <button type="button" onClick={() => { setShowCustomTransport(true); setValue('transporte', '', { shouldDirty: true }) }} className={cn("flex items-center justify-center h-14 px-4 rounded-2xl border border-dashed text-[9px] font-bold uppercase tracking-[0.15em] transition-all duration-300", showCustomTransport ? "bg-primary/5 border-primary text-primary shadow-sm" : "bg-transparent border-border/30 text-muted-foreground/30 hover:text-muted-foreground/60 hover:border-border/60")}>Outros</button>
+                </div>
+                {showCustomTransport && (<Input className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 animate-in fade-in slide-in-from-top-2 text-sm" placeholder="Especifique o tipo..." {...register('transporte')} />)}
+              </div>
             </div>
           </div>
         )}
@@ -309,67 +313,73 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               </div>
             )}
             
-            <div className="grid grid-cols-2 gap-4 items-end">
-              <div className="grid gap-2">
-                <Label htmlFor="valor" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Valor Unitário</Label>
-                <Input id="valor" type="text" inputMode="decimal" value={formatCurrency(valorValue || 0)} onChange={handleCurrencyChange} className={cn("h-14 rounded-2xl bg-muted/50 border-border font-mono font-bold text-lg", (valorValue > 0) ? "text-primary shadow-[0_0_15px_var(--primary)]/5" : "text-muted-foreground/40")} />
-                {errors.valor && <span className="text-[10px] font-medium text-destructive ml-1">{errors.valor.message}</span>}
-              </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4 items-end">
+                  <div className="grid gap-2">
+                    <Label htmlFor="valor" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Valor Unitário</Label>
+                    <Input id="valor" type="text" inputMode="decimal" value={formatCurrency(valorValue || 0)} onChange={handleCurrencyChange} className={cn("h-14 rounded-2xl bg-muted/50 border-border font-mono font-bold text-lg", (valorValue > 0) ? "text-primary shadow-[0_0_15px_var(--primary)]/5" : "text-muted-foreground/40")} />
+                    {errors.valor && <span className="text-[10px] font-medium text-destructive ml-1">{errors.valor.message}</span>}
+                  </div>
 
-              <div className="grid gap-3">
-                <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-center">Quantidade</Label>
-                <div className="flex items-center justify-between bg-muted/30 rounded-2xl border border-border/60 p-1 h-14">
-                  <button 
-                    type="button" 
-                    onClick={() => {
-                      const current = Number(watch('quantidade')) || 1
-                      if (current > 1) setValue('quantidade', current - 1, { shouldDirty: true })
-                    }}
-                    className="h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary active:scale-90 transition-all text-muted-foreground"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  
-                  <span className="text-xl font-black font-mono text-primary select-none">{watch('quantidade')}</span>
+                  <div className="grid gap-3">
+                    <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-center">Quantidade</Label>
+                    <div className="flex items-center justify-between bg-muted/30 rounded-2xl border border-border/60 p-1 h-14">
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          const current = Number(watch('quantidade')) || 1
+                          if (current > 1) setValue('quantidade', current - 1, { shouldDirty: true })
+                        }}
+                        className="h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary active:scale-90 transition-all text-muted-foreground"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      
+                      <span className="text-xl font-black font-mono text-primary select-none">{watch('quantidade')}</span>
 
-                  <button 
-                    type="button" 
-                    onClick={() => {
-                      const current = Number(watch('quantidade')) || 1
-                      if (current < 10) setValue('quantidade', current + 1, { shouldDirty: true })
-                    }}
-                    className="h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary active:scale-90 transition-all text-muted-foreground"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          const current = Number(watch('quantidade')) || 1
+                          if (current < 10) setValue('quantidade', current + 1, { shouldDirty: true })
+                        }}
+                        className="h-10 w-10 rounded-xl bg-background/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary active:scale-90 transition-all text-muted-foreground"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <input type="hidden" {...register('quantidade')} />
+                  </div>
                 </div>
-                <input type="hidden" {...register('quantidade')} />
-              </div>
-            </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="motivo" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Motivo do Gasto</Label>
-              <Input id="motivo" {...register('motivo')} placeholder="Chamado 1234567, Reunião" className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
-              {errors.motivo && <span className="text-[10px] font-medium text-destructive ml-1">{errors.motivo.message}</span>}
-            </div>
-
-            <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between">
-              <div>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-primary/60 mb-0.5">Total Calculado</p>
-                <p className="text-2xl font-black font-mono text-primary">{formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}</p>
-              </div>
-              <Info className="h-5 w-5 text-primary/40" />
-            </div>
-            
-            {isEditing && (
-              <div className="space-y-2">
-                <Label htmlFor="pago-status" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Reembolsado?</Label>
-                <div className="flex items-center justify-between h-14 px-5 rounded-2xl bg-muted/30 border border-border">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{watch('pago') ? 'SIM' : 'NÃO'}</span>
-                   <Switch id="pago-status" checked={watch('pago')} onCheckedChange={(checked) => setValue('pago', checked, { shouldDirty: true })} className="data-[state=checked]:bg-primary" />
+                <div className="grid gap-2">
+                  <Label htmlFor="motivo" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Motivo do Gasto</Label>
+                  <Input id="motivo" {...register('motivo')} placeholder="Chamado 1234567, Reunião" className="h-12 rounded-2xl bg-muted/50 border-border focus-visible:bg-muted/80 transition-colors" />
+                  {errors.motivo && <span className="text-[10px] font-medium text-destructive ml-1">{errors.motivo.message}</span>}
                 </div>
               </div>
-            )}
+
+              <div className="space-y-6">
+                <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-primary/60 mb-0.5">Total Calculado</p>
+                    <p className="text-2xl font-black font-mono text-primary">{formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}</p>
+                  </div>
+                  <Info className="h-5 w-5 text-primary/40" />
+                </div>
+                
+                {isEditing && (
+                  <div className="space-y-2">
+                    <Label htmlFor="pago-status" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Reembolsado?</Label>
+                    <div className="flex items-center justify-between h-14 px-5 rounded-2xl bg-muted/30 border border-border">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{watch('pago') ? 'SIM' : 'NÃO'}</span>
+                      <Switch id="pago-status" checked={watch('pago')} onCheckedChange={(checked) => setValue('pago', checked, { shouldDirty: true })} className="data-[state=checked]:bg-primary" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -383,44 +393,50 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               </div>
             )}
             
-            <div className="grid gap-2">
-              <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Comprovante</Label>
-              <button 
-                type="button" 
-                onClick={(e) => {
-                  console.log('[ExpenseForm] Botão de anexo clicado.');
-                  e.preventDefault();
-                  e.stopPropagation();
-                  fileInputRef.current?.click();
-                }} 
-                disabled={uploading} 
-                className={cn("flex items-center justify-between h-20 px-6 rounded-2xl border border-dashed transition-all bg-muted/30 w-full outline-none", uploading ? "opacity-50 cursor-not-allowed border-primary" : "border-border/60 hover:border-primary/40 cursor-pointer")}
-              >
-                <div className="flex items-center gap-4 text-left">
-                  <div className="p-3 rounded-xl bg-background/50 border border-border">
-                    {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <Upload className="h-5 w-5 text-muted-foreground" />}
-                  </div>
-                  <div className="flex flex-col"><span className="text-[11px] font-black text-foreground uppercase tracking-widest">{uploading ? 'Enviando...' : 'Selecionar Fotos'}</span><span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">JPG, PNG ou WebP</span></div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="grid gap-2">
+                  <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Comprovante</Label>
+                  <button 
+                    type="button" 
+                    onClick={(e) => {
+                      console.log('[ExpenseForm] Botão de anexo clicado.');
+                      e.preventDefault();
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }} 
+                    disabled={uploading} 
+                    className={cn("flex items-center justify-between h-20 px-6 rounded-2xl border border-dashed transition-all bg-muted/30 w-full outline-none", uploading ? "opacity-50 cursor-not-allowed border-primary" : "border-border/60 hover:border-primary/40 cursor-pointer")}
+                  >
+                    <div className="flex items-center gap-4 text-left">
+                      <div className="p-3 rounded-xl bg-background/50 border border-border">
+                        {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <Upload className="h-5 w-5 text-muted-foreground" />}
+                      </div>
+                      <div className="flex flex-col"><span className="text-[11px] font-black text-foreground uppercase tracking-widest">{uploading ? 'Enviando...' : 'Selecionar Fotos'}</span><span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">JPG, PNG ou WebP</span></div>
+                    </div>
+                    <Plus className="h-5 w-5 text-muted-foreground/40" />
+                  </button>
+                  <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" disabled={uploading} />
                 </div>
-                <Plus className="h-5 w-5 text-muted-foreground/40" />
-              </button>
-              <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" disabled={uploading} />
-            </div>
-
-            {receiptUrls && receiptUrls.length > 0 && (
-              <div className="grid grid-cols-4 gap-3 p-4 rounded-2xl bg-muted/30 border border-border animate-in fade-in zoom-in duration-500">
-                {receiptUrls.map((url, idx) => (
-                  <div key={idx} className="relative group/img aspect-square overflow-hidden rounded-xl border border-white/10 shadow-sm">
-                    <img src={url} className="h-full w-full object-cover" alt="recibo" />
-                    <button type="button" onClick={() => { const urls = receiptUrls?.filter((_, i) => i !== idx); setValue('receipt_urls', urls?.length ? urls : null, { shouldDirty: true }) }} className="absolute inset-0 bg-destructive/60 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all"><X className="h-5 w-5 text-white stroke-[3]" /></button>
-                  </div>
-                ))}
               </div>
-            )}
 
-            <div className="p-6 rounded-2xl bg-muted/20 border border-border/40 space-y-4">
-              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest"><span className="text-muted-foreground/40">Resumo</span><span className="text-primary">{transporteValue}</span></div>
-              <div className="flex items-center justify-between text-base font-black"><span className="text-foreground/40">Total</span><span className="text-foreground font-mono">{formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}</span></div>
+              <div className="space-y-6">
+                {receiptUrls && receiptUrls.length > 0 && (
+                  <div className="grid grid-cols-4 gap-3 p-4 rounded-2xl bg-muted/30 border border-border animate-in fade-in zoom-in duration-500">
+                    {receiptUrls.map((url, idx) => (
+                      <div key={idx} className="relative group/img aspect-square overflow-hidden rounded-xl border border-white/10 shadow-sm">
+                        <img src={url} className="h-full w-full object-cover" alt="recibo" />
+                        <button type="button" onClick={() => { const urls = receiptUrls?.filter((_, i) => i !== idx); setValue('receipt_urls', urls?.length ? urls : null, { shouldDirty: true }) }} className="absolute inset-0 bg-destructive/60 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all"><X className="h-5 w-5 text-white stroke-[3]" /></button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="p-6 rounded-2xl bg-muted/20 border border-border/40 space-y-4">
+                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest"><span className="text-muted-foreground/40">Resumo</span><span className="text-primary">{transporteValue}</span></div>
+                  <div className="flex items-center justify-between text-base font-black"><span className="text-foreground/40">Total</span><span className="text-foreground font-mono">{formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}</span></div>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -492,7 +508,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger>{commonTrigger}</DialogTrigger>
       <DialogContent 
-        className="sm:max-w-[480px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-[32px] shadow-2xl" 
+        className="sm:max-w-[480px] md:max-w-[720px] lg:max-w-[800px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-[32px] shadow-2xl" 
         showCloseButton={false}
       >
         <div className="flex flex-col h-full overflow-hidden">
