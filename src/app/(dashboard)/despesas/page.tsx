@@ -702,7 +702,7 @@ export default function DespesasPage() {
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.03] shadow-md" : "border-border/40 hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-500", expense.pago ? "bg-primary/20 text-primary border border-primary/30" : "bg-primary/10 text-primary/40 border border-primary/20")}>
@@ -710,7 +710,21 @@ export default function DespesasPage() {
                   </div>
                   <div className="space-y-0.5"><p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground opacity-50">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</p><h3 className="font-semibold text-base text-foreground leading-none">{expense.local}</h3></div>
                 </div>
-                {selectionMode ? <div className={cn("h-5 w-5 rounded border flex items-center justify-center transition-all", isSelected ? "bg-primary border-primary" : "border-border")}>{isSelected && <Check className="h-3 w-3 text-primary-foreground" />}</div> : <div className="flex gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg"><Edit2 className="h-4 w-4 text-muted-foreground/60 hover:text-foreground" /></Button>} /><Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div>}
+                {selectionMode ? (
+                  <div className={cn(
+                    "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
+                    isSelected 
+                      ? "bg-primary border-primary shadow-sm shadow-primary/20" 
+                      : "border-border/40 dark:border-white/10"
+                  )}>
+                    {isSelected && <Check className="h-3 w-3 text-primary-foreground stroke-[4px]" />}
+                  </div>
+                ) : (
+                  <div className="flex gap-1">
+                    <ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg"><Edit2 className="h-4 w-4 text-muted-foreground/60 hover:text-foreground" /></Button>} />
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-[0.15em] flex items-center gap-1.5 transition-colors group-hover:text-muted-foreground/80">
@@ -731,7 +745,7 @@ export default function DespesasPage() {
                       return (
                         <div 
                           key={i}
-                          className="absolute h-10 w-10 rounded-xl ring-1 ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500"
+                          className="absolute h-10 w-10 rounded-xl ring-1 ring-black/10 dark:ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500"
                           style={{ 
                             left: `${reverseIndex * 8}px`,
                             zIndex: reverseIndex,
@@ -764,7 +778,21 @@ export default function DespesasPage() {
           <Table>
             <TableHeader className="bg-muted/25 border-b border-border/30">
               <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="w-[60px] pl-6"><Checkbox className="rounded-md" checked={selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0} onCheckedChange={handleSelectAll} /></TableHead>
+                <TableHead className="w-[60px] pl-8">
+                  <button 
+                    onClick={() => handleSelectAll(selectedIds.length !== filteredExpenses.length)}
+                    className={cn(
+                      "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
+                      selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0
+                        ? "bg-primary border-primary shadow-sm shadow-primary/20" 
+                        : "border-border/40 dark:border-white/10 hover:border-primary/50"
+                    )}
+                  >
+                    {selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0 && (
+                      <Check className="h-3 w-3 text-primary-foreground stroke-[4px]" />
+                    )}
+                  </button>
+                </TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] py-6">Data</TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em]">Estabelecimento</TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-center">Quant.</TableHead>
@@ -779,8 +807,20 @@ export default function DespesasPage() {
               {paginatedExpenses.map((expense) => { 
                 const isSelected = selectedIds.includes(expense.id); 
                 return (
-                  <TableRow key={expense.id} className={cn("border-b border-border/20 hover:bg-muted/10 transition-all duration-300", isSelected && "bg-primary/[0.04]")}>
-                    <TableCell className="pl-6"><Checkbox className="rounded-md" checked={isSelected} onCheckedChange={(checked) => handleSelectRow(expense.id, !!checked)} /></TableCell>
+                  <TableRow key={expense.id} className={cn("border-b border-border/20 hover:bg-muted/10 transition-all duration-300", isSelected && "bg-primary/[0.04] dark:bg-primary/[0.08]")}>
+                    <TableCell className="pl-8">
+                      <button 
+                        onClick={() => handleSelectRow(expense.id, !isSelected)}
+                        className={cn(
+                          "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
+                          isSelected 
+                            ? "bg-primary border-primary shadow-sm shadow-primary/20" 
+                            : "border-border/40 dark:border-white/10 hover:border-primary/50"
+                        )}
+                      >
+                        {isSelected && <Check className="h-3 w-3 text-primary-foreground stroke-[4px]" />}
+                      </button>
+                    </TableCell>
                     <TableCell className="font-medium text-muted-foreground text-sm py-5">{format(parseISO(expense.date), 'dd MMM, yyyy', { locale: ptBR })}</TableCell>
                     <TableCell><div className="flex flex-col"><span className="font-semibold text-foreground text-base">{expense.local}</span><span className="text-[10px] font-semibold uppercase text-muted-foreground/40 flex items-center gap-1.5 mt-1 tracking-[0.15em] transition-colors group-hover:text-muted-foreground/70">
                       {(() => {
@@ -804,7 +844,7 @@ export default function DespesasPage() {
                               <div 
                                 key={i}
                                 className={cn(
-                                  "absolute h-10 w-10 rounded-xl ring-1 ring-border/30 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
+                                  "absolute h-10 w-10 rounded-xl ring-1 ring-black/10 dark:ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
                                   "group-hover/stack:scale-110 group-hover/stack:translate-x-[var(--hx)] group-hover/stack:rotate-[var(--hr)]"
                                 )}
                                 style={{ 
