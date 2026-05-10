@@ -260,7 +260,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 onChange={handleCurrencyChange} 
                 className={cn(
                   "h-12 rounded-2xl bg-muted/50 border-border font-mono font-bold text-lg",
-                  (valorValue === 0 || !valorValue) ? "text-muted-foreground/40" : "text-foreground"
+                  (valorValue === 0 || !valorValue) ? "text-muted-foreground/40" : "text-primary shadow-[0_0_15px_var(--primary)]/10"
                 )} 
               />
             </div>

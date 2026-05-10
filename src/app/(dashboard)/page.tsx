@@ -2,7 +2,7 @@
 
 import { useExpenses } from '@/hooks/use-expenses'
 import { ExpenseForm } from '@/components/expense-form'
-import { Receipt, AlertCircle, CheckCircle2, Loader2, BarChart3, PieChart as PieChartIcon, TrendingUp, Plus } from 'lucide-react'
+import { Receipt, AlertCircle, CheckCircle2, Loader2, BarChart3, PieChart as PieChartIcon, TrendingUp, Plus, MousePointer2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -59,10 +59,23 @@ export default function DashboardPage() {
   const { data: expenses, isLoading } = useExpenses()
 
   const stats = useMemo(() => {
-    if (!expenses) return { total: 0, pending: 0, paid: 0 }
-    const total = expenses.reduce((acc, curr) => acc + (curr.valor * curr.quantidade), 0)
+    if (!expenses) return { pending: 0, monthCount: 0, monthTotal: 0 }
+    
+    const now = new Date()
+    const monthStart = startOfMonth(now)
+    const monthEnd = endOfMonth(now)
+    
     const pending = expenses.filter(e => !e.pago).reduce((acc, curr) => acc + (curr.valor * curr.quantidade), 0)
-    return { total, pending, paid: total - pending }
+    
+    const currentMonthExpenses = expenses.filter(e => {
+      const d = parseISO(e.date)
+      return isWithinInterval(d, { start: monthStart, end: monthEnd })
+    })
+    
+    const monthCount = currentMonthExpenses.length
+    const monthTotal = currentMonthExpenses.reduce((acc, curr) => acc + (curr.valor * curr.quantidade), 0)
+    
+    return { pending, monthCount, monthTotal }
   }, [expenses])
 
   const chartData = useMemo(() => {
@@ -126,9 +139,9 @@ export default function DashboardPage() {
 
       <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0">
         {[
-          { label: 'Total Registrado', value: stats.total, icon: Receipt },
-          { label: 'Pendente Reembolso', value: stats.pending, icon: AlertCircle },
-          { label: 'Total Pago', value: stats.paid, icon: CheckCircle2 },
+          { label: 'Saldo Pendente', value: stats.pending, icon: AlertCircle, isCurrency: true },
+          { label: 'Transações / Mês', value: stats.monthCount, icon: MousePointer2, isCurrency: false },
+          { label: 'Gasto Mensal', value: stats.monthTotal, icon: TrendingUp, isCurrency: true },
         ].map((stat, i) => (
           <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
             <div className="flex items-center justify-between mb-6">
@@ -138,7 +151,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="text-3xl font-semibold tracking-tight font-mono text-foreground transition-transform duration-500 group-hover:translate-x-1">
-              R$ {stat.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              {stat.isCurrency ? 'R$ ' : ''}{stat.value.toLocaleString('pt-BR', { minimumFractionDigits: stat.isCurrency ? 2 : 0 })}
             </div>
           </div>
         ))}
