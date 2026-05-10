@@ -41,7 +41,7 @@ import {
   TrendingUp, SlidersHorizontal, MousePointer2,
   Check, Calendar, MapPin, Receipt,
   Car, Ticket, Bus, Utensils, Layers, TramFront, BusFront, Navigation,
-  ChevronsLeft, ChevronsRight
+  ChevronsLeft, ChevronsRight, AlertCircle
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -745,7 +745,13 @@ export default function DespesasPage() {
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", (expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && "border-destructive/30 bg-destructive/[0.02]", selectionMode && "active:scale-[0.98]")}>
+              {(expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && (
+                <div className="absolute -top-2.5 right-6 px-3 py-1 bg-destructive text-white text-[8px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-destructive/20 flex items-center gap-1.5 animate-pulse">
+                  <AlertCircle className="h-3 w-3" />
+                  Falta Comprovante
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-500", expense.pago ? "bg-primary/20 text-primary border border-primary/30" : "bg-primary/10 text-primary/40 border border-primary/20")}>
@@ -909,7 +915,12 @@ export default function DespesasPage() {
                             )
                           })}
                         </button>
-                      ) : null}
+                      ) : (expense.transporte === 'Pedágio' && (
+                        <div className="flex flex-col items-center gap-1 text-destructive animate-in fade-in zoom-in duration-500">
+                          <AlertCircle className="h-5 w-5" />
+                          <span className="text-[8px] font-black uppercase tracking-tighter">Falta Comprovante</span>
+                        </div>
+                      ))}
                     </TableCell>
                     <TableCell className="text-center"><button onClick={() => togglePayment.mutate({ id: expense.id, pago: expense.pago })} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all border", expense.pago ? 'bg-primary/10 text-primary border-primary/20 shadow-sm' : 'bg-transparent text-muted-foreground border border-border/30 dark:border-border/40 hover:bg-muted/30 dark:hover:bg-muted/60')}>{expense.pago ? 'Confirmado' : 'Pendente'}</button></TableCell>
                     <TableCell className="text-right pr-6"><div className="flex items-center justify-end gap-1"><ExpenseForm expense={expense} trigger={<Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-foreground"><Edit2 className="h-4 w-4" /></Button>} /><Button variant="ghost" size="icon" className="rounded-lg h-9 w-9 text-muted-foreground/60 hover:text-destructive" onClick={() => setExpenseToDelete(expense.id)}><Trash2 className="h-4 w-4" /></Button></div></TableCell>
