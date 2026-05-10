@@ -491,7 +491,7 @@ export default function DespesasPage() {
         </div>
       </div>
       <div className="space-y-3">
-        <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Categoria</label>
+        <label className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground ml-1">Meio de Transporte</label>
         <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => setTransportFilter('all')}
@@ -832,7 +832,7 @@ export default function DespesasPage() {
                   </button>
                 </TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] py-6">Data</TableHead>
-                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em]">Estabelecimento</TableHead>
+                <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em]">Origem / Destino</TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-center">Quant.</TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-right">Total</TableHead>
                 <TableHead className="font-medium text-muted-foreground text-[10px] uppercase tracking-[0.2em] text-center">Comprovante</TableHead>
