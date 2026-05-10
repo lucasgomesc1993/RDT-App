@@ -66,7 +66,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       transporte: '',
       valor: 0,
       motivo: '',
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toLocaleDateString('en-CA'),
       quantidade: 1,
       pago: false,
       receipt_urls: null
