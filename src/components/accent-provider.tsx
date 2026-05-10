@@ -26,6 +26,7 @@ export const accentColors: AccentColor[] = [
   { name: "indigo", label: "Índigo", value: "oklch(0.65 0.2 260)", foreground: "oklch(0.98 0 0)" },
   { name: "violet", label: "Violeta", value: "oklch(0.6 0.2 290)", foreground: "oklch(0.98 0 0)" },
   { name: "fuchsia", label: "Fúcsia", value: "oklch(0.65 0.2 320)", foreground: "oklch(0.98 0 0)" },
+  { name: "pink", label: "Pink", value: "oklch(0.75 0.15 340)", foreground: "oklch(0.04 0 0)" },
 ]
 
 type AccentContextType = {
