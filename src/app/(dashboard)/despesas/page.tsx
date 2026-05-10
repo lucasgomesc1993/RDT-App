@@ -139,11 +139,18 @@ export default function DespesasPage() {
   const handleBatchMarkAsPaid = async () => {
     if (selectedIds.length === 0) return
     const toUpdate = filteredExpenses.filter(e => selectedIds.includes(e.id) && !e.pago)
+    if (toUpdate.length === 0) {
+      setSelectedIds([])
+      return
+    }
     try {
       await Promise.all(toUpdate.map(e => updateExpense.mutateAsync({ id: e.id, pago: true })))
       setSelectedIds([])
       setSelectionMode(false)
-    } catch (error) { console.error('Batch update failed:', error) }
+    } catch (error) { 
+      console.error('Batch update failed:', error)
+      alert('Erro ao atualizar algumas despesas.')
+    }
   }
 
   const handleBatchDownload = async () => {
@@ -676,22 +683,39 @@ export default function DespesasPage() {
       </div>
 
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-xl animate-in slide-in-from-bottom-10 duration-500">
-          <div className="bg-foreground text-background p-1.5 rounded-2xl flex items-center justify-between shadow-2xl border border-white/10">
-            <div className="flex items-center gap-2 pl-3">
-              <div className="h-6 w-6 rounded-lg bg-background text-foreground flex items-center justify-center font-bold text-[10px] font-mono">{selectedIds.length}</div>
-              <span className="text-[10px] font-semibold uppercase tracking-widest hidden lg:inline opacity-70">selecionados</span>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-lg animate-in fade-in slide-in-from-bottom-6 duration-500">
+          <div className="bg-foreground dark:bg-background/80 backdrop-blur-2xl text-background dark:text-foreground p-1.5 rounded-2xl flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-white/10 dark:border-white/5">
+            <div className="flex items-center gap-2.5 pl-3">
+              <div className="h-6 w-6 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-[10px] font-mono">{selectedIds.length}</div>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-60 hidden sm:inline">Itens</span>
             </div>
             <div className="flex gap-1 items-center">
-              <Button size="xs" variant="ghost" className="h-9 px-2.5 text-background hover:bg-background/10 text-[9px] font-semibold uppercase tracking-wider flex items-center" onClick={handleBatchDownload} title="Baixar Comprovantes">
-                <Download className="h-3.5 w-3.5 sm:mr-2" /> 
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background dark:text-foreground hover:bg-white/10 dark:hover:bg-white/5 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
+                onClick={handleBatchDownload}
+              >
+                <Download className="h-3.5 w-3.5 sm:mr-1.5 opacity-60" /> 
                 <span className="hidden sm:inline">Recibos</span>
               </Button>
-              <Button size="xs" variant="ghost" className="h-9 px-2.5 text-background hover:bg-background/10 text-[9px] font-semibold uppercase tracking-wider flex items-center" onClick={handleExportExcel} title="Exportar Excel">
-                <FileSpreadsheet className="h-3.5 w-3.5 sm:mr-2" /> 
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background dark:text-foreground hover:bg-white/10 dark:hover:bg-white/5 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
+                onClick={handleExportExcel}
+              >
+                <FileSpreadsheet className="h-3.5 w-3.5 sm:mr-1.5 opacity-60" /> 
                 <span className="hidden sm:inline">Excel</span>
               </Button>
-              <Button size="xs" variant="default" className="h-9 px-4 bg-primary text-primary-foreground hover:opacity-90 text-[10px] font-bold uppercase tracking-widest rounded-xl" onClick={handleBatchMarkAsPaid}>Pagar</Button>
+              <Button 
+                size="sm" 
+                variant="default" 
+                className="h-8 px-4 bg-primary text-primary-foreground hover:opacity-90 text-[9px] font-black uppercase tracking-wider rounded-lg shadow-md shadow-primary/20 transition-all active:scale-95" 
+                onClick={handleBatchMarkAsPaid}
+              >
+                Pagar
+              </Button>
             </div>
           </div>
         </div>
