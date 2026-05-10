@@ -40,7 +40,7 @@ import {
   CheckCircle2, Clock, Tag, Download, FileSpreadsheet,
   TrendingUp, SlidersHorizontal, MousePointer2,
   Check, Calendar, MapPin, Receipt,
-  Car, Ticket, Bus, Utensils, Layers
+  Car, Ticket, Bus, Utensils, Layers, TramFront, BusFront, Navigation
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -55,7 +55,9 @@ const getCategoryIcon = (opt: string) => {
   switch (opt) {
     case 'Estacionamento': return Car;
     case 'Pedágio': return Ticket;
-    case 'CPTM/Metrô': return Bus;
+    case 'CPTM/Metrô': return TramFront;
+    case 'Ônibus': return BusFront;
+    case 'Uber/App': return Navigation;
     case 'Almoço':
     case 'Almoço Reduzido': return Utensils;
     default: return Tag;
@@ -321,7 +323,9 @@ export default function DespesasPage() {
     switch (type) {
       case 'Estacionamento': return Car
       case 'Pedágio': return Ticket
-      case 'CPTM/Metrô': return Bus
+      case 'CPTM/Metrô': return TramFront
+      case 'Ônibus': return BusFront
+      case 'Uber/App': return Navigation
       case 'Almoço Reduzido': return Utensils
       default: return Layers
     }
