@@ -17,7 +17,7 @@ export default function ConfiguracoesPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-muted/40 border border-border/50 text-muted-foreground text-[10px] font-semibold uppercase tracking-wider">Preferências</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">Preferências</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground flex items-center gap-4">
             Ajustes
