@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Info, CreditCard } from 'lucide-react'
+import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Info, CreditCard, Clock } from 'lucide-react'
 import { Expense } from '@/types/database'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -66,7 +66,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       transporte: '',
       valor: 0,
       motivo: '',
-      date: new Date().toLocaleDateString('en-CA'),
+      date: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
       quantidade: 1,
       pago: false,
       receipt_urls: null
@@ -94,7 +94,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
           transporte: '',
           valor: 0,
           motivo: '',
-          date: new Date().toISOString().split('T')[0],
+          date: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
           quantidade: 1,
           pago: false,
           receipt_urls: null
@@ -308,9 +308,45 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Data do Gasto</Label>
+        <div className="grid grid-cols-1 gap-6 items-start">
+          {/* Campo: Data */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Data do Gasto</Label>
+              <div className="flex gap-1">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const today = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                    setValue('date', today, { shouldDirty: true, shouldValidate: true });
+                  }}
+                  className={cn(
+                    "px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest transition-all",
+                    dateValue === new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  Hoje
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const yesterday = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000) - 86400000).toISOString().split('T')[0];
+                    setValue('date', yesterday, { shouldDirty: true, shouldValidate: true });
+                  }}
+                  className={cn(
+                    "px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest transition-all",
+                    dateValue === new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000) - 86400000).toISOString().split('T')[0]
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  Ontem
+                </button>
+              </div>
+            </div>
+
             {isMobile ? (
               <div className="relative">
                 <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
@@ -318,12 +354,12 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                   type="date" 
                   value={dateValue} 
                   onChange={(e) => setValue('date', e.target.value, { shouldDirty: true, shouldValidate: true })}
-                  className="flex h-11 w-full rounded-xl border border-border bg-muted/50 pl-11 pr-4 text-sm font-medium transition-all focus:bg-muted/80 appearance-none"
+                  className="flex h-12 w-full rounded-2xl border border-border bg-muted/30 pl-11 pr-4 text-sm font-medium transition-all focus:bg-muted/50 appearance-none"
                 />
               </div>
             ) : (
               <Popover>
-                <PopoverTrigger className="flex h-10 w-full items-center rounded-xl border border-border bg-muted/50 px-4 text-sm font-medium transition-all hover:bg-muted/80 text-left cursor-pointer">
+                <PopoverTrigger className="flex h-12 w-full items-center rounded-2xl border border-border bg-muted/30 px-4 text-sm font-medium transition-all hover:bg-muted/50 text-left cursor-pointer">
                   <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
                   {dateValue ? format(new Date(dateValue + 'T12:00:00'), "dd MMM, yy", { locale: ptBR }) : 'Data'}
                 </PopoverTrigger>
@@ -333,13 +369,17 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               </Popover>
             )}
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="pago-status" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Reembolsado?</Label>
-            <div className="flex items-center justify-between h-11 px-4 rounded-xl bg-muted/50 border border-border">
-               <span className="text-[10px] font-bold uppercase text-muted-foreground">{watch('pago') ? 'SIM' : 'NÃO'}</span>
-               <Switch id="pago-status" checked={watch('pago')} onCheckedChange={(checked) => setValue('pago', checked, { shouldDirty: true })} className="data-[state=checked]:bg-foreground" />
+
+          {/* Campo: Status de Reembolso (Apenas na Edição) */}
+          {isEditing && (
+            <div className="space-y-2">
+              <Label htmlFor="pago-status" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Reembolsado?</Label>
+              <div className="flex items-center justify-between h-12 px-5 rounded-2xl bg-muted/30 border border-border group-hover:border-primary/20 transition-all">
+                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{watch('pago') ? 'SIM' : 'NÃO'}</span>
+                 <Switch id="pago-status" checked={watch('pago')} onCheckedChange={(checked) => setValue('pago', checked, { shouldDirty: true })} className="data-[state=checked]:bg-primary" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="grid gap-2">
