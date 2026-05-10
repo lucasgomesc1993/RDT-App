@@ -715,7 +715,7 @@ export default function DespesasPage() {
                     "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
                     isSelected 
                       ? "bg-primary border-primary shadow-sm shadow-primary/20" 
-                      : "border-border/40 dark:border-white/10"
+                      : "border-border/20 dark:border-white/5"
                   )}>
                     {isSelected && <Check className="h-3 w-3 text-primary-foreground stroke-[4px]" />}
                   </div>
@@ -745,7 +745,7 @@ export default function DespesasPage() {
                       return (
                         <div 
                           key={i}
-                          className="absolute h-10 w-10 rounded-xl ring-1 ring-black/10 dark:ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500"
+                          className="absolute h-10 w-10 rounded-xl ring-1 ring-black/[0.05] dark:ring-white/10 overflow-hidden shadow-md shadow-black/5 transition-all duration-500"
                           style={{ 
                             left: `${reverseIndex * 8}px`,
                             zIndex: reverseIndex,
@@ -785,7 +785,7 @@ export default function DespesasPage() {
                       "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
                       selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0
                         ? "bg-primary border-primary shadow-sm shadow-primary/20" 
-                        : "border-border/40 dark:border-white/10 hover:border-primary/50"
+                        : "border-border/20 dark:border-white/5 hover:border-primary/50"
                     )}
                   >
                     {selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0 && (
@@ -815,7 +815,7 @@ export default function DespesasPage() {
                           "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
                           isSelected 
                             ? "bg-primary border-primary shadow-sm shadow-primary/20" 
-                            : "border-border/40 dark:border-white/10 hover:border-primary/50"
+                            : "border-border/20 dark:border-white/5 hover:border-primary/50"
                         )}
                       >
                         {isSelected && <Check className="h-3 w-3 text-primary-foreground stroke-[4px]" />}
@@ -844,7 +844,7 @@ export default function DespesasPage() {
                               <div 
                                 key={i}
                                 className={cn(
-                                  "absolute h-10 w-10 rounded-xl ring-1 ring-black/10 dark:ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
+                                  "absolute h-10 w-10 rounded-xl ring-1 ring-black/[0.05] dark:ring-white/10 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
                                   "group-hover/stack:scale-110 group-hover/stack:translate-x-[var(--hx)] group-hover/stack:rotate-[var(--hr)]"
                                 )}
                                 style={{ 
