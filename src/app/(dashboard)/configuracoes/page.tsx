@@ -40,18 +40,22 @@ export default function ConfiguracoesPage() {
 
       <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
         {/* Modo de Exibição */}
-        <Card className="lg:col-span-1 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm h-fit transition-all duration-500 group hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
-          <CardContent className="p-8">
+        <div className="lg:col-span-1 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border border-white/[0.06] dark:border-white/[0.06] border-border/30 rounded-[32px] shadow-sm transition-all duration-500 group hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
+          <div className="p-8 pb-6">
             <div className="flex items-center justify-between mb-8">
-              <div className="space-y-1">
-                <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Exibição</span>
-                <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Modo de Interface</p>
-              </div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Interface</span>
               <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <Settings className="h-4 w-4" />
               </div>
             </div>
-            <div className="flex flex-col gap-3">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-tight text-foreground">Exibição</h2>
+              <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed mt-2">
+                Alterne entre os temas claro e escuro.
+              </p>
+            </div>
+          </div>
+          <div className="px-8 pb-8 flex flex-col gap-3">
               {[
                 { id: 'light', label: 'Claro', icon: Sun },
                 { id: 'dark', label: 'Escuro', icon: Moon },
@@ -60,47 +64,50 @@ export default function ConfiguracoesPage() {
                   key={t.id}
                   onClick={() => setTheme(t.id)}
                   className={cn(
-                    "flex items-center justify-between w-full p-4 rounded-xl border transition-all duration-300",
+                    "flex items-center justify-between w-full h-14 px-4 rounded-2xl border transition-all duration-300",
                     theme === t.id 
-                      ? "border-primary bg-primary/10 shadow-sm" 
-                      : "border-border/30 dark:border-border/50 bg-muted/20 dark:bg-muted/40 hover:bg-muted/40 text-muted-foreground"
+                      ? "border-primary bg-primary/5 text-foreground shadow-sm" 
+                      : "border-border/50 bg-muted/30 hover:bg-muted/60 text-muted-foreground hover:text-foreground"
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={cn("p-2 rounded-lg border", theme === t.id ? "bg-primary/10 border-primary/20 text-primary" : "bg-background border-border/30 dark:border-border/50")}>
-                      <t.icon className="h-4 w-4" />
+                    <div className={cn("p-1.5 rounded-lg border transition-colors", theme === t.id ? "bg-primary/10 border-primary/20 text-primary" : "bg-background/50 border-border text-primary")}>
+                      <t.icon className="h-3.5 w-3.5" />
                     </div>
-                    <span className="text-sm font-semibold">{t.label}</span>
+                    <span className="text-[11px] font-semibold">{t.label}</span>
                   </div>
                   {theme === t.id && <Check className="h-4 w-4 text-primary" />}
                 </button>
               ))}
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Seleção de Cores */}
-        <Card className="lg:col-span-2 bg-card/25 dark:bg-card/40 border-border/30 dark:border-border/50 rounded-2xl overflow-hidden shadow-sm transition-all duration-500 group hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
-          <CardContent className="p-8">
+        <div className="lg:col-span-2 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border border-white/[0.06] dark:border-white/[0.06] border-border/30 rounded-[32px] shadow-sm transition-all duration-500 group hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
+          <div className="p-8 pb-6">
             <div className="flex items-center justify-between mb-8">
-              <div className="space-y-1">
-                <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Cor de Destaque</span>
-                <p className="text-[10px] text-muted-foreground opacity-40 font-bold uppercase tracking-tighter">Identidade Visual</p>
-              </div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Identidade Visual</span>
               <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <Palette className="h-4 w-4" />
               </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-tight text-foreground">Cor de Destaque</h2>
+              <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed mt-2">
+                Defina a cor principal para os botões e elementos interativos.
+              </p>
+            </div>
+          </div>
+          <div className="px-8 pb-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {accentColors.map((color) => (
                 <button
                   key={color.name}
                   onClick={() => setAccent(color.name)}
                   className={cn(
-                    "flex flex-col items-center gap-3 p-4 rounded-xl border transition-all duration-300 group",
+                    "flex flex-col items-center gap-3 p-4 rounded-2xl border transition-all duration-300",
                     accent.name === color.name 
-                      ? "border-primary bg-primary/10 shadow-sm" 
-                      : "border-border/30 dark:border-border/50 bg-muted/20 dark:bg-muted/40 hover:bg-muted/30 dark:hover:bg-muted/60"
+                      ? "border-primary bg-primary/5 shadow-sm" 
+                      : "border-border/50 bg-muted/30 hover:bg-muted/60"
                   )}
                 >
                   <div 
@@ -111,16 +118,14 @@ export default function ConfiguracoesPage() {
                   </div>
                   <span className={cn(
                     "text-[10px] font-bold uppercase tracking-wider transition-colors",
-                    accent.name === color.name ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
+                    accent.name === color.name ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                   )}>
                     {color.label.split(" ")[0]}
                   </span>
                 </button>
               ))}
-            </div>
-
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
