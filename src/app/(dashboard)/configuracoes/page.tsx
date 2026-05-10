@@ -55,8 +55,8 @@ export default function ConfiguracoesPage() {
               </p>
             </div>
           </div>
-          <div className="px-8 pb-8 flex items-center gap-3">
-            <div className="flex bg-muted/30 p-1 rounded-2xl border border-border/50 w-full sm:w-auto">
+          <div className="px-8 pb-8">
+            <div className="inline-flex bg-muted/30 p-1 rounded-[14px] border border-border/50">
               {[
                 { id: 'light', label: 'Claro', icon: Sun },
                 { id: 'dark', label: 'Escuro', icon: Moon },
@@ -65,14 +65,14 @@ export default function ConfiguracoesPage() {
                   key={t.id}
                   onClick={() => setTheme(t.id)}
                   className={cn(
-                    "flex items-center justify-center gap-2 h-12 px-6 rounded-xl transition-all duration-300 flex-1 sm:flex-none",
+                    "flex items-center justify-center gap-1.5 h-8 px-4 rounded-[10px] transition-all duration-300",
                     theme === t.id 
                       ? "bg-background shadow-sm border border-border/50 text-primary" 
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                      : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
                   )}
                 >
-                  <t.icon className="h-4 w-4" />
-                  <span className="text-[11px] font-bold uppercase tracking-widest">{t.label}</span>
+                  <t.icon className="h-3.5 w-3.5" />
+                  <span className="text-[9px] font-bold uppercase tracking-widest">{t.label}</span>
                 </button>
               ))}
             </div>
