@@ -29,10 +29,28 @@ export function Navbar() {
   return (
     <div className="flex items-center justify-between border-b border-border/50 bg-background/50 backdrop-blur-2xl px-6 py-4 md:hidden sticky top-0 z-40">
       <div className="flex items-center gap-3">
-        <div className="h-6 w-6 rounded bg-foreground flex items-center justify-center">
-          <div className="h-2.5 w-2.5 bg-background rounded-[1px] rotate-45" />
+        <div className="relative h-10 w-10 flex items-center justify-center">
+          <div className="absolute inset-0 bg-primary/10 rounded-xl rotate-6" />
+          <div className="relative h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
+            <svg 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="white" 
+              strokeWidth="2.5" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="h-4 w-4"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" fillOpacity="0.2" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
         </div>
-        <span className="font-medium tracking-tight text-foreground">RDT APP</span>
+        <div className="flex flex-col -space-y-1">
+          <span className="text-xl font-black tracking-tighter text-foreground uppercase italic">RDT</span>
+          <span className="text-[8px] font-bold tracking-[0.2em] text-primary uppercase">Financeiro</span>
+        </div>
       </div>
 
       <Drawer open={open} onOpenChange={setOpen}>

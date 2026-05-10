@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Info, CreditCard, Clock } from 'lucide-react'
+import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Info, CreditCard, Clock, TramFront, BusFront, Navigation } from 'lucide-react'
 import { Expense } from '@/types/database'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -43,7 +43,8 @@ interface ExpenseFormProps {
 const transportOptions = [
   { label: 'Estacionamento', value: 'Estacionamento', icon: Car, color: 'text-blue-500' },
   { label: 'Pedágio', value: 'Pedágio', icon: Ticket, color: 'text-amber-500' },
-  { label: 'CPTM/Metrô', value: 'CPTM/Metrô', icon: Bus, color: 'text-indigo-500' },
+  { label: 'CPTM/Metrô', value: 'CPTM/Metrô', icon: TramFront, color: 'text-indigo-500' },
+  { label: 'Ônibus', value: 'Ônibus', icon: BusFront, color: 'text-orange-500' },
   { label: 'Almoço', value: 'Almoço Reduzido', icon: Utensils, color: 'text-emerald-500' },
 ]
 
@@ -230,7 +231,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               <button
                 type="button"
                 className={cn(
-                  "flex items-center justify-center h-10 px-4 rounded-xl border border-dashed text-[9px] font-bold uppercase tracking-[0.15em] transition-all duration-300 col-span-2 mt-1",
+                  "flex items-center justify-center h-14 px-4 rounded-2xl border border-dashed text-[9px] font-bold uppercase tracking-[0.15em] transition-all duration-300",
                   showCustomTransport 
                     ? "bg-primary/5 border-primary text-primary shadow-sm" 
                     : "bg-transparent border-border/30 text-muted-foreground/30 hover:text-muted-foreground/60 hover:border-border/60"

@@ -24,13 +24,33 @@ export function Sidebar() {
 
   return (
     <div className="hidden md:flex h-full w-64 flex-col bg-background/50 backdrop-blur-2xl border-r border-border/50 p-6 gap-8">
-      <div className="px-2 flex items-center gap-3">
-        <div className="h-7 w-7 rounded bg-foreground flex items-center justify-center">
-          <div className="h-3 w-3 bg-background rounded-[1px] rotate-45" />
+      <div className="px-2 flex items-center gap-4">
+        <div className="relative h-12 w-12 flex items-center justify-center">
+          <div className="absolute inset-0 bg-primary/10 rounded-2xl rotate-6 transition-transform group-hover:rotate-12" />
+          <div className="relative h-9 w-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+            <svg 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="white" 
+              strokeWidth="2.5" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="h-5 w-5"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" fillOpacity="0.2" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
         </div>
-        <span className="text-lg font-medium tracking-tight text-foreground">
-          RDT APP
-        </span>
+        <div className="flex flex-col -space-y-1.5">
+          <span className="text-2xl font-black tracking-tighter text-foreground uppercase italic">
+            RDT
+          </span>
+          <span className="text-[10px] font-bold tracking-[0.3em] text-primary uppercase ml-0.5">
+            Financeiro
+          </span>
+        </div>
       </div>
 
       <nav className="flex-1 space-y-1.5">
