@@ -55,7 +55,8 @@ export default function ConfiguracoesPage() {
               </p>
             </div>
           </div>
-          <div className="px-8 pb-8 flex flex-col gap-3">
+          <div className="px-8 pb-8 flex items-center gap-3">
+            <div className="flex bg-muted/30 p-1 rounded-2xl border border-border/50 w-full sm:w-auto">
               {[
                 { id: 'light', label: 'Claro', icon: Sun },
                 { id: 'dark', label: 'Escuro', icon: Moon },
@@ -64,21 +65,17 @@ export default function ConfiguracoesPage() {
                   key={t.id}
                   onClick={() => setTheme(t.id)}
                   className={cn(
-                    "flex items-center justify-between w-full h-14 px-4 rounded-2xl border transition-all duration-300",
+                    "flex items-center justify-center gap-2 h-12 px-6 rounded-xl transition-all duration-300 flex-1 sm:flex-none",
                     theme === t.id 
-                      ? "border-primary bg-primary/5 text-foreground shadow-sm" 
-                      : "border-border/50 bg-muted/30 hover:bg-muted/60 text-muted-foreground hover:text-foreground"
+                      ? "bg-background shadow-sm border border-border/50 text-primary" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                   )}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-1.5 rounded-lg border transition-colors", theme === t.id ? "bg-primary/10 border-primary/20 text-primary" : "bg-background/50 border-border text-primary")}>
-                      <t.icon className="h-3.5 w-3.5" />
-                    </div>
-                    <span className="text-[11px] font-semibold">{t.label}</span>
-                  </div>
-                  {theme === t.id && <Check className="h-4 w-4 text-primary" />}
+                  <t.icon className="h-4 w-4" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest">{t.label}</span>
                 </button>
               ))}
+            </div>
           </div>
         </div>
 
@@ -98,30 +95,22 @@ export default function ConfiguracoesPage() {
               </p>
             </div>
           </div>
-          <div className="px-8 pb-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="px-8 pb-8 flex flex-wrap gap-3">
               {accentColors.map((color) => (
                 <button
                   key={color.name}
                   onClick={() => setAccent(color.name)}
+                  title={color.label}
                   className={cn(
-                    "flex flex-col items-center gap-3 p-4 rounded-2xl border transition-all duration-300",
-                    accent.name === color.name 
-                      ? "border-primary bg-primary/5 shadow-sm" 
-                      : "border-border/50 bg-muted/30 hover:bg-muted/60"
+                    "relative h-12 w-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary",
+                    accent.name === color.name ? "ring-2 ring-offset-4 ring-offset-background" : ""
                   )}
+                  style={{ 
+                    backgroundColor: color.value,
+                    boxShadow: accent.name === color.name ? `0 0 20px -5px ${color.value}` : 'inset 0 2px 4px rgba(0,0,0,0.1)'
+                  }}
                 >
-                  <div 
-                    className="h-10 w-10 rounded-full flex items-center justify-center border border-black/5 shadow-inner"
-                    style={{ backgroundColor: color.value }}
-                  >
-                    {accent.name === color.name && <Check className="h-5 w-5" style={{ color: color.foreground }} />}
-                  </div>
-                  <span className={cn(
-                    "text-[10px] font-bold uppercase tracking-wider transition-colors",
-                    accent.name === color.name ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                  )}>
-                    {color.label.split(" ")[0]}
-                  </span>
+                  {accent.name === color.name && <Check className="h-5 w-5" style={{ color: color.foreground }} />}
                 </button>
               ))}
           </div>

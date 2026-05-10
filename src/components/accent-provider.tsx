@@ -12,12 +12,20 @@ export type AccentColor = {
 
 export const accentColors: AccentColor[] = [
   { name: "default", label: "Automático", value: "oklch(0.98 0 0)", foreground: "oklch(0.04 0 0)" },
-  { name: "indigo", label: "Índigo", value: "oklch(0.65 0.2 260)", foreground: "oklch(0.98 0 0)" },
-  { name: "emerald", label: "Esmeralda", value: "oklch(0.75 0.18 160)", foreground: "oklch(0.04 0 0)" },
-  { name: "acid", label: "Verde Ácido", value: "oklch(0.85 0.22 110)", foreground: "oklch(0.04 0 0)" },
-  { name: "blue", label: "Azul Elétrico", value: "oklch(0.7 0.15 240)", foreground: "oklch(0.98 0 0)" },
-  { name: "rose", label: "Rosa Choque", value: "oklch(0.7 0.2 0)", foreground: "oklch(0.98 0 0)" },
+  { name: "zinc", label: "Zinco", value: "oklch(0.45 0 0)", foreground: "oklch(0.98 0 0)" },
+  { name: "red", label: "Vermelho", value: "oklch(0.6 0.2 20)", foreground: "oklch(0.98 0 0)" },
+  { name: "rose", label: "Rosa", value: "oklch(0.65 0.2 350)", foreground: "oklch(0.98 0 0)" },
+  { name: "orange", label: "Laranja", value: "oklch(0.7 0.15 45)", foreground: "oklch(0.04 0 0)" },
   { name: "amber", label: "Âmbar", value: "oklch(0.8 0.15 65)", foreground: "oklch(0.04 0 0)" },
+  { name: "yellow", label: "Amarelo", value: "oklch(0.85 0.15 90)", foreground: "oklch(0.04 0 0)" },
+  { name: "acid", label: "Limão", value: "oklch(0.85 0.22 110)", foreground: "oklch(0.04 0 0)" },
+  { name: "emerald", label: "Esmeralda", value: "oklch(0.75 0.18 160)", foreground: "oklch(0.04 0 0)" },
+  { name: "teal", label: "Petróleo", value: "oklch(0.65 0.15 190)", foreground: "oklch(0.98 0 0)" },
+  { name: "cyan", label: "Ciano", value: "oklch(0.75 0.15 220)", foreground: "oklch(0.04 0 0)" },
+  { name: "blue", label: "Azul", value: "oklch(0.7 0.15 240)", foreground: "oklch(0.98 0 0)" },
+  { name: "indigo", label: "Índigo", value: "oklch(0.65 0.2 260)", foreground: "oklch(0.98 0 0)" },
+  { name: "violet", label: "Violeta", value: "oklch(0.6 0.2 290)", foreground: "oklch(0.98 0 0)" },
+  { name: "fuchsia", label: "Fúcsia", value: "oklch(0.65 0.2 320)", foreground: "oklch(0.98 0 0)" },
 ]
 
 type AccentContextType = {
