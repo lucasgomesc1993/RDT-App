@@ -683,35 +683,37 @@ export default function DespesasPage() {
       </div>
 
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-md animate-in fade-in slide-in-from-bottom-6 duration-500">
-          <div className="bg-foreground text-background p-1.5 rounded-2xl flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-white/10">
-            <div className="flex items-center gap-2.5 pl-3">
-              <div className="h-6 w-6 rounded-lg bg-background text-foreground flex items-center justify-center font-bold text-[10px] font-mono">{selectedIds.length}</div>
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-60 hidden sm:inline">Itens</span>
+        <div className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[95%] sm:max-w-lg animate-in fade-in slide-in-from-bottom-8 duration-500">
+          <div className="bg-foreground text-background p-1.5 sm:p-2 rounded-2xl flex items-center gap-2 sm:gap-6 shadow-[0_20px_50px_rgba(0,0,0,0.4)] border border-white/10 whitespace-nowrap">
+            <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4">
+              <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-lg sm:rounded-xl bg-background text-foreground flex items-center justify-center font-bold text-[9px] sm:text-[11px] font-mono shadow-sm">{selectedIds.length}</div>
+              <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 hidden xs:inline">
+                {selectedIds.length === 1 ? 'Item' : 'Itens'} <span className="hidden md:inline">Selecionados</span>
+              </span>
             </div>
-            <div className="flex gap-1 items-center">
+            <div className="flex gap-1 sm:gap-1.5 items-center pr-1 sm:pr-2">
               <Button 
                 size="sm" 
                 variant="ghost" 
-                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background hover:bg-white/10 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
+                className="h-8 sm:h-9 px-2 sm:px-3 text-background hover:bg-white/10 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest flex items-center rounded-xl transition-all" 
                 onClick={handleBatchDownload}
               >
-                <Download className="h-3.5 w-3.5 sm:mr-1.5 opacity-60" /> 
+                <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 sm:mr-2 opacity-60" /> 
                 <span className="hidden sm:inline">Recibos</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="ghost" 
-                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background hover:bg-white/10 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
+                className="h-8 sm:h-9 px-2 sm:px-3 text-background hover:bg-white/10 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest flex items-center rounded-xl transition-all" 
                 onClick={handleExportExcel}
               >
-                <FileSpreadsheet className="h-3.5 w-3.5 sm:mr-1.5 opacity-60" /> 
+                <FileSpreadsheet className="h-3.5 w-3.5 sm:h-4 sm:w-4 sm:mr-2 opacity-60" /> 
                 <span className="hidden sm:inline">Excel</span>
               </Button>
               <Button 
                 size="sm" 
                 variant="default" 
-                className="h-8 px-4 bg-primary text-primary-foreground hover:opacity-90 text-[9px] font-black uppercase tracking-wider rounded-lg shadow-md shadow-primary/20 transition-all active:scale-95" 
+                className="h-8 sm:h-9 px-3 sm:px-5 bg-primary text-primary-foreground hover:opacity-90 text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95 ml-1 sm:ml-2" 
                 onClick={handleBatchMarkAsPaid}
               >
                 Pagar
