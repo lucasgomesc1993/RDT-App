@@ -230,10 +230,10 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               <button
                 type="button"
                 className={cn(
-                  "flex items-center justify-center h-14 px-4 rounded-2xl border text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 col-span-2",
+                  "flex items-center justify-center h-10 px-4 rounded-xl border border-dashed text-[9px] font-bold uppercase tracking-[0.15em] transition-all duration-300 col-span-2 mt-1",
                   showCustomTransport 
                     ? "bg-primary/5 border-primary text-primary shadow-sm" 
-                    : "bg-muted/30 border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/60 border-dashed"
+                    : "bg-transparent border-border/30 text-muted-foreground/30 hover:text-muted-foreground/60 hover:border-border/60"
                 )}
                 onClick={() => {
                   setShowCustomTransport(true)
