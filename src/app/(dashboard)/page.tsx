@@ -94,29 +94,65 @@ export default function DashboardPage() {
   }, [expenses, selectedDate])
 
   const chartData = useMemo(() => {
-    if (!expenses) return []
-    const refDate = selectedDate === 'TOTAL' ? new Date() : new Date(selectedDate)
-    const last6Months = Array.from({ length: 6 }).map((_, i) => {
-      const date = subMonths(refDate, i)
-      return {
-        month: format(date, 'MMMM', { locale: ptBR }),
-        timestamp: date,
-        total: 0
+    if (!expenses || expenses.length === 0) return []
+    
+    if (selectedDate === 'TOTAL') {
+      // Pega a menor e a maior data dentre as despesas
+      const dates = expenses.map(e => parseISO(e.date).getTime())
+      const minDate = new Date(Math.min(...dates))
+      const maxDate = new Date(Math.max(...dates, new Date().getTime())) // Até o mês atual
+      
+      const start = startOfMonth(minDate)
+      const end = startOfMonth(maxDate)
+      
+      const allMonths: { month: string; timestamp: Date; total: number }[] = []
+      let current = start
+      while (current <= end) {
+        allMonths.push({
+          month: format(current, 'MMM yy', { locale: ptBR }),
+          timestamp: new Date(current),
+          total: 0
+        })
+        current = addMonths(current, 1)
       }
-    }).reverse()
-
-    expenses.forEach(expense => {
-      const expenseDate = parseISO(expense.date)
-      last6Months.forEach(month => {
-        if (isWithinInterval(expenseDate, {
-          start: startOfMonth(month.timestamp),
-          end: endOfMonth(month.timestamp)
-        })) {
-          month.total += (expense.valor * expense.quantidade)
-        }
+      
+      expenses.forEach(expense => {
+        const expenseDate = parseISO(expense.date)
+        allMonths.forEach(month => {
+          if (isWithinInterval(expenseDate, {
+            start: startOfMonth(month.timestamp),
+            end: endOfMonth(month.timestamp)
+          })) {
+            month.total += (expense.valor * expense.quantidade)
+          }
+        })
       })
-    })
-    return last6Months
+      
+      return allMonths
+    } else {
+      const refDate = new Date(selectedDate)
+      const last6Months = Array.from({ length: 6 }).map((_, i) => {
+        const date = subMonths(refDate, i)
+        return {
+          month: format(date, 'MMMM', { locale: ptBR }),
+          timestamp: date,
+          total: 0
+        }
+      }).reverse()
+
+      expenses.forEach(expense => {
+        const expenseDate = parseISO(expense.date)
+        last6Months.forEach(month => {
+          if (isWithinInterval(expenseDate, {
+            start: startOfMonth(month.timestamp),
+            end: endOfMonth(month.timestamp)
+          })) {
+            month.total += (expense.valor * expense.quantidade)
+          }
+        })
+      })
+      return last6Months
+    }
   }, [expenses, selectedDate])
 
   const categoryData = useMemo(() => {
