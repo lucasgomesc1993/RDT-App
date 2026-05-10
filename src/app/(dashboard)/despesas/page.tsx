@@ -745,9 +745,9 @@ export default function DespesasPage() {
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", (expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && "border-destructive/30 bg-destructive/[0.02]", selectionMode && "active:scale-[0.98]")}>
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", (expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && "border-primary/30 bg-primary/[0.02]", selectionMode && "active:scale-[0.98]")}>
               {(expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && (
-                <div className="absolute -top-2.5 right-6 px-3 py-1 bg-destructive text-white text-[8px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-destructive/20 flex items-center gap-1.5 animate-pulse">
+                <div className="absolute -top-2.5 right-6 px-3 py-1 bg-primary text-primary-foreground text-[8px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-primary/20 flex items-center gap-1.5 animate-pulse">
                   <AlertCircle className="h-3 w-3" />
                   Falta Comprovante
                 </div>
@@ -916,7 +916,7 @@ export default function DespesasPage() {
                           })}
                         </button>
                       ) : (expense.transporte === 'Pedágio' && (
-                        <div className="flex flex-col items-center gap-1 text-destructive animate-in fade-in zoom-in duration-500">
+                        <div className="flex flex-col items-center gap-1 text-primary animate-in fade-in zoom-in duration-500">
                           <AlertCircle className="h-5 w-5" />
                           <span className="text-[8px] font-black uppercase tracking-tighter">Falta Comprovante</span>
                         </div>
