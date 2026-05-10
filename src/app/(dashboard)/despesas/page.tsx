@@ -81,7 +81,7 @@ export default function DespesasPage() {
   const [receiptFilter, setReceiptFilter] = useState<'all' | 'with' | 'without'>('all')
   const [dateRange, setDateRange] = useState<'all' | 'month'>('all')
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 20
+  const [itemsPerPage, setItemsPerPage] = useState(20)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [selectionMode, setSelectionMode] = useState(false)
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null)
@@ -922,12 +922,9 @@ export default function DespesasPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-10 px-4 md:px-0">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/30">
-            Mostrando {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredExpenses.length)} de {filteredExpenses.length} registros
-          </div>
-          
-          <div className="flex items-center gap-1.5">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mt-10 px-4 md:px-0">
+          {/* Navegação - Primeiro no Mobile para facilitar acesso */}
+          <div className="flex items-center gap-1.5 justify-center w-full sm:w-auto order-1 sm:order-2">
             <Button 
               variant="outline" 
               size="icon" 
@@ -969,6 +966,35 @@ export default function DespesasPage() {
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>
+          </div>
+
+          {/* Info & Page Size - Agrupados em linha no Mobile */}
+          <div className="flex items-center justify-between w-full sm:w-auto gap-4 sm:gap-8 order-2 sm:order-1 border-t sm:border-none border-border/20 pt-6 sm:pt-0">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/30 whitespace-nowrap">
+              {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredExpenses.length)} <span className="lowercase">de</span> {filteredExpenses.length}
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/20">Exibir</span>
+              <Select 
+                value={itemsPerPage.toString()} 
+                onValueChange={(v) => {
+                  setItemsPerPage(Number(v))
+                  setCurrentPage(1)
+                }}
+              >
+                <SelectTrigger className="h-8 w-[70px] rounded-lg bg-muted/10 border-border/40 text-[10px] font-bold font-mono outline-none focus:ring-0 focus:ring-offset-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-background/95 backdrop-blur-2xl border-border/40 rounded-xl min-w-[70px]">
+                  {[10, 20, 50, 100].map(val => (
+                    <SelectItem key={val} value={val.toString()} className="text-[10px] font-bold font-mono rounded-lg cursor-pointer">
+                      {val}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
       )}
