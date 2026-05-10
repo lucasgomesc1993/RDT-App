@@ -588,7 +588,7 @@ export default function DespesasPage() {
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10 px-4 md:px-0">
         <header className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">Administração</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">Administração</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
             Lançamentos
