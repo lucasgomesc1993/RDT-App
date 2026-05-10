@@ -231,14 +231,18 @@ export default function DespesasPage() {
   const handleCloseGallery = () => { setSelectedReceipts(null); setActiveGalleryExpense(null) }
 
   // Sincroniza o scroll quando o currentIndex muda via dots ou setas
+  // Ref para evitar loops infinitos e conflitos de scroll
+  const isInternalUpdate = useRef(false)
+
   useEffect(() => {
-    if (scrollRef.current && selectedReceipts) {
+    if (scrollRef.current && selectedReceipts && !isInternalUpdate.current) {
       const container = scrollRef.current
       const targetScroll = container.offsetWidth * currentIndex
       if (Math.abs(container.scrollLeft - targetScroll) > 10) {
         container.scrollTo({ left: targetScroll, behavior: 'smooth' })
       }
     }
+    isInternalUpdate.current = false
   }, [currentIndex, selectedReceipts])
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -246,6 +250,7 @@ export default function DespesasPage() {
     const container = e.currentTarget
     const index = Math.round(container.scrollLeft / container.offsetWidth)
     if (index !== currentIndex && index >= 0 && index < selectedReceipts.length) {
+      isInternalUpdate.current = true
       setCurrentIndex(index)
     }
   }
@@ -402,15 +407,22 @@ export default function DespesasPage() {
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="absolute inset-0 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing"
+            className="absolute inset-0 flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing will-change-transform"
           >
             {selectedReceipts.map((url, index) => (
-              <div key={index} className="flex-none w-full h-full snap-center flex items-center justify-center p-4 sm:p-12">
-                <img 
-                  src={url} 
-                  alt={`Comprovante ${index + 1}`} 
-                  className="max-w-full max-h-full object-contain rounded-xl border border-white/10"
-                />
+              <div 
+                key={index} 
+                className="min-w-full h-full flex items-center justify-center p-4 snap-center will-change-transform"
+              >
+                <div className="relative w-full h-full flex items-center justify-center translate-z-0">
+                  <img 
+                    src={url} 
+                    alt={`Comprovante ${index + 1}`}
+                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl transition-opacity duration-300 will-change-transform"
+                    onLoad={(e) => (e.currentTarget.style.opacity = '1')}
+                    style={{ opacity: 0 }}
+                  />
+                </div>
               </div>
             ))}
           </div>
