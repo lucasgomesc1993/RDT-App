@@ -46,7 +46,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { format, isWithinInterval, parseISO, startOfMonth, endOfMonth } from 'date-fns'
+import { format, isWithinInterval, parseISO, startOfMonth, endOfMonth, subMonths, addMonths } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -76,6 +76,7 @@ export default function DespesasPage() {
   const [activeGalleryExpense, setActiveGalleryExpense] = useState<any | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [search, setSearch] = useState('')
+  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), "yyyy-MM"))
   const [statusFilter, setStatusFilter] = useState<'all' | 'pago' | 'pendente'>('all')
   const [transportFilter, setTransportFilter] = useState('all')
   const [receiptFilter, setReceiptFilter] = useState<'all' | 'with' | 'without'>('all')
@@ -308,16 +309,16 @@ export default function DespesasPage() {
     }
   }
   const confirmDelete = async () => { if (expenseToDelete) { await deleteExpense.mutateAsync(expenseToDelete); setExpenseToDelete(null); setSelectedIds(prev => prev.filter(id => id !== expenseToDelete)) } }
-  const clearFilters = () => { setSearch(''); setStatusFilter('all'); setTransportFilter('all'); setReceiptFilter('all'); setDateRange('all'); setSelectedIds([]) }
+  const clearFilters = () => { 
+    setSearch(''); 
+    setStatusFilter('all'); 
+    setTransportFilter('all'); 
+    setReceiptFilter('all'); 
+    setDateRange('all'); 
+    setSelectedMonth(format(new Date(), "yyyy-MM"));
+    setSelectedIds([]);
+  }
 
-  if (isLoading) return (
-    <div className="flex h-full items-center justify-center min-h-[400px]">
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm font-medium text-muted-foreground animate-pulse tracking-widest uppercase">Carregando despesas...</p>
-      </div>
-    </div>
-  )
 
 
   const getTransportIcon = (type: string) => {
@@ -582,24 +583,69 @@ export default function DespesasPage() {
   const hasActiveFilters = activeFiltersCount > 0 || search !== ''
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 pb-20 pt-4 animate-in fade-in duration-1000">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
-        <div className="space-y-3">
+    <div className="max-w-7xl mx-auto pb-20 pt-4 animate-in fade-in duration-1000">
+      {/* Header Fixo - Nunca desmonta */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10 px-4 md:px-0">
+        <header className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-muted/20 text-muted-foreground text-[10px] font-bold uppercase tracking-wider border border-border/30">Gestão</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">Administração</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground flex items-center gap-4">
-            Despesas
-            <span className="text-muted-foreground text-lg font-normal font-mono opacity-40">/ {stats.count}</span>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
+            Lançamentos
           </h1>
-          <p className="text-muted-foreground text-sm font-medium opacity-60">Gerencie e monitore todos os seus gastos registrados.</p>
-        </div>
-        <div className="flex gap-3">
-          <ExpenseForm onSuccess={() => setSelectedIds([])} />
+          <p className="text-muted-foreground text-sm font-medium opacity-60">Gerencie e acompanhe seus reembolsos.</p>
+        </header>
+
+        <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-3">
+          <div className="order-2 sm:order-1 flex items-center gap-1 p-1 bg-muted/20 rounded-2xl border border-border/40 w-full sm:w-auto">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl hover:bg-background/50 text-muted-foreground"
+              onClick={() => {
+                const date = parseISO(selectedMonth + "-01")
+                setSelectedMonth(format(subMonths(date, 1), "yyyy-MM"))
+              }}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <Select value={selectedMonth} onValueChange={(val) => val && setSelectedMonth(val)}>
+              <SelectTrigger className="flex-1 sm:w-[180px] h-10 bg-transparent border-none focus:ring-0 font-bold uppercase tracking-widest text-[10px]">
+                <SelectValue>{format(parseISO(selectedMonth + "-01"), "MMMM 'de' yyyy", { locale: ptBR })}</SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-background/95 backdrop-blur-2xl border-white/10 rounded-2xl">
+                {Array.from({ length: 12 }).map((_, i) => {
+                  const date = subMonths(new Date(), i)
+                  const value = format(date, "yyyy-MM")
+                  return (
+                    <SelectItem key={value} value={value} className="text-[10px] font-bold uppercase tracking-widest">
+                      {format(date, "MMMM 'de' yyyy", { locale: ptBR })}
+                    </SelectItem>
+                  )
+                })}
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl hover:bg-background/50 text-muted-foreground"
+              onClick={() => {
+                const date = parseISO(selectedMonth + "-01")
+                setSelectedMonth(format(addMonths(date, 1), "yyyy-MM"))
+              }}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="order-1 sm:order-2 w-full sm:w-auto">
+            <ExpenseForm onSuccess={() => setSelectedMonth(format(new Date(), "yyyy-MM"))} />
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0">
+      <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0 mb-10">
         {[
           { label: 'Total Filtrado', value: stats.total, icon: TrendingUp },
           { label: 'Reembolsado', value: stats.paid, icon: CheckCircle2 },
@@ -608,44 +654,58 @@ export default function DespesasPage() {
           <div key={idx} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
+              <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
                 <item.icon className="h-4 w-4" />
               </div>
             </div>
-            <div className="text-3xl font-semibold tracking-tight font-mono text-foreground transition-transform duration-500 group-hover:translate-x-1">
+            <div className="text-3xl font-black tracking-tight font-mono text-foreground transition-transform duration-500 group-hover:translate-x-1">
               R$ {item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="sticky top-4 z-40 mx-4 md:mx-0">
-        <div className="bg-card/25 dark:bg-card/50 backdrop-blur-2xl border border-border/30 dark:border-border/50 rounded-2xl p-2 flex flex-col md:flex-row items-center gap-2 shadow-sm">
-          <div className="relative w-full md:flex-1 group">
-            <Search className="absolute left-4 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
-            <Input placeholder="Pesquisar..." value={search} onChange={(e) => setSearch(e.target.value)} className="h-10 pl-11 rounded-xl bg-transparent border-none focus-visible:bg-white/[0.02] transition-all" />
-          </div>
-          
-          <div className="h-6 w-px bg-border/30 hidden md:block" />
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Carregando lançamentos...</p>
+        </div>
+      ) : (
+        <div className="animate-in fade-in duration-700 space-y-10">
+          <div className="sticky top-4 z-40 mx-4 md:mx-0">
+            <div className="bg-card/25 dark:bg-card/50 backdrop-blur-2xl border border-border/30 dark:border-border/50 rounded-2xl p-2 flex flex-col md:flex-row items-center gap-2 shadow-sm">
+              <div className="relative w-full md:flex-1 group">
+                <Search className="absolute left-4 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
+                <Input 
+                  placeholder="Pesquisar..." 
+                  value={search} 
+                  onChange={(e) => setSearch(e.target.value)} 
+                  className="h-10 pl-11 rounded-xl bg-transparent border-none focus-visible:bg-white/[0.02] transition-all" 
+                />
+              </div>
+              
+              <div className="h-6 w-px bg-border/30 hidden md:block" />
 
-          <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto no-scrollbar pb-1 md:pb-0 px-2 md:px-0">
-            {['all', 'pago', 'pendente'].map((f) => (
-              <button 
-                key={f} 
-                onClick={() => setStatusFilter(f as any)} 
-                className={cn(
-                  "px-3 h-8 rounded-lg text-[10px] font-semibold uppercase tracking-widest transition-all whitespace-nowrap", 
-                  statusFilter === f 
-                    ? "bg-primary text-primary-foreground shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
-                )}
-              >
-                {f === 'all' ? 'Tudo' : f}
-              </button>
-            ))}
-          </div>
+              <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto no-scrollbar pb-1 md:pb-0 px-2 md:px-0">
+                {['all', 'pago', 'pendente'].map((f) => (
+                  <button 
+                    key={f} 
+                    onClick={() => setStatusFilter(f as any)} 
+                    className={cn(
+                      "px-3 h-8 rounded-lg text-[10px] font-semibold uppercase tracking-widest transition-all whitespace-nowrap", 
+                      statusFilter === f 
+                        ? "bg-primary text-primary-foreground shadow-sm" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                    )}
+                  >
+                    {f === 'all' ? 'Tudo' : f}
+                  </button>
+                ))}
+              </div>
 
-          <div className="h-6 w-px bg-border/30 hidden md:block" />
+              <div className="h-6 w-px bg-border/30 hidden md:block" />
+            </div>
+          </div>
 
           <div className="flex w-full md:w-auto items-center gap-2 shrink-0">
             {isMobile ? (
@@ -695,9 +755,7 @@ export default function DespesasPage() {
             <Button variant="outline" className={cn("h-10 w-10 md:hidden rounded-xl border-primary bg-primary text-primary-foreground shadow-md")} onClick={toggleSelectionMode}>
               {selectionMode ? <X className="h-4 w-4" /> : <CheckSquare className="h-4 w-4" />}
             </Button>
-          </div>
         </div>
-      </div>
 
       {selectedIds.length > 0 && (
         <div className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[95%] sm:max-w-lg animate-in fade-in slide-in-from-bottom-8 duration-500">
@@ -745,13 +803,7 @@ export default function DespesasPage() {
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", (expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && "border-primary/30 bg-primary/[0.02]", selectionMode && "active:scale-[0.98]")}>
-              {(expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && (
-                <div className="absolute -top-2.5 right-6 px-3 py-1 bg-primary text-primary-foreground text-[8px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-primary/20 flex items-center gap-1.5 animate-pulse">
-                  <AlertCircle className="h-3 w-3" />
-                  Falta Comprovante
-                </div>
-              )}
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-500", expense.pago ? "bg-primary/20 text-primary border border-primary/30" : "bg-primary/10 text-primary/40 border border-primary/20")}>
@@ -776,12 +828,20 @@ export default function DespesasPage() {
                 )}
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-[0.15em] flex items-center gap-1.5 transition-colors group-hover:text-muted-foreground/80">
+                <span className={cn(
+                  "text-[10px] font-semibold uppercase tracking-[0.15em] flex items-center gap-1.5 transition-colors",
+                  (expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0))
+                    ? "text-amber-500/60"
+                    : "text-muted-foreground/50 group-hover:text-muted-foreground/80"
+                )}>
                   {(() => {
                     const Icon = getCategoryIcon(expense.transporte)
                     return <Icon className="h-3 w-3 opacity-60" />
                   })()}
                   {expense.transporte}
+                  {(expense.transporte === 'Pedágio' && (!expense.receipt_urls || expense.receipt_urls.length === 0)) && (
+                    <AlertCircle className="h-2.5 w-2.5" />
+                  )}
                 </span>
                 {expense.receipt_urls && expense.receipt_urls.length > 0 && (
                   <button 
@@ -916,9 +976,8 @@ export default function DespesasPage() {
                           })}
                         </button>
                       ) : (expense.transporte === 'Pedágio' && (
-                        <div className="flex flex-col items-center gap-1 text-primary animate-in fade-in zoom-in duration-500">
-                          <AlertCircle className="h-5 w-5" />
-                          <span className="text-[8px] font-black uppercase tracking-tighter">Falta Comprovante</span>
+                        <div className="flex items-center justify-center text-amber-500/40">
+                          <AlertCircle className="h-4 w-4" />
                         </div>
                       ))}
                     </TableCell>
@@ -1004,11 +1063,13 @@ export default function DespesasPage() {
                     </SelectItem>
                   ))}
                 </SelectContent>
-              </Select>
-            </div>
+            </Select>
           </div>
         </div>
+      </div>
       )}
+    </div>
+    )}
 
       {isMobile ? (
         <>

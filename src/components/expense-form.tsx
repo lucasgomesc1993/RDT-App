@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { useCreateExpense, useUpdateExpense } from '@/hooks/use-expenses'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Minus, Info, CreditCard, Clock, TramFront, BusFront, Navigation } from 'lucide-react'
 import { Expense } from '@/types/database'
@@ -53,6 +53,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   const [uploading, setUploading] = useState(false)
   const [showCustomTransport, setShowCustomTransport] = useState(false)
   const isMobile = useIsMobile()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   
   const createExpense = useCreateExpense()
   const updateExpense = useUpdateExpense()
@@ -60,6 +61,8 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
   const isEditing = !!expense
   const [step, setStep] = useState(1)
+  const [isAdvancing, setIsAdvancing] = useState(false)
+  const [canSubmit, setCanSubmit] = useState(false)
 
   const { register, handleSubmit, reset, setValue, watch, trigger: formTrigger, formState: { errors, isSubmitting } } = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema) as any,
@@ -75,9 +78,23 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     }
   })
 
+  const [prevOpen, setPrevOpen] = useState(false)
+
   useEffect(() => {
+    if (step === 3) {
+      setCanSubmit(false)
+      const timer = setTimeout(() => setCanSubmit(true), 500)
+      return () => clearTimeout(timer)
+    }
+  }, [step])
+
+  useEffect(() => {
+    if (open && !prevOpen) {
+      setStep(1) // Só reseta o passo quando o modal REALMENTE abre
+    }
+    setPrevOpen(open)
+
     if (open) {
-      setStep(1) // Sempre reseta para o primeiro passo ao abrir
       if (expense) {
         reset({
           local: expense.local,
@@ -92,20 +109,23 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         const isPredefined = transportOptions.some(opt => opt.value === expense.transporte)
         setShowCustomTransport(!isPredefined && expense.transporte !== '')
       } else {
-        reset({
-          local: '',
-          transporte: 'Estacionamento',
-          valor: 0,
-          motivo: '',
-          date: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
-          quantidade: 1,
-          pago: false,
-          receipt_urls: null
-        })
-        setShowCustomTransport(false)
+        // Se não estiver editando, mantém os defaultValues do useForm (ou reseta se necessário)
+        if (!expense && prevOpen !== open) {
+          reset({
+            local: '',
+            transporte: 'Estacionamento',
+            valor: 0,
+            motivo: '',
+            date: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
+            quantidade: 1,
+            pago: false,
+            receipt_urls: null
+          })
+          setShowCustomTransport(false)
+        }
       }
     }
-  }, [open, expense, reset])
+  }, [open, expense, reset, prevOpen])
 
   const dateValue = watch('date')
   const valorValue = watch('valor')
@@ -166,9 +186,11 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   }
 
   const onSubmit = async (data: ExpenseFormValues) => {
+    console.log('[ExpenseForm] onSubmit chamado!', data, 'Step atual:', step);
     try {
       if (isEditing) { await updateExpense.mutateAsync({ id: expense!.id, ...data }) } 
       else { await createExpense.mutateAsync(data) }
+      console.log('[ExpenseForm] Despesa salva com sucesso, fechando modal...');
       setOpen(false)
       onSuccess?.()
     } catch (error) { console.error('Save error:', error) }
@@ -185,8 +207,23 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
   const prevStep = () => setStep(prev => prev - 1)
 
+  const handleSafeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (step < 3) {
+      console.log('[ExpenseForm] Enter pressionado ou Submit precoce. Avançando passo em vez de salvar.');
+      nextStep();
+    } else {
+      if (!canSubmit) {
+        console.log('[ExpenseForm] Submit bloqueado pelo anti-double-tap.');
+        return;
+      }
+      handleSubmit(onSubmit)(e);
+    }
+  }
+
   const FormContent = (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full overflow-hidden">
+    <form onSubmit={handleSafeSubmit} className="flex flex-col h-full overflow-hidden">
       {/* Barra de Progresso */}
       <div className="px-8 pt-6 pb-2">
         <div className="flex items-center justify-between mb-2">
@@ -348,16 +385,26 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
             
             <div className="grid gap-2">
               <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Comprovante</Label>
-              <label htmlFor="receipt" className={cn("flex items-center justify-between h-20 px-6 rounded-2xl border border-dashed transition-all bg-muted/30", uploading ? "opacity-50 cursor-not-allowed border-primary" : "border-border/60 hover:border-primary/40 cursor-pointer")}>
-                <div className="flex items-center gap-4">
+              <button 
+                type="button" 
+                onClick={(e) => {
+                  console.log('[ExpenseForm] Botão de anexo clicado.');
+                  e.preventDefault();
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }} 
+                disabled={uploading} 
+                className={cn("flex items-center justify-between h-20 px-6 rounded-2xl border border-dashed transition-all bg-muted/30 w-full outline-none", uploading ? "opacity-50 cursor-not-allowed border-primary" : "border-border/60 hover:border-primary/40 cursor-pointer")}
+              >
+                <div className="flex items-center gap-4 text-left">
                   <div className="p-3 rounded-xl bg-background/50 border border-border">
                     {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <Upload className="h-5 w-5 text-muted-foreground" />}
                   </div>
                   <div className="flex flex-col"><span className="text-[11px] font-black text-foreground uppercase tracking-widest">{uploading ? 'Enviando...' : 'Selecionar Fotos'}</span><span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">JPG, PNG ou WebP</span></div>
                 </div>
                 <Plus className="h-5 w-5 text-muted-foreground/40" />
-                <input id="receipt" type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" disabled={uploading} />
-              </label>
+              </button>
+              <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" disabled={uploading} />
             </div>
 
             {receiptUrls && receiptUrls.length > 0 && (
@@ -411,11 +458,29 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     </button>
   )
 
+  const handleInteractOutside = (e: any) => {
+    console.log('[ExpenseForm] handleInteractOutside disparado no Drawer.', e.type);
+    const hasFocus = typeof document !== "undefined" && document.hasFocus();
+    console.log('[ExpenseForm] document.hasFocus():', hasFocus);
+    if (!hasFocus) {
+      console.log('[ExpenseForm] Prevenindo fechamento porque a janela perdeu o foco (provável file picker).');
+      e.preventDefault();
+    }
+  }
+
+  const handleOpenChange = (newOpen: boolean) => {
+    console.log('[ExpenseForm] onOpenChange chamado. Novo valor:', newOpen, '| Step atual:', step);
+    setOpen(newOpen);
+  }
+
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger>{commonTrigger}</DrawerTrigger>
-        <DrawerContent className="h-full bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none flex flex-col overflow-hidden">
+      <Drawer open={open} onOpenChange={handleOpenChange} dismissible={step !== 3}>
+        <DrawerTrigger asChild>{commonTrigger}</DrawerTrigger>
+        <DrawerContent 
+          onInteractOutside={handleInteractOutside}
+          className="h-full bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none flex flex-col overflow-hidden"
+        >
           <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 my-4" />
           {FormContent}
         </DrawerContent>
@@ -424,9 +489,12 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger>{commonTrigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[480px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-[32px] shadow-2xl" showCloseButton={false}>
+      <DialogContent 
+        className="sm:max-w-[480px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-[32px] shadow-2xl" 
+        showCloseButton={false}
+      >
         <div className="flex flex-col h-full overflow-hidden">
           <div className="p-8 pb-6">
             <div className="flex items-center justify-between mb-8">
