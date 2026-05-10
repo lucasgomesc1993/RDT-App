@@ -18,9 +18,11 @@ import {
   Cell,
   Legend
 } from 'recharts'
-import { format, parseISO, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns'
+import { format, parseISO, subMonths, addMonths, startOfMonth, endOfMonth, isWithinInterval, eachMonthOfInterval } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
@@ -57,31 +59,45 @@ const CategoryTooltip = ({ active, payload }: any) => {
 
 export default function DashboardPage() {
   const { data: expenses, isLoading } = useExpenses()
+  const [selectedDate, setSelectedDate] = useState<string>(startOfMonth(new Date()).toISOString())
+
+  const availableMonths = useMemo(() => {
+    if (!expenses || expenses.length === 0) return []
+    
+    const dates = expenses.map(e => startOfMonth(parseISO(e.date)).toISOString())
+    // Sempre inclui o mês atual como opção
+    dates.push(startOfMonth(new Date()).toISOString())
+    
+    return Array.from(new Set(dates))
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+  }, [expenses])
 
   const stats = useMemo(() => {
     if (!expenses) return { pending: 0, monthCount: 0, monthTotal: 0 }
     
-    const now = new Date()
-    const monthStart = startOfMonth(now)
-    const monthEnd = endOfMonth(now)
+    const isTotal = selectedDate === 'TOTAL'
+    const monthStart = isTotal ? null : startOfMonth(new Date(selectedDate))
+    const monthEnd = isTotal ? null : endOfMonth(new Date(selectedDate))
     
-    const pending = expenses.filter(e => !e.pago).reduce((acc, curr) => acc + (curr.valor * curr.quantidade), 0)
+    const filteredExpenses = isTotal 
+      ? expenses 
+      : expenses.filter(e => {
+          const d = parseISO(e.date)
+          return isWithinInterval(d, { start: monthStart!, end: monthEnd! })
+        })
     
-    const currentMonthExpenses = expenses.filter(e => {
-      const d = parseISO(e.date)
-      return isWithinInterval(d, { start: monthStart, end: monthEnd })
-    })
-    
-    const monthCount = currentMonthExpenses.length
-    const monthTotal = currentMonthExpenses.reduce((acc, curr) => acc + (curr.valor * curr.quantidade), 0)
+    const pending = filteredExpenses.filter(e => !e.pago).reduce((acc, curr) => acc + (curr.valor * curr.quantidade), 0)
+    const monthCount = filteredExpenses.length
+    const monthTotal = filteredExpenses.reduce((acc, curr) => acc + (curr.valor * curr.quantidade), 0)
     
     return { pending, monthCount, monthTotal }
-  }, [expenses])
+  }, [expenses, selectedDate])
 
   const chartData = useMemo(() => {
     if (!expenses) return []
+    const refDate = selectedDate === 'TOTAL' ? new Date() : new Date(selectedDate)
     const last6Months = Array.from({ length: 6 }).map((_, i) => {
-      const date = subMonths(new Date(), i)
+      const date = subMonths(refDate, i)
       return {
         month: format(date, 'MMMM', { locale: ptBR }),
         timestamp: date,
@@ -101,17 +117,43 @@ export default function DashboardPage() {
       })
     })
     return last6Months
-  }, [expenses])
+  }, [expenses, selectedDate])
 
   const categoryData = useMemo(() => {
     if (!expenses) return []
+    const isTotal = selectedDate === 'TOTAL'
+    const monthStart = isTotal ? null : startOfMonth(new Date(selectedDate))
+    const monthEnd = isTotal ? null : endOfMonth(new Date(selectedDate))
+
     const categories: Record<string, number> = {}
-    expenses.forEach(e => {
-      categories[e.transporte] = (categories[e.transporte] || 0) + (e.valor * e.quantidade)
-    })
+    expenses
+      .filter(e => {
+        if (isTotal) return true
+        const d = parseISO(e.date)
+        return isWithinInterval(d, { start: monthStart!, end: monthEnd! })
+      })
+      .forEach(e => {
+        categories[e.transporte] = (categories[e.transporte] || 0) + (e.valor * e.quantidade)
+      })
     return Object.entries(categories).map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value)
-  }, [expenses])
+  }, [expenses, selectedDate])
+
+  const handlePrev = () => {
+    if (selectedDate === 'TOTAL') return
+    const currentIndex = availableMonths.indexOf(selectedDate)
+    if (currentIndex < availableMonths.length - 1) {
+      setSelectedDate(availableMonths[currentIndex + 1])
+    }
+  }
+
+  const handleNext = () => {
+    if (selectedDate === 'TOTAL') return
+    const currentIndex = availableMonths.indexOf(selectedDate)
+    if (currentIndex > 0) {
+      setSelectedDate(availableMonths[currentIndex - 1])
+    }
+  }
 
   if (isLoading) return (
     <div className="flex h-full items-center justify-center">
@@ -124,7 +166,7 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-1000 pb-20 pt-4">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 px-4 md:px-0">
         <header className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full bg-muted/20 dark:bg-muted/40 text-muted-foreground text-[10px] font-semibold uppercase tracking-wider border border-border/30 dark:border-border/50">Visão Geral</span>
@@ -134,14 +176,88 @@ export default function DashboardPage() {
           </h1>
           <p className="text-muted-foreground text-sm font-medium opacity-60">Sua performance financeira em tempo real.</p>
         </header>
-        <ExpenseForm />
+
+        <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-3">
+          <div className="order-2 sm:order-1 flex items-center gap-1 p-1 bg-muted/20 rounded-2xl border border-border/40 w-full sm:w-auto">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl hover:bg-background/50 text-muted-foreground disabled:opacity-20"
+              disabled={selectedDate === 'TOTAL' || availableMonths.indexOf(selectedDate) === availableMonths.length - 1}
+              onClick={handlePrev}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <Select
+              value={selectedDate}
+              onValueChange={(value) => {
+                if (value) setSelectedDate(value)
+              }}
+            >
+              <SelectTrigger className="flex-1 sm:w-[180px] h-10 bg-transparent border-none focus:ring-0 font-bold uppercase tracking-widest text-[10px]">
+                <SelectValue>
+                  {selectedDate === 'TOTAL' 
+                    ? 'Período Total' 
+                    : format(new Date(selectedDate), "MMMM 'de' yyyy", { locale: ptBR })}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-background/95 backdrop-blur-2xl border-white/10 rounded-2xl">
+                <SelectItem 
+                  value="TOTAL"
+                  className="text-[10px] font-bold uppercase tracking-widest text-primary"
+                >
+                  Período Total
+                </SelectItem>
+                <div className="h-px bg-border/40 my-1" />
+                {availableMonths.map((monthIso, i) => (
+                  <SelectItem 
+                    key={i} 
+                    value={monthIso}
+                    className="text-[10px] font-bold uppercase tracking-widest"
+                  >
+                    {format(new Date(monthIso), "MMMM 'de' yyyy", { locale: ptBR })}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-xl hover:bg-background/50 text-muted-foreground disabled:opacity-20"
+              disabled={selectedDate === 'TOTAL' || availableMonths.indexOf(selectedDate) === 0}
+              onClick={handleNext}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="order-1 sm:order-2 w-full sm:w-auto">
+            <ExpenseForm />
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0">
         {[
-          { label: 'Saldo Pendente', value: stats.pending, icon: AlertCircle, isCurrency: true },
-          { label: 'Transações / Mês', value: stats.monthCount, icon: MousePointer2, isCurrency: false },
-          { label: 'Gasto Mensal', value: stats.monthTotal, icon: TrendingUp, isCurrency: true },
+          { 
+            label: selectedDate === 'TOTAL' ? 'Pendente Total' : `Pendente / ${format(new Date(selectedDate), 'MMM', { locale: ptBR })}`, 
+            value: stats.pending, 
+            icon: AlertCircle, 
+            isCurrency: true 
+          },
+          { 
+            label: selectedDate === 'TOTAL' ? 'Transações Totais' : `Transações / ${format(new Date(selectedDate), 'MMM', { locale: ptBR })}`, 
+            value: stats.monthCount, 
+            icon: MousePointer2, 
+            isCurrency: false 
+          },
+          { 
+            label: selectedDate === 'TOTAL' ? 'Gasto Total' : `Gasto em ${format(new Date(selectedDate), 'MMMM', { locale: ptBR })}`, 
+            value: stats.monthTotal, 
+            icon: TrendingUp, 
+            isCurrency: true 
+          },
         ].map((stat, i) => (
           <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
             <div className="flex items-center justify-between mb-6">
@@ -211,7 +327,8 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
-                <PieChartIcon className="h-4 w-4 opacity-50" /> Distribuição
+                <PieChartIcon className="h-4 w-4 opacity-50" /> 
+                {selectedDate === 'TOTAL' ? 'Distribuição Total' : `Distribuição / ${format(new Date(selectedDate), 'MMM', { locale: ptBR })}`}
               </h3>
               <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Gastos por categoria</p>
             </div>
