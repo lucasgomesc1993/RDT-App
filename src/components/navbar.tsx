@@ -31,17 +31,17 @@ export function Navbar() {
       <div className="flex items-center gap-3">
         <div className="relative h-10 w-10 flex items-center justify-center">
           <div className="absolute inset-0 bg-primary/10 rounded-xl rotate-6" />
-          <div className="relative h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
+          <div className="relative h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20 text-primary-foreground">
             <svg 
               viewBox="0 0 24 24" 
               fill="none" 
-              stroke="white" 
+              stroke="currentColor" 
               strokeWidth="2.5" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
               className="h-4 w-4"
             >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" fillOpacity="0.2" />
+              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" fillOpacity="0.2" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>

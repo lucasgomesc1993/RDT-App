@@ -27,17 +27,17 @@ export function Sidebar() {
       <div className="px-2 flex items-center gap-4">
         <div className="relative h-12 w-12 flex items-center justify-center">
           <div className="absolute inset-0 bg-primary/10 rounded-2xl rotate-6 transition-transform group-hover:rotate-12" />
-          <div className="relative h-9 w-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+          <div className="relative h-9 w-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 text-primary-foreground">
             <svg 
               viewBox="0 0 24 24" 
               fill="none" 
-              stroke="white" 
+              stroke="currentColor" 
               strokeWidth="2.5" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
               className="h-5 w-5"
             >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" fillOpacity="0.2" />
+              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor" fillOpacity="0.2" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>

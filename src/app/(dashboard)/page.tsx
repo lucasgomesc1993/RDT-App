@@ -236,7 +236,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="space-y-10 animate-in fade-in duration-700">
-          <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0">
+          <div className="grid gap-6 md:grid-cols-3 px-4 md:px-0 mb-10">
             {[
               { 
                 label: selectedDate === 'TOTAL' ? 'Pendente Total' : `Pendente / ${format(new Date(selectedDate), 'MMM', { locale: ptBR })}`, 
