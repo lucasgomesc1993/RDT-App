@@ -683,17 +683,17 @@ export default function DespesasPage() {
       </div>
 
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-lg animate-in fade-in slide-in-from-bottom-6 duration-500">
-          <div className="bg-foreground dark:bg-background/80 backdrop-blur-2xl text-background dark:text-foreground p-1.5 rounded-2xl flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-white/10 dark:border-white/5">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-md animate-in fade-in slide-in-from-bottom-6 duration-500">
+          <div className="bg-foreground text-background p-1.5 rounded-2xl flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.4)] border border-white/10">
             <div className="flex items-center gap-2.5 pl-3">
-              <div className="h-6 w-6 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-[10px] font-mono">{selectedIds.length}</div>
+              <div className="h-6 w-6 rounded-lg bg-background text-foreground flex items-center justify-center font-bold text-[10px] font-mono">{selectedIds.length}</div>
               <span className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-60 hidden sm:inline">Itens</span>
             </div>
             <div className="flex gap-1 items-center">
               <Button 
                 size="sm" 
                 variant="ghost" 
-                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background dark:text-foreground hover:bg-white/10 dark:hover:bg-white/5 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
+                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background hover:bg-white/10 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
                 onClick={handleBatchDownload}
               >
                 <Download className="h-3.5 w-3.5 sm:mr-1.5 opacity-60" /> 
@@ -702,7 +702,7 @@ export default function DespesasPage() {
               <Button 
                 size="sm" 
                 variant="ghost" 
-                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background dark:text-foreground hover:bg-white/10 dark:hover:bg-white/5 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
+                className="h-8 w-8 sm:w-auto sm:px-2.5 text-background hover:bg-white/10 text-[8px] font-bold uppercase tracking-widest flex items-center rounded-lg" 
                 onClick={handleExportExcel}
               >
                 <FileSpreadsheet className="h-3.5 w-3.5 sm:mr-1.5 opacity-60" /> 
@@ -739,7 +739,7 @@ export default function DespesasPage() {
                     "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
                     isSelected 
                       ? "bg-primary border-primary shadow-sm shadow-primary/20" 
-                      : "border-border/20 dark:border-white/5"
+                      : "border-border/40 dark:border-white/10"
                   )}>
                     {isSelected && <Check className="h-3 w-3 text-primary-foreground stroke-[4px]" />}
                   </div>
@@ -769,7 +769,7 @@ export default function DespesasPage() {
                       return (
                         <div 
                           key={i}
-                          className="absolute h-10 w-10 rounded-xl ring-1 ring-black/[0.05] dark:ring-white/10 overflow-hidden shadow-md shadow-black/5 transition-all duration-500"
+                          className="absolute h-10 w-10 rounded-xl ring-1 ring-black/10 dark:ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500"
                           style={{ 
                             left: `${reverseIndex * 8}px`,
                             zIndex: reverseIndex,
@@ -809,7 +809,7 @@ export default function DespesasPage() {
                       "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
                       selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0
                         ? "bg-primary border-primary shadow-sm shadow-primary/20" 
-                        : "border-border/20 dark:border-white/5 hover:border-primary/50"
+                        : "border-border/40 dark:border-white/10"
                     )}
                   >
                     {selectedIds.length === filteredExpenses.length && filteredExpenses.length > 0 && (
@@ -839,7 +839,7 @@ export default function DespesasPage() {
                           "h-5 w-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center",
                           isSelected 
                             ? "bg-primary border-primary shadow-sm shadow-primary/20" 
-                            : "border-border/20 dark:border-white/5 hover:border-primary/50"
+                            : "border-border/40 dark:border-white/10"
                         )}
                       >
                         {isSelected && <Check className="h-3 w-3 text-primary-foreground stroke-[4px]" />}
@@ -868,7 +868,7 @@ export default function DespesasPage() {
                               <div 
                                 key={i}
                                 className={cn(
-                                  "absolute h-10 w-10 rounded-xl ring-1 ring-black/[0.05] dark:ring-white/10 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
+                                  "absolute h-10 w-10 rounded-xl ring-1 ring-black/10 dark:ring-white/20 overflow-hidden shadow-md shadow-black/5 transition-all duration-500 ease-out",
                                   "group-hover/stack:scale-110 group-hover/stack:translate-x-[var(--hx)] group-hover/stack:rotate-[var(--hr)]"
                                 )}
                                 style={{ 
