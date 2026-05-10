@@ -12,7 +12,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Minus, Info, CreditCard, Clock, TramFront, BusFront, Navigation } from 'lucide-react'
 import { Expense } from '@/types/database'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, subDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
@@ -260,7 +260,38 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] ml-1">Data do Gasto</Label>
+                  <div className="flex items-center justify-between ml-1">
+                    <Label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em]">Data do Gasto</Label>
+                    <div className="flex gap-1.5">
+                      <button 
+                        type="button" 
+                        onClick={() => setValue('date', new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0], { shouldDirty: true, shouldValidate: true })}
+                        className={cn(
+                          "text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg transition-all border",
+                          dateValue === new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0] 
+                            ? "bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/20" 
+                            : "bg-muted/30 border-border/50 text-muted-foreground/50 hover:text-foreground hover:bg-muted/50"
+                        )}
+                      >
+                        Hoje
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          const yesterday = subDays(new Date(), 1);
+                          setValue('date', new Date(yesterday.getTime() - yesterday.getTimezoneOffset() * 60000).toISOString().split('T')[0], { shouldDirty: true, shouldValidate: true });
+                        }}
+                        className={cn(
+                          "text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg transition-all border",
+                          dateValue === new Date(subDays(new Date(), 1).getTime() - subDays(new Date(), 1).getTimezoneOffset() * 60000).toISOString().split('T')[0]
+                            ? "bg-primary border-primary text-primary-foreground shadow-sm shadow-primary/20" 
+                            : "bg-muted/30 border-border/50 text-muted-foreground/50 hover:text-foreground hover:bg-muted/50"
+                        )}
+                      >
+                        Ontem
+                      </button>
+                    </div>
+                  </div>
                   {isMobile ? (
                     <Drawer>
                       <DrawerTrigger asChild>
