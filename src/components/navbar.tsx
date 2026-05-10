@@ -101,7 +101,7 @@ export function Navbar() {
             <div className="pt-4 border-t border-border/50 mt-4">
               <Drawer>
                 <DrawerTrigger asChild>
-                  <button className="flex w-full items-center gap-4 px-6 h-12 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-xl transition-all duration-300">
+                  <button className="flex w-full items-center gap-4 px-6 h-12 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-xl transition-all duration-300">
                     <LogOut className="h-4.5 w-4.5" />
                     Sair do Sistema
                   </button>

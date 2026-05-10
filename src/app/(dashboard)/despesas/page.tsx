@@ -40,7 +40,8 @@ import {
   CheckCircle2, Clock, Tag, Download, FileSpreadsheet,
   TrendingUp, SlidersHorizontal, MousePointer2,
   Check, Calendar, MapPin, Receipt,
-  Car, Ticket, Bus, Utensils, Layers, TramFront, BusFront, Navigation
+  Car, Ticket, Bus, Utensils, Layers, TramFront, BusFront, Navigation,
+  ChevronsLeft, ChevronsRight
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -921,10 +922,54 @@ export default function DespesasPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="h-10 px-4 rounded-xl border-border/50 text-xs uppercase tracking-widest font-medium">Anterior</Button>
-          <div className="h-10 flex items-center px-4 rounded-xl bg-white/[0.02] border border-white/[0.04] text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Página {currentPage} / {totalPages}</div>
-          <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="h-10 px-4 rounded-xl border-border/50 text-xs uppercase tracking-widest font-medium">Próxima</Button>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-10 px-4 md:px-0">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/30">
+            Mostrando {((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, filteredExpenses.length)} de {filteredExpenses.length} registros
+          </div>
+          
+          <div className="flex items-center gap-1.5">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setCurrentPage(1)} 
+              disabled={currentPage === 1} 
+              className="h-10 w-10 rounded-xl border-border/40 bg-muted/10 hover:border-primary/40 hover:bg-primary/5 transition-all text-muted-foreground hover:text-primary disabled:opacity-20"
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+              disabled={currentPage === 1} 
+              className="h-10 w-10 rounded-xl border-border/40 bg-muted/10 hover:border-primary/40 hover:bg-primary/5 transition-all text-muted-foreground hover:text-primary disabled:opacity-20"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <div className="h-10 px-6 flex items-center justify-center rounded-xl bg-white/[0.02] border border-white/[0.04] text-[11px] font-black tracking-[0.1em] text-foreground font-mono shadow-inner">
+              {currentPage} <span className="text-muted-foreground/20 mx-2">/</span> {totalPages}
+            </div>
+
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+              disabled={currentPage === totalPages} 
+              className="h-10 w-10 rounded-xl border-border/40 bg-muted/10 hover:border-primary/40 hover:bg-primary/5 transition-all text-muted-foreground hover:text-primary disabled:opacity-20"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setCurrentPage(totalPages)} 
+              disabled={currentPage === totalPages} 
+              className="h-10 w-10 rounded-xl border-border/40 bg-muted/10 hover:border-primary/40 hover:bg-primary/5 transition-all text-muted-foreground hover:text-primary disabled:opacity-20"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       )}
 
