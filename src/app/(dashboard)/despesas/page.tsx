@@ -728,24 +728,20 @@ export default function DespesasPage() {
               </span>
             </div>
             <div className="flex gap-1 sm:gap-1.5 items-center pr-1 sm:pr-2">
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="h-8 sm:h-9 px-2 sm:px-3 text-background hover:bg-white/10 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest flex items-center rounded-xl transition-all" 
+              <button 
+                className="h-8 sm:h-9 px-2 sm:px-3 text-background hover:bg-primary/20 hover:ring-1 hover:ring-primary/40 hover:text-background text-[8px] sm:text-[9px] font-bold uppercase tracking-widest flex items-center rounded-xl transition-all bg-transparent border-none outline-none cursor-pointer" 
                 onClick={handleBatchDownload}
               >
                 <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 sm:mr-2 opacity-60" /> 
                 <span className="hidden sm:inline">Recibos</span>
-              </Button>
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="h-8 sm:h-9 px-2 sm:px-3 text-background hover:bg-white/10 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest flex items-center rounded-xl transition-all" 
+              </button>
+              <button 
+                className="h-8 sm:h-9 px-2 sm:px-3 text-background hover:bg-primary/20 hover:ring-1 hover:ring-primary/40 hover:text-background text-[8px] sm:text-[9px] font-bold uppercase tracking-widest flex items-center rounded-xl transition-all bg-transparent border-none outline-none cursor-pointer" 
                 onClick={handleExportExcel}
               >
                 <FileSpreadsheet className="h-3.5 w-3.5 sm:h-4 sm:w-4 sm:mr-2 opacity-60" /> 
                 <span className="hidden sm:inline">Excel</span>
-              </Button>
+              </button>
               <Button 
                 size="sm" 
                 variant="default" 
