@@ -38,9 +38,9 @@ export default function ConfiguracoesPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8 px-4 md:px-0">
-        {/* Modo de Exibição */}
-        <div className="lg:col-span-1 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border border-white/[0.06] dark:border-white/[0.06] border-border/30 rounded-[32px] shadow-sm transition-all duration-500 group hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4 md:px-0">
+        {/* Card de Tema */}
+        <div className="glass-card flex flex-col overflow-hidden group">
           <div className="p-8 pb-6">
             <div className="flex items-center justify-between mb-8">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Interface</span>
@@ -55,32 +55,71 @@ export default function ConfiguracoesPage() {
               </p>
             </div>
           </div>
-          <div className="px-8 pb-8">
-            <div className="inline-flex bg-muted/30 p-1 rounded-[14px] border border-border/50">
-              {[
-                { id: 'light', label: 'Claro', icon: Sun },
-                { id: 'dark', label: 'Escuro', icon: Moon },
-              ].map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTheme(t.id)}
-                  className={cn(
-                    "flex items-center justify-center gap-1.5 h-8 px-4 rounded-[10px] transition-all duration-300",
-                    theme === t.id 
-                      ? "bg-background shadow-sm border border-border/50 text-primary" 
-                      : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5"
-                  )}
-                >
-                  <t.icon className="h-3.5 w-3.5" />
-                  <span className="text-[9px] font-bold uppercase tracking-widest">{t.label}</span>
-                </button>
-              ))}
+
+          <div className="p-8 pt-2 mt-auto">
+            <div className="flex p-1.5 bg-muted/20 dark:bg-white/[0.02] rounded-2xl border border-border/40 gap-1.5">
+              <button
+                onClick={() => setTheme('light')}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300",
+                  theme === 'light'
+                    ? "bg-background text-foreground shadow-lg shadow-black/5 border border-border/50 scale-[1.02]"
+                    : "text-muted-foreground hover:bg-background/50"
+                )}
+              >
+                <Sun className="h-3.5 w-3.5" />
+                <span>Claro</span>
+              </button>
+              <button
+                onClick={() => setTheme('dark')}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 h-12 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300",
+                  theme === 'dark'
+                    ? "bg-background text-foreground shadow-lg shadow-black/5 border border-border/50 scale-[1.02]"
+                    : "text-muted-foreground hover:bg-background/50"
+                )}
+              >
+                <Moon className="h-3.5 w-3.5" />
+                <span>Escuro</span>
+              </button>
             </div>
           </div>
         </div>
 
+        {/* Card de Informações */}
+        <div className="glass-card flex flex-col overflow-hidden group">
+          <div className="p-8 pb-6">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Aplicação</span>
+              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
+                <Info className="h-4 w-4" />
+              </div>
+            </div>
+            <div>
+              <h2 className="text-3xl font-semibold tracking-tight text-foreground">Sobre o RDT</h2>
+              <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed mt-2">
+                Versão 2.4.0 • Build editorial estável.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-8 pt-2 mt-auto">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between p-4 bg-muted/20 dark:bg-white/[0.02] rounded-2xl border border-border/40">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Status do Sistema</span>
+                <div className="flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Operacional</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 md:px-0">
         {/* Seleção de Cores */}
-        <div className="lg:col-span-2 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border border-white/[0.06] dark:border-white/[0.06] border-border/30 rounded-[32px] shadow-sm transition-all duration-500 group hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
+        <div className="glass-card flex flex-col overflow-hidden group">
           <div className="p-8 pb-6">
             <div className="flex items-center justify-between mb-8">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Identidade Visual</span>
