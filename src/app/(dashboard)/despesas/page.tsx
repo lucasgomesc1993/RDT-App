@@ -609,15 +609,18 @@ export default function DespesasPage() {
           { label: 'Reembolsado', value: stats.paid, icon: CheckCircle2 },
           { label: 'Pendente', value: stats.pending, icon: Clock },
         ].map((item, idx) => (
-          <div key={idx} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{item.label}</span>
-              <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+          <div key={idx} className="glass-card group p-8 pb-10 transition-all duration-500 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 group-hover:text-primary/50 transition-colors">{item.label}</span>
+              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                 <item.icon className="h-4 w-4" />
               </div>
             </div>
-            <div className="text-3xl font-black tracking-tight font-mono text-foreground transition-transform duration-500 group-hover:translate-x-1">
-              R$ {item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            <div className="text-3xl font-semibold tracking-tight text-foreground transition-transform duration-500 group-hover:translate-x-1">
+              <span className="flex items-baseline gap-1">
+                <span className="text-sm font-bold opacity-30">R$</span>
+                <span className="font-mono font-bold tracking-tighter">{item.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+              </span>
             </div>
           </div>
         ))}
@@ -631,7 +634,7 @@ export default function DespesasPage() {
       ) : (
         <div className="animate-in fade-in duration-700 space-y-10">
           <div className="sticky top-4 z-40 mx-4 md:mx-0">
-            <div className="bg-card/25 dark:bg-card/50 backdrop-blur-2xl border border-border/30 dark:border-border/50 rounded-2xl p-2 flex flex-col md:flex-row items-center gap-2 shadow-sm">
+            <div className="glass-card p-2 flex flex-col md:flex-row items-center gap-2">
               <div className="relative w-full md:flex-1 group">
                 <Search className="absolute left-4 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
                 <Input 
@@ -761,7 +764,7 @@ export default function DespesasPage() {
         {paginatedExpenses.map((expense) => { 
           const isSelected = selectedIds.includes(expense.id); 
           return (
-            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("relative rounded-2xl bg-card border p-5 space-y-4 transition-all duration-300 shadow-sm", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "border-border/40 hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
+            <div key={expense.id} onClick={() => selectionMode && handleSelectRow(expense.id, !isSelected)} className={cn("glass-card relative p-5 space-y-4", isSelected ? "border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-md" : "hover:bg-muted/30", selectionMode && "active:scale-[0.98]")}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-500", expense.pago ? "bg-primary/20 text-primary border border-primary/30" : "bg-primary/10 text-primary/40 border border-primary/20")}>
@@ -841,7 +844,7 @@ export default function DespesasPage() {
       </div>
 
       <div className="hidden md:block px-4 lg:px-0">
-        <div className="rounded-2xl border border-border/30 bg-card/25 overflow-hidden shadow-sm">
+        <div className="glass-card overflow-hidden">
           <Table>
             <TableHeader className="bg-muted/25 border-b border-border/30">
               <TableRow className="hover:bg-transparent border-none">

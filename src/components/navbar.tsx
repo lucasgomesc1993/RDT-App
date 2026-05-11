@@ -27,7 +27,7 @@ export function Navbar() {
   ]
 
   return (
-    <div className="flex items-center justify-between border-b border-border/50 bg-background/50 backdrop-blur-2xl px-6 py-4 md:hidden sticky top-0 z-40">
+    <div className="flex items-center justify-between border-b border-border/50 bg-background px-6 py-4 md:hidden sticky top-0 z-40">
       <div className="flex items-center gap-3">
         <div className="relative h-10 w-10 flex items-center justify-center">
           <div className="absolute inset-0 bg-primary/10 rounded-xl rotate-6" />

@@ -293,21 +293,28 @@ export default function DashboardPage() {
                 isCurrency: true 
               },
             ].map((stat, i) => (
-              <div key={i} className="group relative overflow-hidden rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-muted/5 dark:hover:bg-white/[0.02]">
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{stat.label}</span>
-                  <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+              <div key={i} className="glass-card group p-8 pb-10 transition-all duration-500 hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-8">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 group-hover:text-primary/50 transition-colors">{stat.label}</span>
+                  <div className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary group-hover:scale-110 group-hover:rotate-3">
                     <stat.icon className="h-4 w-4" />
                   </div>
                 </div>
-                <div className="text-3xl font-black tracking-tight font-mono text-foreground transition-transform duration-500 group-hover:translate-x-1">
-                  {stat.isCurrency ? 'R$ ' : ''}{stat.value.toLocaleString('pt-BR', { minimumFractionDigits: stat.isCurrency ? 2 : 0 })}
+                <div className="text-3xl font-semibold tracking-tight text-foreground transition-transform duration-500 group-hover:translate-x-1">
+                  {stat.isCurrency ? (
+                    <span className="flex items-baseline gap-1">
+                      <span className="text-sm font-bold opacity-30">R$</span>
+                      <span className="font-mono font-bold tracking-tighter">{stat.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    </span>
+                  ) : (
+                    <span className="font-mono font-bold tracking-tighter">{stat.value}</span>
+                  )}
                 </div>
               </div>
             ))}          </div>
 
           <div className="grid gap-8 lg:grid-cols-2 px-4 md:px-0">
-            <div className="rounded-2xl border border-border/40 bg-card/30 p-8 space-y-8 transition-all duration-300 shadow-sm">
+            <div className="glass-card p-8 space-y-8">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">
@@ -355,7 +362,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-border/30 dark:border-border/50 bg-card/20 dark:bg-card/40 p-5 pb-10 sm:p-8 space-y-6 sm:space-y-8 transition-all duration-300 shadow-sm">
+            <div className="glass-card p-5 pb-10 sm:p-8 space-y-6 sm:space-y-8">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <h3 className="text-lg font-semibold flex items-center gap-2 text-foreground">

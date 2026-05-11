@@ -23,7 +23,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="hidden md:flex h-full w-64 flex-col bg-background/50 backdrop-blur-2xl border-r border-border/50 p-6 gap-8">
+    <div className="hidden md:flex h-full w-64 flex-col bg-background border-r border-border/50 p-6 gap-8">
       <div className="px-2 flex items-center gap-4">
         <div className="relative h-12 w-12 flex items-center justify-center">
           <div className="absolute inset-0 bg-primary/10 rounded-2xl rotate-6 transition-transform group-hover:rotate-12" />
