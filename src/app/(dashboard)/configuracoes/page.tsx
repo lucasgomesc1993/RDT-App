@@ -3,7 +3,7 @@
 import { useAccent, accentColors } from "@/components/accent-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Settings, Palette, Check, RotateCcw, Moon, Sun, Monitor } from "lucide-react"
+import { Settings, Palette, Check, RotateCcw, Moon, Sun, Monitor, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTheme } from "next-themes"
 
