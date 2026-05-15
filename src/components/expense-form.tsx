@@ -148,7 +148,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       const newUrls: string[] = []
       
       for (const file of Array.from(files)) {
-        const options = { maxSizeMB: 0.8, maxWidthOrHeight: 1280, useWebWorker: true }
+        const options = { maxSizeMB: 0.4, maxWidthOrHeight: 1280, useWebWorker: true }
         const compressedFile = await imageCompression(file, options)
         const fileExt = file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
