@@ -55,6 +55,10 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   const isMobile = useIsMobile()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [isCameraActive, setIsCameraActive] = useState(false)
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
   
   const createExpense = useCreateExpense()
   const updateExpense = useUpdateExpense()
@@ -159,10 +163,63 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   const transporteValue = watch('transporte')
   const receiptUrls = watch('receipt_urls')
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
+  const startCamera = async () => {
+    setIsCameraActive(true)
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, 
+        audio: false 
+      })
+      setCameraStream(stream)
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+      }
+    } catch (err) {
+      console.error('Erro ao acessar câmera:', err)
+      alert('Não foi possível acessar a câmera. Verifique as permissões.')
+      setIsCameraActive(false)
+    }
+  }
 
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop())
+      setCameraStream(null)
+    }
+    setIsCameraActive(false)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop())
+      }
+    }
+  }, [cameraStream])
+
+  const capturePhoto = async () => {
+    if (!videoRef.current || !canvasRef.current) return
+
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    
+    const context = canvas.getContext('2d')
+    if (context) {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+      
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' })
+          await processFiles([file])
+          stopCamera()
+        }
+      }, 'image/jpeg', 0.9)
+    }
+  }
+
+  const processFiles = async (files: File[]) => {
     setUploading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -198,8 +255,14 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       alert('Erro de permissão no upload. Verifique sua conexão ou tente novamente.')
     } finally { 
       setUploading(false)
-      if (e.target) e.target.value = '' // Reset input
     }
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    await processFiles(Array.from(files))
+    if (e.target) e.target.value = '' // Reset input
   }
 
   const formatCurrency = (value: number) => {
@@ -509,10 +572,10 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                       <button 
                         type="button" 
                         onClick={(e) => {
-                          console.log('[ExpenseForm] Botão de câmera clicado.');
+                          console.log('[ExpenseForm] Abrindo câmera interna.');
                           e.preventDefault();
                           e.stopPropagation();
-                          cameraInputRef.current?.click();
+                          startCamera();
                         }} 
                         disabled={uploading} 
                         className={cn(
@@ -545,15 +608,6 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                   type="file" 
                   accept="image/*" 
                   multiple 
-                  onChange={handleFileUpload} 
-                  className="hidden" 
-                  disabled={uploading} 
-                />
-                <input 
-                  ref={cameraInputRef} 
-                  type="file" 
-                  accept="image/*" 
-                  capture="environment" 
                   onChange={handleFileUpload} 
                   className="hidden" 
                   disabled={uploading} 
@@ -691,6 +745,49 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
           {FormContent}
         </div>
       </DialogContent>
+
+      {/* Câmera Overlay */}
+      {isCameraActive && (
+        <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center animate-in fade-in duration-300">
+          <div className="absolute top-8 left-0 right-0 px-8 flex items-center justify-between z-10">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Câmera</span>
+              <span className="text-white font-semibold tracking-tight">Capturar Recibo</span>
+            </div>
+            <button 
+              onClick={stopCamera}
+              className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="relative w-full aspect-[3/4] max-h-[70vh] overflow-hidden bg-muted/20">
+            <video 
+              ref={videoRef} 
+              autoPlay 
+              playsInline 
+              className="w-full h-full object-cover"
+            />
+            {/* Overlay de Guia */}
+            <div className="absolute inset-8 border-2 border-dashed border-white/20 rounded-2xl pointer-events-none flex items-center justify-center">
+               <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Alinhe o recibo aqui</div>
+            </div>
+          </div>
+
+          <div className="flex-1 w-full flex items-center justify-center p-8">
+            <button 
+              onClick={capturePhoto}
+              className="h-20 w-20 rounded-full border-4 border-white/20 p-1 group active:scale-90 transition-transform"
+            >
+              <div className="w-full h-full rounded-full bg-white group-hover:bg-primary transition-colors flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                <div className="h-6 w-6 rounded-full border-2 border-black/10" />
+              </div>
+            </button>
+          </div>
+          <canvas ref={canvasRef} className="hidden" />
+        </div>
+      )}
     </Dialog>
   )
 }
