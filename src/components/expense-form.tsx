@@ -9,7 +9,6 @@ import { useCreateExpense, useUpdateExpense } from '@/hooks/use-expenses'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { useState, useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
 import { createClient } from '@/utils/supabase/client'
 import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Minus, Info, CreditCard, Clock, TramFront, BusFront, Navigation, Camera } from 'lucide-react'
 import { Expense } from '@/types/database'
@@ -56,10 +55,6 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   const isMobile = useIsMobile()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [isCameraActive, setIsCameraActive] = useState(false)
-  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
   
   const createExpense = useCreateExpense()
   const updateExpense = useUpdateExpense()
@@ -163,65 +158,6 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   const valorValue = watch('valor')
   const transporteValue = watch('transporte')
   const receiptUrls = watch('receipt_urls')
-
-  const startCamera = async () => {
-    setIsCameraActive(true)
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, 
-        audio: false 
-      })
-      setCameraStream(stream)
-    } catch (err) {
-      console.error('Erro ao acessar câmera:', err)
-      alert('Não foi possível acessar a câmera. Verifique as permissões.')
-      setIsCameraActive(false)
-    }
-  }
-
-  const stopCamera = () => {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach(track => track.stop())
-      setCameraStream(null)
-    }
-    setIsCameraActive(false)
-  }
-
-  useEffect(() => {
-    if (isCameraActive && cameraStream && videoRef.current) {
-      videoRef.current.srcObject = cameraStream
-    }
-  }, [isCameraActive, cameraStream])
-
-  useEffect(() => {
-    return () => {
-      if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop())
-      }
-    }
-  }, [cameraStream])
-
-  const capturePhoto = async () => {
-    if (!videoRef.current || !canvasRef.current) return
-
-    const video = videoRef.current
-    const canvas = canvasRef.current
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
-    
-    const context = canvas.getContext('2d')
-    if (context) {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height)
-      
-      canvas.toBlob(async (blob) => {
-        if (blob) {
-          const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' })
-          await processFiles([file])
-          stopCamera()
-        }
-      }, 'image/jpeg', 0.9)
-    }
-  }
 
   const processFiles = async (files: File[]) => {
     setUploading(true)
@@ -576,10 +512,10 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                       <button 
                         type="button" 
                         onClick={(e) => {
-                          console.log('[ExpenseForm] Abrindo câmera interna.');
+                          console.log('[ExpenseForm] Botão de câmera clicado.');
                           e.preventDefault();
                           e.stopPropagation();
-                          startCamera();
+                          cameraInputRef.current?.click();
                         }} 
                         disabled={uploading} 
                         className={cn(
@@ -612,6 +548,15 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                   type="file" 
                   accept="image/*" 
                   multiple 
+                  onChange={handleFileUpload} 
+                  className="hidden" 
+                  disabled={uploading} 
+                />
+                <input 
+                  ref={cameraInputRef} 
+                  type="file" 
+                  accept="image/*" 
+                  capture="environment" 
                   onChange={handleFileUpload} 
                   className="hidden" 
                   disabled={uploading} 
@@ -707,108 +652,48 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     }
   }
 
-  // Componente de overlay da câmera (renderizado via Portal direto no body)
-  const CameraOverlay = isCameraActive && typeof document !== 'undefined' ? createPortal(
-    <div 
-      className="fixed inset-0 bg-black flex flex-col items-center justify-center animate-in fade-in duration-300"
-      style={{ zIndex: 99999 }}
-      onTouchStart={(e) => e.stopPropagation()}
-      onTouchMove={(e) => e.stopPropagation()}
-    >
-      <div className="absolute top-8 left-0 right-0 px-8 flex items-center justify-between z-10">
-        <div className="flex flex-col">
-          <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Câmera</span>
-          <span className="text-white font-semibold tracking-tight">Capturar Recibo</span>
-        </div>
-        <button 
-          type="button"
-          onClick={() => stopCamera()}
-          onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); stopCamera(); }}
-          className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white active:bg-white/30 transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="relative w-full aspect-[3/4] max-h-[70vh] overflow-hidden bg-muted/20">
-        <video 
-          ref={videoRef} 
-          autoPlay 
-          playsInline 
-          muted
-          className="w-full h-full object-cover"
-        />
-        {/* Overlay de Guia */}
-        <div className="absolute inset-8 border-2 border-dashed border-white/20 rounded-2xl pointer-events-none flex items-center justify-center">
-           <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Alinhe o recibo aqui</div>
-        </div>
-      </div>
-
-      <div className="flex-1 w-full flex items-center justify-center p-8">
-        <button 
-          type="button"
-          onClick={() => capturePhoto()}
-          onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); capturePhoto(); }}
-          className="h-20 w-20 rounded-full border-4 border-white/20 p-1 group active:scale-90 transition-transform"
-        >
-          <div className="w-full h-full rounded-full bg-white group-hover:bg-primary transition-colors flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-            <div className="h-6 w-6 rounded-full border-2 border-black/10" />
-          </div>
-        </button>
-      </div>
-      <canvas ref={canvasRef} className="hidden" />
-    </div>,
-    document.body
-  ) : null
-
   if (isMobile) {
     return (
-      <>
-        <Drawer open={open} onOpenChange={handleOpenChange} dismissible={step !== 3}>
-          <DrawerTrigger asChild>{commonTrigger}</DrawerTrigger>
-          <DrawerContent 
-            onInteractOutside={handleInteractOutside}
-            className="h-full bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none flex flex-col overflow-hidden"
-          >
-            <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 my-4" />
-            {FormContent}
-          </DrawerContent>
-        </Drawer>
-        {CameraOverlay}
-      </>
+      <Drawer open={open} onOpenChange={handleOpenChange} dismissible={step !== 3}>
+        <DrawerTrigger asChild>{commonTrigger}</DrawerTrigger>
+        <DrawerContent 
+          onInteractOutside={handleInteractOutside}
+          className="h-full bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-t-[40px] p-0 outline-none flex flex-col overflow-hidden"
+        >
+          <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-white/10 my-4" />
+          {FormContent}
+        </DrawerContent>
+      </Drawer>
     )
   }
 
   return (
-    <>
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogTrigger>{commonTrigger}</DialogTrigger>
-        <DialogContent 
-          className="sm:max-w-[480px] md:max-w-[720px] lg:max-w-[800px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-[32px] shadow-2xl" 
-          showCloseButton={false}
-        >
-          <div className="flex flex-col h-full overflow-hidden">
-            <div className="p-8 pb-6">
-              <div className="flex items-center justify-between mb-8">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Financeiro</span>
-                <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
-                  <CreditCard className="h-4 w-4" />
-                </div>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger>{commonTrigger}</DialogTrigger>
+      <DialogContent 
+        className="sm:max-w-[480px] md:max-w-[720px] lg:max-w-[800px] max-h-[90vh] p-0 flex flex-col overflow-hidden bg-background/95 backdrop-blur-3xl border-white/[0.06] rounded-[32px] shadow-2xl" 
+        showCloseButton={false}
+      >
+        <div className="flex flex-col h-full overflow-hidden">
+          <div className="p-8 pb-6">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Financeiro</span>
+              <div className="p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-primary">
+                <CreditCard className="h-4 w-4" />
               </div>
-              <DialogHeader>
-                <DialogTitle className="text-3xl font-semibold tracking-tight">
-                  {isEditing ? 'Editar Registro' : 'Nova Despesa'}
-                </DialogTitle>
-                <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed mt-2">
-                  Preencha os detalhes do gasto para manter seu controle financeiro atualizado.
-                </p>
-              </DialogHeader>
             </div>
-            {FormContent}
+            <DialogHeader>
+              <DialogTitle className="text-3xl font-semibold tracking-tight">
+                {isEditing ? 'Editar Registro' : 'Nova Despesa'}
+              </DialogTitle>
+              <p className="text-sm font-medium text-muted-foreground/40 leading-relaxed mt-2">
+                Preencha os detalhes do gasto para manter seu controle financeiro atualizado.
+              </p>
+            </DialogHeader>
           </div>
-        </DialogContent>
-      </Dialog>
-      {CameraOverlay}
-    </>
+          {FormContent}
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
