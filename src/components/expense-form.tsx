@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Minus, Info, CreditCard, Clock, TramFront, BusFront, Navigation } from 'lucide-react'
+import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Minus, Info, CreditCard, Clock, TramFront, BusFront, Navigation, Camera } from 'lucide-react'
 import { Expense } from '@/types/database'
 import { format, parseISO, subDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -54,6 +54,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   const [showCustomTransport, setShowCustomTransport] = useState(false)
   const isMobile = useIsMobile()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
   
   const createExpense = useCreateExpense()
   const updateExpense = useUpdateExpense()
@@ -420,35 +421,106 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
             {isMobile && (
               <div className="pt-4 pb-2 text-left">
                 <h2 className="text-3xl font-semibold tracking-tight">Anexar Recibos</h2>
-                <p className="text-sm font-medium text-muted-foreground/40 mt-1">Para finalizar, anexe fotos dos seus comprovantes.</p>
+                <p className="text-sm font-medium text-muted-foreground/40 mt-1">
+                  Para finalizar, anexe fotos dos seus comprovantes.
+                </p>
               </div>
             )}
             
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-6">
                 <div className="grid gap-2">
-                  <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Comprovante</Label>
-                  <button 
-                    type="button" 
-                    onClick={(e) => {
-                      console.log('[ExpenseForm] Botão de anexo clicado.');
-                      e.preventDefault();
-                      e.stopPropagation();
-                      fileInputRef.current?.click();
-                    }} 
-                    disabled={uploading} 
-                    className={cn("flex items-center justify-between h-20 px-6 rounded-2xl border border-dashed transition-all bg-muted/30 w-full outline-none", uploading ? "opacity-50 cursor-not-allowed border-primary" : "border-border/60 hover:border-primary/40 cursor-pointer")}
-                  >
-                    <div className="flex items-center gap-4 text-left">
-                      <div className="p-3 rounded-xl bg-background/50 border border-border">
-                        {uploading ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <Upload className="h-5 w-5 text-muted-foreground" />}
+                  <Label className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Comprovante
+                  </Label>
+                  <div className={cn("grid gap-3", isMobile ? "grid-cols-2" : "grid-cols-1")}>
+                    <button 
+                      type="button" 
+                      onClick={(e) => {
+                        console.log('[ExpenseForm] Botão de galeria clicado.');
+                        e.preventDefault();
+                        e.stopPropagation();
+                        fileInputRef.current?.click();
+                      }} 
+                      disabled={uploading} 
+                      className={cn(
+                        "flex items-center justify-between h-20 px-6 rounded-2xl border border-dashed transition-all bg-muted/30 w-full outline-none", 
+                        uploading ? "opacity-50 cursor-not-allowed border-primary" : "border-border/60 hover:border-primary/40 cursor-pointer"
+                      )}
+                    >
+                      <div className="flex items-center gap-4 text-left">
+                        <div className="p-3 rounded-xl bg-background/50 border border-border">
+                          {uploading ? (
+                            <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                          ) : (
+                            <Upload className="h-5 w-5 text-muted-foreground" />
+                          )}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-black text-foreground uppercase tracking-widest">
+                            {uploading ? 'Enviando...' : (isMobile ? 'Galeria' : 'Selecionar Fotos')}
+                          </span>
+                          <span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">
+                            Mídia
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-col"><span className="text-[11px] font-black text-foreground uppercase tracking-widest">{uploading ? 'Enviando...' : 'Selecionar Fotos'}</span><span className="text-[9px] font-medium text-muted-foreground/50 uppercase tracking-wider">JPG, PNG ou WebP</span></div>
-                    </div>
-                    <Plus className="h-5 w-5 text-muted-foreground/40" />
-                  </button>
-                  <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" disabled={uploading} />
+                      {!isMobile && <Plus className="h-5 w-5 text-muted-foreground/40" />}
+                    </button>
+
+                    {isMobile && (
+                      <button 
+                        type="button" 
+                        onClick={(e) => {
+                          console.log('[ExpenseForm] Botão de câmera clicado.');
+                          e.preventDefault();
+                          e.stopPropagation();
+                          cameraInputRef.current?.click();
+                        }} 
+                        disabled={uploading} 
+                        className={cn(
+                          "flex items-center justify-between h-20 px-6 rounded-2xl border border-dashed transition-all bg-primary/5 w-full outline-none border-primary/40"
+                        )}
+                      >
+                        <div className="flex items-center gap-4 text-left">
+                          <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
+                            {uploading ? (
+                              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                            ) : (
+                              <Camera className="h-5 w-5 text-primary" />
+                            )}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[11px] font-black text-primary uppercase tracking-widest">
+                              Câmera
+                            </span>
+                            <span className="text-[9px] font-medium text-primary/50 uppercase tracking-wider">
+                              Tirar Foto
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    )}
+                  </div>
                 </div>
+                <input 
+                  ref={fileInputRef} 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  onChange={handleFileUpload} 
+                  className="hidden" 
+                  disabled={uploading} 
+                />
+                <input 
+                  ref={cameraInputRef} 
+                  type="file" 
+                  accept="image/*" 
+                  capture="environment" 
+                  onChange={handleFileUpload} 
+                  className="hidden" 
+                  disabled={uploading} 
+                />
               </div>
 
               <div className="space-y-6">
@@ -457,15 +529,32 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                     {receiptUrls.map((url, idx) => (
                       <div key={idx} className="relative group/img aspect-square overflow-hidden rounded-xl border border-white/10 shadow-sm">
                         <img src={url} className="h-full w-full object-cover" alt="recibo" />
-                        <button type="button" onClick={() => { const urls = receiptUrls?.filter((_, i) => i !== idx); setValue('receipt_urls', urls?.length ? urls : null, { shouldDirty: true }) }} className="absolute inset-0 bg-destructive/60 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all"><X className="h-5 w-5 text-white stroke-[3]" /></button>
+                        <button 
+                          type="button" 
+                          onClick={() => { 
+                            const urls = receiptUrls?.filter((_, i) => i !== idx); 
+                            setValue('receipt_urls', urls?.length ? urls : null, { shouldDirty: true });
+                          }} 
+                          className="absolute inset-0 bg-destructive/60 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all"
+                        >
+                          <X className="h-5 w-5 text-white stroke-[3]" />
+                        </button>
                       </div>
                     ))}
                   </div>
                 )}
 
                 <div className="p-6 rounded-2xl bg-muted/20 border border-border/40 space-y-4">
-                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest"><span className="text-muted-foreground/40">Resumo</span><span className="text-primary">{transporteValue}</span></div>
-                  <div className="flex items-center justify-between text-base font-black"><span className="text-foreground/40">Total</span><span className="text-foreground font-mono">{formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}</span></div>
+                  <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-muted-foreground/40">Resumo</span>
+                    <span className="text-primary">{transporteValue}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-base font-black">
+                    <span className="text-foreground/40">Total</span>
+                    <span className="text-foreground font-mono">
+                      {formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
