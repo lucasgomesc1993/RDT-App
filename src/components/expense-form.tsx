@@ -91,24 +91,19 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
   useEffect(() => {
     if (open && !prevOpen) {
-      // Tenta recuperar rascunho apenas se não estiver editando uma despesa existente
+      setStep(1)
       if (!expense) {
-        const draft = localStorage.getItem('EXPENSE_FORM_DRAFT')
-        if (draft) {
-          try {
-            const savedData = JSON.parse(draft)
-            reset(savedData.values)
-            setStep(savedData.step || 1)
-            setShowCustomTransport(savedData.showCustomTransport || false)
-            console.log('[ExpenseForm] Rascunho restaurado com sucesso.')
-          } catch (e) {
-            console.error('Erro ao restaurar rascunho:', e)
-          }
-        } else {
-          setStep(1)
-        }
-      } else {
-        setStep(1)
+        reset({
+          local: '',
+          transporte: 'Estacionamento',
+          valor: 0,
+          motivo: '',
+          date: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0],
+          quantidade: 1,
+          pago: false,
+          receipt_urls: null
+        })
+        setShowCustomTransport(false)
       }
     }
     setPrevOpen(open)
@@ -128,31 +123,6 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       setShowCustomTransport(!isPredefined && expense.transporte !== '')
     }
   }, [open, expense, reset, prevOpen])
-
-  // Efeito para salvar rascunho automaticamente
-  const formValues = watch()
-  useEffect(() => {
-    if (open && !expense) {
-      const draft = {
-        values: formValues,
-        step,
-        showCustomTransport,
-        timestamp: Date.now()
-      }
-      localStorage.setItem('EXPENSE_FORM_DRAFT', JSON.stringify(draft))
-      localStorage.setItem('EXPENSE_FORM_OPEN', 'true')
-    }
-  }, [formValues, step, open, expense, showCustomTransport])
-
-  // Efeito para reabrir o modal se houve um reload durante o uso
-  useEffect(() => {
-    const wasOpen = localStorage.getItem('EXPENSE_FORM_OPEN') === 'true'
-    if (wasOpen && !open && !expense) {
-      // Pequeno delay para garantir que tudo carregou
-      const timer = setTimeout(() => setOpen(true), 500)
-      return () => clearTimeout(timer)
-    }
-  }, [])
 
   const dateValue = watch('date')
   const valorValue = watch('valor')
@@ -221,8 +191,6 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
       if (isEditing) { await updateExpense.mutateAsync({ id: expense!.id, ...data }) } 
       else { await createExpense.mutateAsync(data) }
       console.log('[ExpenseForm] Despesa salva com sucesso, fechando modal...');
-      localStorage.removeItem('EXPENSE_FORM_DRAFT')
-      localStorage.removeItem('EXPENSE_FORM_OPEN')
       setOpen(false)
       onSuccess?.()
     } catch (error) { console.error('Save error:', error) }
@@ -647,9 +615,6 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
   const handleOpenChange = (newOpen: boolean) => {
     console.log('[ExpenseForm] onOpenChange chamado. Novo valor:', newOpen, '| Step atual:', step);
     setOpen(newOpen);
-    if (!newOpen) {
-      localStorage.setItem('EXPENSE_FORM_OPEN', 'false');
-    }
   }
 
   if (isMobile) {
