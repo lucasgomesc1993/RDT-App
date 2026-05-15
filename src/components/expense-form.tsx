@@ -9,6 +9,7 @@ import { useCreateExpense, useUpdateExpense } from '@/hooks/use-expenses'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { createClient } from '@/utils/supabase/client'
 import { Loader2, X, Car, Ticket, Bus, Utensils, CalendarIcon, Upload, Plus, Minus, Info, CreditCard, Clock, TramFront, BusFront, Navigation, Camera } from 'lucide-react'
 import { Expense } from '@/types/database'
@@ -706,17 +707,24 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     }
   }
 
-  // Componente de overlay da câmera (independente do Dialog/Drawer)
-  const CameraOverlay = isCameraActive ? (
-    <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center animate-in fade-in duration-300">
+  // Componente de overlay da câmera (renderizado via Portal direto no body)
+  const CameraOverlay = isCameraActive && typeof document !== 'undefined' ? createPortal(
+    <div 
+      className="fixed inset-0 bg-black flex flex-col items-center justify-center animate-in fade-in duration-300"
+      style={{ zIndex: 99999 }}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
+    >
       <div className="absolute top-8 left-0 right-0 px-8 flex items-center justify-between z-10">
         <div className="flex flex-col">
           <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Câmera</span>
           <span className="text-white font-semibold tracking-tight">Capturar Recibo</span>
         </div>
         <button 
-          onClick={stopCamera}
-          className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white"
+          type="button"
+          onClick={() => stopCamera()}
+          onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); stopCamera(); }}
+          className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white active:bg-white/30 transition-colors"
         >
           <X className="h-5 w-5" />
         </button>
@@ -738,7 +746,9 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
       <div className="flex-1 w-full flex items-center justify-center p-8">
         <button 
-          onClick={capturePhoto}
+          type="button"
+          onClick={() => capturePhoto()}
+          onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); capturePhoto(); }}
           className="h-20 w-20 rounded-full border-4 border-white/20 p-1 group active:scale-90 transition-transform"
         >
           <div className="w-full h-full rounded-full bg-white group-hover:bg-primary transition-colors flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.3)]">
@@ -747,7 +757,8 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         </button>
       </div>
       <canvas ref={canvasRef} className="hidden" />
-    </div>
+    </div>,
+    document.body
   ) : null
 
   if (isMobile) {
