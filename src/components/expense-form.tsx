@@ -425,161 +425,94 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
 
         {/* STEP 3: Comprovação */}
         {step === 3 && (
-          <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
+          <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
             <div className="pt-2">
-              <h2 className="text-3xl font-black tracking-tight text-foreground uppercase tracking-wider">
-                Comprovação
-              </h2>
-              <p className="text-[11px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] mt-1">
-                Anexe os recibos para validação
-              </p>
+              <h2 className="text-2xl font-semibold tracking-tight">Comprovantes</h2>
+              <p className="text-sm text-muted-foreground/50 mt-1">Anexe as fotos dos seus recibos.</p>
             </div>
             
-            <div className="grid gap-8">
-              <div className="space-y-4">
-                <Label className="ml-1 text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.3em]">
-                  Mídia de Origem
-                </Label>
-                <div className={cn("grid gap-4", isMobile ? "grid-cols-2" : "grid-cols-2")}>
-                  <button 
-                    type="button" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      fileInputRef.current?.click();
-                    }} 
-                    disabled={uploading} 
-                    className={cn(
-                      "group relative flex flex-col items-center justify-center gap-3 h-32 rounded-[24px] border-2 border-dashed transition-all duration-300 outline-none", 
-                      uploading 
-                        ? "opacity-50 cursor-not-allowed border-primary/20 bg-primary/5" 
-                        : "border-white/10 bg-white/[0.02] hover:border-primary/40 hover:bg-primary/[0.02] active:scale-[0.96]"
-                    )}
-                  >
-                    <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.05] group-hover:scale-110 transition-transform duration-500 shadow-2xl">
-                      {uploading ? (
-                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                      ) : (
-                        <Upload className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                      )}
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <span className="text-[10px] font-black text-foreground uppercase tracking-widest">
-                        Galeria
-                      </span>
-                      <span className="text-[8px] font-bold text-muted-foreground/30 uppercase tracking-widest mt-0.5">
-                        Selecionar
-                      </span>
-                    </div>
-                  </button>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <button 
+                  type="button" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }} 
+                  disabled={uploading} 
+                  className="flex items-center gap-3 h-14 px-5 rounded-2xl bg-muted/30 border border-border hover:bg-muted/50 transition-all active:scale-[0.98]"
+                >
+                  <div className="p-2 rounded-lg bg-background/50 border border-border">
+                    {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest">Galeria</span>
+                </button>
 
-                  <button 
-                    type="button" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (isMobile) {
-                        cameraInputRef.current?.click();
-                      } else {
-                        fileInputRef.current?.click();
-                      }
-                    }} 
-                    disabled={uploading} 
-                    className={cn(
-                      "group relative flex flex-col items-center justify-center gap-3 h-32 rounded-[24px] border-2 border-dashed transition-all duration-300 outline-none",
-                      uploading 
-                        ? "opacity-50 cursor-not-allowed border-primary/20 bg-primary/5" 
-                        : "border-primary/20 bg-primary/5 hover:border-primary/50 hover:bg-primary/10 active:scale-[0.96]"
-                    )}
-                  >
-                    <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/20 group-hover:scale-110 transition-transform duration-500 shadow-2xl shadow-primary/20">
-                      {uploading ? (
-                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                      ) : (
-                        <Camera className="h-6 w-6 text-primary" />
-                      )}
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <span className="text-[10px] font-black text-primary uppercase tracking-widest">
-                        Câmera
-                      </span>
-                      <span className="text-[8px] font-bold text-primary/40 uppercase tracking-widest mt-0.5">
-                        Tirar Foto
-                      </span>
-                    </div>
-                  </button>
-                </div>
-                
-                <input 
-                  ref={fileInputRef} 
-                  type="file" 
-                  accept="image/*" 
-                  multiple 
-                  onChange={handleFileUpload} 
-                  className="hidden" 
+                <button 
+                  type="button" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cameraInputRef.current?.click();
+                  }} 
                   disabled={uploading} 
-                />
-                <input 
-                  ref={cameraInputRef} 
-                  type="file" 
-                  accept="image/*" 
-                  capture="environment" 
-                  onChange={handleFileUpload} 
-                  className="hidden" 
-                  disabled={uploading} 
-                />
+                  className="flex items-center gap-3 h-14 px-5 rounded-2xl bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-all active:scale-[0.98]"
+                >
+                  <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
+                    <Camera className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-primary">Câmera</span>
+                </button>
               </div>
 
-              <div className="space-y-8">
-                {receiptUrls && receiptUrls.length > 0 && (
-                  <div className="space-y-4">
-                    <Label className="ml-1 text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.3em]">
-                      Arquivos Anexados ({receiptUrls.length})
-                    </Label>
-                    <div className="grid grid-cols-4 gap-4 p-5 rounded-[28px] bg-white/[0.02] border border-white/10 animate-in fade-in zoom-in duration-500">
-                      {receiptUrls.map((url, idx) => (
-                        <div key={idx} className="relative group/img aspect-square overflow-hidden rounded-[18px] border border-white/10 shadow-2xl">
-                          <img src={url} className="h-full w-full object-cover grayscale-[0.5] group-hover/img:grayscale-0 transition-all duration-500" alt="recibo" />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300" />
-                          <button 
-                            type="button" 
-                            onClick={() => { 
-                              const urls = receiptUrls?.filter((_, i) => i !== idx); 
-                              setValue('receipt_urls', urls?.length ? urls : null, { shouldDirty: true });
-                            }} 
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-destructive text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all duration-300 hover:scale-110 shadow-xl"
-                          >
-                            <X className="h-5 w-5 stroke-[3]" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <input 
+                ref={fileInputRef} 
+                type="file" 
+                accept="image/*" 
+                multiple 
+                onChange={handleFileUpload} 
+                className="hidden" 
+              />
+              <input 
+                ref={cameraInputRef} 
+                type="file" 
+                accept="image/*" 
+                capture="environment" 
+                onChange={handleFileUpload} 
+                className="hidden" 
+              />
 
-                <div className="p-8 rounded-[32px] bg-primary/[0.03] border border-primary/10 space-y-6 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity duration-700">
-                    <CreditCard className="h-24 w-24 -rotate-12" />
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] relative z-10">
-                    <span className="text-muted-foreground/40">Item Selecionado</span>
-                    <span className="px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-                      {transporteValue}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-end justify-between relative z-10">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em] mb-1">Valor Total</span>
-                      <span className="text-4xl font-black text-foreground font-mono tracking-tighter">
-                        {formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}
-                      </span>
+              {receiptUrls && receiptUrls.length > 0 && (
+                <div className="grid grid-cols-4 gap-3 p-3 rounded-2xl bg-muted/20 border border-border/50">
+                  {receiptUrls.map((url, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-border shadow-sm group">
+                      <img src={url} className="h-full w-full object-cover" alt="recibo" />
+                      <button 
+                        type="button" 
+                        onClick={() => { 
+                          const urls = receiptUrls?.filter((_, i) => i !== idx); 
+                          setValue('receipt_urls', urls?.length ? urls : null, { shouldDirty: true });
+                        }} 
+                        className="absolute inset-0 bg-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                      >
+                        <X className="h-4 w-4 text-white" />
+                      </button>
                     </div>
-                    <div className="h-12 w-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center">
-                      <Plus className="h-5 w-5 text-muted-foreground/20" />
-                    </div>
-                  </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="p-5 rounded-2xl bg-muted/30 border border-border space-y-3">
+                <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                  <span>Resumo</span>
+                  <span className="text-primary">{transporteValue}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground/60">Total</span>
+                  <span className="text-lg font-black font-mono">
+                    {formatCurrency((valorValue || 0) * (watch('quantidade') || 1))}
+                  </span>
                 </div>
               </div>
             </div>
