@@ -171,9 +171,6 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
         audio: false 
       })
       setCameraStream(stream)
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
     } catch (err) {
       console.error('Erro ao acessar câmera:', err)
       alert('Não foi possível acessar a câmera. Verifique as permissões.')
@@ -188,6 +185,12 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
     }
     setIsCameraActive(false)
   }
+
+  useEffect(() => {
+    if (isCameraActive && cameraStream && videoRef.current) {
+      videoRef.current.srcObject = cameraStream
+    }
+  }, [isCameraActive, cameraStream])
 
   useEffect(() => {
     return () => {
@@ -767,6 +770,7 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
               ref={videoRef} 
               autoPlay 
               playsInline 
+              muted
               className="w-full h-full object-cover"
             />
             {/* Overlay de Guia */}
