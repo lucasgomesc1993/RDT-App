@@ -350,7 +350,16 @@ export function ExpenseForm({ expense, onSuccess, trigger }: ExpenseFormProps) {
                 <div className="grid grid-cols-2 gap-4 items-end">
                   <div className="grid gap-2">
                     <Label htmlFor="valor" className="ml-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Valor Unitário</Label>
-                    <Input id="valor" type="text" inputMode="decimal" value={formatCurrency(valorValue || 0)} onChange={handleCurrencyChange} className={cn("h-14 rounded-2xl bg-muted/50 border-border font-mono font-bold text-lg", (valorValue > 0) ? "text-primary shadow-[0_0_15px_var(--primary)]/5" : "text-muted-foreground/40")} />
+                    <Input 
+                      id="valor" 
+                      type="text" 
+                      inputMode="decimal" 
+                      value={formatCurrency(valorValue || 0)} 
+                      onChange={handleCurrencyChange} 
+                      onFocus={(e) => setTimeout(() => e.target.setSelectionRange(e.target.value.length, e.target.value.length), 0)}
+                      onClick={(e) => (e.target as HTMLInputElement).setSelectionRange((e.target as HTMLInputElement).value.length, (e.target as HTMLInputElement).value.length)}
+                      className={cn("h-14 rounded-2xl bg-muted/50 border-border font-mono font-bold text-lg", (valorValue > 0) ? "text-primary shadow-[0_0_15px_var(--primary)]/5" : "text-muted-foreground/40")} 
+                    />
                     {errors.valor && <span className="text-[10px] font-medium text-destructive ml-1">{errors.valor.message}</span>}
                   </div>
 
